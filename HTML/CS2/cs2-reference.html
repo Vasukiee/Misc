@@ -564,6 +564,9 @@
         <div class="pt-line">Logica: <span>import/export lavoratori, non mobilità interna</span></div>
       </div>
     </div>
+    <div class="note">
+      <strong>Regola metro per il tuo layout:</strong> fermate ai margini esterni dei distretti <span class="ok">✓ corretto</span>. Aggiungi una fermata anche nel centro industriale (vicino all'accesso lavoratori) così la gente prende metro invece dell'auto. Il bus fa il "last mile" dall'uscita metro all'interno del distretto residenziale.
+    </div>
     <table>
       <tr><th>Errore comune</th><th>Correzione</th></tr>
       <tr><td>Metro parallela all'autostrada</td><td>Metro deve attraversare i distretti perpendicolarmente</td></tr>
@@ -698,6 +701,941 @@
     <div class="note">Le turbine si "rubano" vento solo lungo l'asse del vento, non lateralmente. Puoi metterle vicine lateralmente (5 celle) senza perdita se sono in fila perpendicolare al vento.</div>
   </div>
 </div>
+
+<!-- 9. DISTRETTO RES/COM — 4 FASI -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">09</span>
+    <span class="section-title">Distretto Residenziale / Commerciale — Crescita in 4 Fasi</span>
+  </div>
+  <div class="section-body">
+
+    <div class="note" style="margin-bottom:4px">
+      Ingresso: <strong style="color:var(--accent)">collettore 4 corsie</strong> dal lato sud. Ogni fase espande la griglia mantenendo la struttura 3×3 sottozone. Le dimensioni indicate sono della sottozona singola; il distretto totale è sempre 3×3 di quelle.
+    </div>
+
+    <!-- FASE 1 -->
+    <div style="border:1px solid var(--border);border-radius:4px;overflow:hidden;">
+      <div style="background:rgba(90,184,74,0.08);border-bottom:1px solid var(--border);padding:10px 14px;display:flex;align-items:center;gap:12px;">
+        <span style="font-family:'Share Tech Mono',monospace;font-size:0.7rem;background:rgba(90,184,74,0.15);color:var(--zone-res);border:1px solid rgba(90,184,74,0.3);padding:2px 8px;border-radius:2px;">FASE 1</span>
+        <span style="font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#fff;">Fondazione — ~2.000 abitanti</span>
+        <span style="margin-left:auto;font-family:'Share Tech Mono',monospace;font-size:0.75rem;color:var(--muted);">sottozona 12×12 celle · distretto 36×36 celle (288m)</span>
+      </div>
+      <div style="padding:12px 14px;display:flex;flex-direction:column;gap:10px;">
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:0.7rem;color:var(--muted);text-transform:uppercase;margin-bottom:6px;">Struttura griglia 3×3</div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:3px;max-width:200px;">
+              <div style="background:rgba(74,159,212,0.2);border:1px solid rgba(74,159,212,0.4);padding:6px 4px;text-align:center;font-size:0.7rem;border-radius:2px;color:var(--zone-com)">COM</div>
+              <div style="background:rgba(74,159,212,0.2);border:1px solid rgba(74,159,212,0.4);padding:6px 4px;text-align:center;font-size:0.7rem;border-radius:2px;color:var(--zone-com)">COM</div>
+              <div style="background:rgba(74,159,212,0.2);border:1px solid rgba(74,159,212,0.4);padding:6px 4px;text-align:center;font-size:0.7rem;border-radius:2px;color:var(--zone-com)">COM</div>
+              <div style="background:rgba(90,184,74,0.15);border:1px solid rgba(90,184,74,0.3);padding:6px 4px;text-align:center;font-size:0.7rem;border-radius:2px;color:var(--zone-res)">LOW</div>
+              <div style="background:rgba(90,184,74,0.15);border:1px solid rgba(90,184,74,0.3);padding:6px 4px;text-align:center;font-size:0.7rem;border-radius:2px;color:var(--zone-res)">LOW</div>
+              <div style="background:rgba(90,184,74,0.15);border:1px solid rgba(90,184,74,0.3);padding:6px 4px;text-align:center;font-size:0.7rem;border-radius:2px;color:var(--zone-res)">LOW</div>
+              <div style="background:rgba(90,184,74,0.15);border:1px solid rgba(90,184,74,0.3);padding:6px 4px;text-align:center;font-size:0.7rem;border-radius:2px;color:var(--zone-res)">LOW</div>
+              <div style="background:rgba(90,184,74,0.15);border:1px solid rgba(90,184,74,0.3);padding:6px 4px;text-align:center;font-size:0.7rem;border-radius:2px;color:var(--zone-res)">LOW</div>
+              <div style="background:rgba(90,184,74,0.15);border:1px solid rgba(90,184,74,0.3);padding:6px 4px;text-align:center;font-size:0.7rem;border-radius:2px;color:var(--zone-res)">LOW</div>
+            </div>
+            <div style="font-size:0.72rem;color:var(--muted);margin-top:5px;">↑ nord (interno mappa) &nbsp; ↓ sud (collettore ingresso)</div>
+          </div>
+          <div style="font-size:0.83rem;">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:0.7rem;color:var(--muted);text-transform:uppercase;margin-bottom:6px;">Parametri</div>
+            <div style="display:flex;flex-direction:column;gap:3px;">
+              <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(30,46,50,0.6);"><span style="color:var(--muted)">Sottozone COM (fila sud)</span><span style="font-family:'Share Tech Mono',monospace;color:var(--zone-com)">3 di 9</span></div>
+              <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(30,46,50,0.6);"><span style="color:var(--muted)">Sottozone LOW density</span><span style="font-family:'Share Tech Mono',monospace;color:var(--zone-res)">6 di 9</span></div>
+              <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(30,46,50,0.6);"><span style="color:var(--muted)">Strade interne</span><span style="font-family:'Share Tech Mono',monospace;color:var(--accent3)">collettori 2c</span></div>
+              <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(30,46,50,0.6);"><span style="color:var(--muted)">Accessi al collettore 4c</span><span style="font-family:'Share Tech Mono',monospace;color:var(--accent3)">1 centrale</span></div>
+              <div style="display:flex;justify-content:space-between;padding:3px 0;"><span style="color:var(--muted)">Mezzi pubblici</span><span style="font-family:'Share Tech Mono',monospace;color:var(--accent3)">1 linea bus</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="note">
+          Il commercio sta a sud perché è il primo contatto con il collettore — i clienti arrivano, parcheggiano, non entrano nel residenziale. Le strade della griglia interna sono già collettori a 2 corsie anche se le case sono poche: costa poco ora e evita demolizioni dopo. <strong>Lascia già spazio per la rotatoria nord</strong> anche se non la costruisci ancora.
+        </div>
+      </div>
+    </div>
+
+    <!-- FASE 2 -->
+    <div style="border:1px solid var(--border);border-radius:4px;overflow:hidden;">
+      <div style="background:rgba(74,159,212,0.08);border-bottom:1px solid var(--border);padding:10px 14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <span style="font-family:'Share Tech Mono',monospace;font-size:0.7rem;background:rgba(74,159,212,0.15);color:var(--zone-com);border:1px solid rgba(74,159,212,0.3);padding:2px 8px;border-radius:2px;">FASE 2</span>
+        <span style="font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#fff;">Densificazione — ~6.000 abitanti</span>
+        <span style="margin-left:auto;font-family:'Share Tech Mono',monospace;font-size:0.75rem;color:var(--muted);">sottozona 16×16 celle · distretto 48×48 celle (384m)</span>
+      </div>
+      <div style="padding:12px 14px;display:flex;flex-direction:column;gap:10px;">
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:0.7rem;color:var(--muted);text-transform:uppercase;margin-bottom:6px;">Struttura griglia 3×3</div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:3px;max-width:200px;">
+              <div style="background:rgba(139,111,212,0.15);border:1px solid rgba(139,111,212,0.35);padding:6px 4px;text-align:center;font-size:0.65rem;border-radius:2px;color:var(--road-res)">MED</div>
+              <div style="background:rgba(139,111,212,0.15);border:1px solid rgba(139,111,212,0.35);padding:6px 4px;text-align:center;font-size:0.65rem;border-radius:2px;color:var(--road-res)">MED</div>
+              <div style="background:rgba(139,111,212,0.15);border:1px solid rgba(139,111,212,0.35);padding:6px 4px;text-align:center;font-size:0.65rem;border-radius:2px;color:var(--road-res)">MED</div>
+              <div style="background:rgba(90,184,74,0.15);border:1px solid rgba(90,184,74,0.3);padding:6px 4px;text-align:center;font-size:0.65rem;border-radius:2px;color:var(--zone-res)">LOW</div>
+              <div style="background:rgba(74,159,212,0.2);border:1px solid rgba(74,159,212,0.4);padding:6px 4px;text-align:center;font-size:0.65rem;border-radius:2px;color:var(--zone-com)">OFF</div>
+              <div style="background:rgba(90,184,74,0.15);border:1px solid rgba(90,184,74,0.3);padding:6px 4px;text-align:center;font-size:0.65rem;border-radius:2px;color:var(--zone-res)">LOW</div>
+              <div style="background:rgba(74,159,212,0.2);border:1px solid rgba(74,159,212,0.4);padding:6px 4px;text-align:center;font-size:0.65rem;border-radius:2px;color:var(--zone-com)">COM</div>
+              <div style="background:rgba(74,159,212,0.2);border:1px solid rgba(74,159,212,0.4);padding:6px 4px;text-align:center;font-size:0.65rem;border-radius:2px;color:var(--zone-com)">COM</div>
+              <div style="background:rgba(74,159,212,0.2);border:1px solid rgba(74,159,212,0.4);padding:6px 4px;text-align:center;font-size:0.65rem;border-radius:2px;color:var(--zone-com)">COM</div>
+            </div>
+            <div style="font-size:0.72rem;color:var(--muted);margin-top:5px;">↑ nord · MED = medium density · OFF = uffici</div>
+          </div>
+          <div style="font-size:0.83rem;">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:0.7rem;color:var(--muted);text-transform:uppercase;margin-bottom:6px;">Parametri</div>
+            <div style="display:flex;flex-direction:column;gap:3px;">
+              <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(30,46,50,0.6);"><span style="color:var(--muted)">COM (fila sud)</span><span style="font-family:'Share Tech Mono',monospace;color:var(--zone-com)">3 di 9</span></div>
+              <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(30,46,50,0.6);"><span style="color:var(--muted)">Uffici (centro)</span><span style="font-family:'Share Tech Mono',monospace;color:var(--zone-com)">1 di 9</span></div>
+              <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(30,46,50,0.6);"><span style="color:var(--muted)">LOW density</span><span style="font-family:'Share Tech Mono',monospace;color:var(--zone-res)">2 di 9</span></div>
+              <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(30,46,50,0.6);"><span style="color:var(--muted)">MED density (fila nord)</span><span style="font-family:'Share Tech Mono',monospace;color:var(--road-res)">3 di 9</span></div>
+              <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(30,46,50,0.6);"><span style="color:var(--muted)">Accessi al collettore 4c</span><span style="font-family:'Share Tech Mono',monospace;color:var(--accent3)">2 (est + ovest)</span></div>
+              <div style="display:flex;justify-content:space-between;padding:3px 0;"><span style="color:var(--muted)">Mezzi pubblici</span><span style="font-family:'Share Tech Mono',monospace;color:var(--accent3)">2 linee bus</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="note">
+          Gli uffici al centro smistano il traffico di punta: entrano la mattina, escono la sera — opposto al commercio. Mettili al centro perché non generano camion e tollerano meno verde. <strong>In questa fase aggiungi il secondo accesso al collettore</strong> (uno a est, uno a ovest del distretto) e costruisci la rotatoria nord anche se non la usi ancora — serve per la fase 3.
+        </div>
+      </div>
+    </div>
+
+    <!-- FASE 3 -->
+    <div style="border:1px solid var(--border);border-radius:4px;overflow:hidden;">
+      <div style="background:rgba(255,209,102,0.06);border-bottom:1px solid var(--border);padding:10px 14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <span style="font-family:'Share Tech Mono',monospace;font-size:0.7rem;background:rgba(255,209,102,0.12);color:var(--accent3);border:1px solid rgba(255,209,102,0.3);padding:2px 8px;border-radius:2px;">FASE 3</span>
+        <span style="font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#fff;">Città consolidata — ~15.000 abitanti</span>
+        <span style="margin-left:auto;font-family:'Share Tech Mono',monospace;font-size:0.75rem;color:var(--muted);">sottozona 20×20 celle · distretto 60×60 celle (480m)</span>
+      </div>
+      <div style="padding:12px 14px;display:flex;flex-direction:column;gap:10px;">
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:0.7rem;color:var(--muted);text-transform:uppercase;margin-bottom:6px;">Struttura griglia 3×3</div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:3px;max-width:200px;">
+              <div style="background:rgba(139,111,212,0.2);border:1px solid rgba(139,111,212,0.4);padding:6px 4px;text-align:center;font-size:0.65rem;border-radius:2px;color:var(--road-res)">MED</div>
+              <div style="background:rgba(139,111,212,0.2);border:1px solid rgba(139,111,212,0.4);padding:6px 4px;text-align:center;font-size:0.65rem;border-radius:2px;color:var(--road-res)">MED</div>
+              <div style="background:rgba(139,111,212,0.2);border:1px solid rgba(139,111,212,0.4);padding:6px 4px;text-align:center;font-size:0.65rem;border-radius:2px;color:var(--road-res)">MED</div>
+              <div style="background:rgba(139,111,212,0.2);border:1px solid rgba(139,111,212,0.4);padding:6px 4px;text-align:center;font-size:0.65rem;border-radius:2px;color:var(--road-res)">MED</div>
+              <div style="background:rgba(0,229,192,0.1);border:1px solid rgba(0,229,192,0.25);padding:6px 4px;text-align:center;font-size:0.65rem;border-radius:2px;color:var(--accent)">HUB</div>
+              <div style="background:rgba(139,111,212,0.2);border:1px solid rgba(139,111,212,0.4);padding:6px 4px;text-align:center;font-size:0.65rem;border-radius:2px;color:var(--road-res)">MED</div>
+              <div style="background:rgba(74,159,212,0.2);border:1px solid rgba(74,159,212,0.4);padding:6px 4px;text-align:center;font-size:0.65rem;border-radius:2px;color:var(--zone-com)">COM</div>
+              <div style="background:rgba(74,159,212,0.2);border:1px solid rgba(74,159,212,0.4);padding:6px 4px;text-align:center;font-size:0.65rem;border-radius:2px;color:var(--zone-com)">OFF</div>
+              <div style="background:rgba(74,159,212,0.2);border:1px solid rgba(74,159,212,0.4);padding:6px 4px;text-align:center;font-size:0.65rem;border-radius:2px;color:var(--zone-com)">COM</div>
+            </div>
+            <div style="font-size:0.72rem;color:var(--muted);margin-top:5px;">HUB = nodo intermodale centrale (metro + bus)</div>
+          </div>
+          <div style="font-size:0.83rem;">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:0.7rem;color:var(--muted);text-transform:uppercase;margin-bottom:6px;">Parametri</div>
+            <div style="display:flex;flex-direction:column;gap:3px;">
+              <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(30,46,50,0.6);"><span style="color:var(--muted)">COM + Uffici (fila sud)</span><span style="font-family:'Share Tech Mono',monospace;color:var(--zone-com)">3 di 9</span></div>
+              <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(30,46,50,0.6);"><span style="color:var(--muted)">MED density</span><span style="font-family:'Share Tech Mono',monospace;color:var(--road-res)">5 di 9</span></div>
+              <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(30,46,50,0.6);"><span style="color:var(--muted)">HUB intermodale</span><span style="font-family:'Share Tech Mono',monospace;color:var(--accent)">1 centrale</span></div>
+              <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(30,46,50,0.6);"><span style="color:var(--muted)">Accessi stradali</span><span style="font-family:'Share Tech Mono',monospace;color:var(--accent3)">3 (N+E+O)</span></div>
+              <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(30,46,50,0.6);"><span style="color:var(--muted)">Metro</span><span style="font-family:'Share Tech Mono',monospace;color:var(--accent3)">1 linea, 2 fermate</span></div>
+              <div style="display:flex;justify-content:space-between;padding:3px 0;"><span style="color:var(--muted)">Bus circolari interni</span><span style="font-family:'Share Tech Mono',monospace;color:var(--accent3)">2 anelli</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:rgba(0,229,192,0.05);border:1px solid rgba(0,229,192,0.15);border-radius:3px;padding:10px 14px;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:0.7rem;color:var(--accent);text-transform:uppercase;margin-bottom:8px;">🚇 Schema trasporti pubblici fase 3</div>
+          <div style="font-size:0.83rem;display:flex;flex-direction:column;gap:5px;">
+            <div><span style="color:var(--accent)">Metro:</span> <span style="color:var(--muted)">entra da sud (stazione vicino COM), fermata centrale all'HUB, esce a nord verso il prossimo distretto. Distanza fermate: </span><span style="font-family:'Share Tech Mono',monospace;color:var(--accent3)">25–30 celle (200–240m)</span></div>
+            <div><span style="color:var(--accent)">Bus anello est:</span> <span style="color:var(--muted)">percorre la colonna est della griglia, fermate ogni sottozona, connette alla metro all'HUB.</span></div>
+            <div><span style="color:var(--accent)">Bus anello ovest:</span> <span style="color:var(--muted)">speculare. I due anelli girano in senso opposto — uno CW, uno CCW — così la frequenza percepita è doppia.</span></div>
+            <div><span style="color:var(--accent3)">Obiettivo:</span> <span style="color:var(--muted)">il 60% degli abitanti usa il trasporto pubblico. Se non ci arrivi, aggiungi park&amp;ride sul collettore di ingresso prima del distretto.</span></div>
+          </div>
+        </div>
+
+        <div class="note">
+          <strong>Low density scompare in questa fase</strong> — le sottozone LOW vengono riconvertite a MED quando la domanda lo richiede. Il LOW density rimane solo fuori dal distretto, in zona periferica. L'HUB centrale è la stazione metro con fermata bus integrata: non è una sottozona zonabile, è infrastruttura pura.
+        </div>
+      </div>
+    </div>
+
+    <!-- FASE 4 -->
+    <div style="border:1px solid rgba(255,107,53,0.3);border-radius:4px;overflow:hidden;">
+      <div style="background:rgba(255,107,53,0.08);border-bottom:1px solid rgba(255,107,53,0.2);padding:10px 14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <span style="font-family:'Share Tech Mono',monospace;font-size:0.7rem;background:rgba(255,107,53,0.15);color:var(--accent2);border:1px solid rgba(255,107,53,0.3);padding:2px 8px;border-radius:2px;">FASE 4</span>
+        <span style="font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#fff;">Massima densità — ~30.000 abitanti</span>
+        <span style="margin-left:auto;font-family:'Share Tech Mono',monospace;font-size:0.75rem;color:var(--muted);">sottozona 24×24 celle · distretto 72×72 celle (576m)</span>
+      </div>
+      <div style="padding:12px 14px;display:flex;flex-direction:column;gap:10px;">
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:0.7rem;color:var(--muted);text-transform:uppercase;margin-bottom:6px;">Struttura griglia 3×3</div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:3px;max-width:200px;">
+              <div style="background:rgba(139,111,212,0.25);border:1px solid rgba(139,111,212,0.5);padding:6px 4px;text-align:center;font-size:0.65rem;border-radius:2px;color:#c4aaff">HIGH</div>
+              <div style="background:rgba(0,229,192,0.1);border:1px solid rgba(0,229,192,0.25);padding:6px 4px;text-align:center;font-size:0.65rem;border-radius:2px;color:var(--accent)">HUB2</div>
+              <div style="background:rgba(139,111,212,0.25);border:1px solid rgba(139,111,212,0.5);padding:6px 4px;text-align:center;font-size:0.65rem;border-radius:2px;color:#c4aaff">HIGH</div>
+              <div style="background:rgba(139,111,212,0.2);border:1px solid rgba(139,111,212,0.4);padding:6px 4px;text-align:center;font-size:0.65rem;border-radius:2px;color:var(--road-res)">MED</div>
+              <div style="background:rgba(0,229,192,0.1);border:1px solid rgba(0,229,192,0.25);padding:6px 4px;text-align:center;font-size:0.65rem;border-radius:2px;color:var(--accent)">HUB1</div>
+              <div style="background:rgba(139,111,212,0.2);border:1px solid rgba(139,111,212,0.4);padding:6px 4px;text-align:center;font-size:0.65rem;border-radius:2px;color:var(--road-res)">MED</div>
+              <div style="background:rgba(74,159,212,0.2);border:1px solid rgba(74,159,212,0.4);padding:6px 4px;text-align:center;font-size:0.65rem;border-radius:2px;color:var(--zone-com)">COM</div>
+              <div style="background:rgba(74,159,212,0.2);border:1px solid rgba(74,159,212,0.4);padding:6px 4px;text-align:center;font-size:0.65rem;border-radius:2px;color:var(--zone-com)">OFF</div>
+              <div style="background:rgba(74,159,212,0.2);border:1px solid rgba(74,159,212,0.4);padding:6px 4px;text-align:center;font-size:0.65rem;border-radius:2px;color:var(--zone-com)">COM</div>
+            </div>
+            <div style="font-size:0.72rem;color:var(--muted);margin-top:5px;">HUB1 = metro + bus · HUB2 = metro + tram</div>
+          </div>
+          <div style="font-size:0.83rem;">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:0.7rem;color:var(--muted);text-transform:uppercase;margin-bottom:6px;">Parametri</div>
+            <div style="display:flex;flex-direction:column;gap:3px;">
+              <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(30,46,50,0.6);"><span style="color:var(--muted)">COM + Uffici (fila sud)</span><span style="font-family:'Share Tech Mono',monospace;color:var(--zone-com)">3 di 9</span></div>
+              <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(30,46,50,0.6);"><span style="color:var(--muted)">MED density</span><span style="font-family:'Share Tech Mono',monospace;color:var(--road-res)">2 di 9</span></div>
+              <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(30,46,50,0.6);"><span style="color:var(--muted)">HIGH density</span><span style="font-family:'Share Tech Mono',monospace;color:#c4aaff">2 di 9</span></div>
+              <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(30,46,50,0.6);"><span style="color:var(--muted)">HUB intermodali</span><span style="font-family:'Share Tech Mono',monospace;color:var(--accent)">2 di 9</span></div>
+              <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(30,46,50,0.6);"><span style="color:var(--muted)">Accessi stradali</span><span style="font-family:'Share Tech Mono',monospace;color:var(--accent3)">4 (tutti i lati)</span></div>
+              <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(30,46,50,0.6);"><span style="color:var(--muted)">Metro</span><span style="font-family:'Share Tech Mono',monospace;color:var(--accent3)">2 linee incrociate</span></div>
+              <div style="display:flex;justify-content:space-between;padding:3px 0;"><span style="color:var(--muted)">Obiettivo TPL</span><span style="font-family:'Share Tech Mono',monospace;color:var(--accent2)">80% utenti</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:rgba(0,229,192,0.05);border:1px solid rgba(0,229,192,0.15);border-radius:3px;padding:10px 14px;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:0.7rem;color:var(--accent);text-transform:uppercase;margin-bottom:8px;">🚇 Schema trasporti pubblici fase 4</div>
+          <div style="font-size:0.83rem;display:flex;flex-direction:column;gap:5px;">
+            <div><span style="color:var(--accent)">Metro linea NS:</span> <span style="color:var(--muted)">attraversa il distretto nord-sud, fermate a HUB1 (centro) e sul collettore sud.</span></div>
+            <div><span style="color:var(--accent)">Metro linea EW:</span> <span style="color:var(--muted)">attraversa est-ovest, fermata a HUB2 (nord-centro). Le due linee si incrociano a HUB1.</span></div>
+            <div><span style="color:var(--accent)">Tram:</span> <span style="color:var(--muted)">percorre la fila nord (HIGH density) est-ovest. Alimenta HUB2 e scarica ai margini verso altri distretti.</span></div>
+            <div><span style="color:var(--accent)">Bus:</span> <span style="color:var(--muted)">solo last-mile e connessione verso zone non coperte da metro. Nessun bus parallelo alla metro.</span></div>
+            <div><span style="color:var(--accent3)">Strade:</span> <span style="color:var(--muted)">a questo punto le arterie interne possono essere parzialmente chiuse al traffico privato — usa zone a traffico limitato (se disponibile) sulla fila centrale.</span></div>
+          </div>
+        </div>
+
+        <div style="background:rgba(255,107,53,0.07);border:1px solid rgba(255,107,53,0.2);border-radius:3px;padding:10px 14px;font-size:0.85rem;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:0.7rem;color:var(--accent2);text-transform:uppercase;margin-bottom:6px;">⚠ Soglia — Quando creare un nuovo distretto</div>
+          Quando la domanda supera i 30.000 abitanti in questo distretto <strong style="color:#fff">non espandere ulteriormente</strong> — crea un secondo distretto identico alla fase 1 collegato via metro a HUB1. Il distretto fase 4 diventa il nodo di transito, non la destinazione finale di tutta la crescita.
+        </div>
+      </div>
+    </div>
+
+    <!-- Riepilogo fasi -->
+    <table>
+      <tr>
+        <th>Fase</th>
+        <th>Abitanti</th>
+        <th>Sottozona</th>
+        <th>Distretto totale</th>
+        <th>TPL</th>
+        <th>Accessi stradali</th>
+      </tr>
+      <tr>
+        <td><span class="tag tag-zon">F1</span></td>
+        <td class="val">~2.000</td>
+        <td class="val">12×12 celle</td>
+        <td class="val">36×36 (288m)</td>
+        <td>1 bus</td>
+        <td class="val">1</td>
+      </tr>
+      <tr>
+        <td><span class="tag tag-com">F2</span></td>
+        <td class="val">~6.000</td>
+        <td class="val">16×16 celle</td>
+        <td class="val">48×48 (384m)</td>
+        <td>2 bus</td>
+        <td class="val">2</td>
+      </tr>
+      <tr>
+        <td><span class="tag tag-warn">F3</span> </td>
+        <td class="val">~15.000</td>
+        <td class="val">20×20 celle</td>
+        <td class="val">60×60 (480m)</td>
+        <td>metro + 2 bus anello</td>
+        <td class="val">3</td>
+      </tr>
+      <tr>
+        <td><span class="tag" style="background:rgba(255,107,53,0.15);color:var(--accent2);border:1px solid rgba(255,107,53,0.3);">F4</span></td>
+        <td class="val">~30.000</td>
+        <td class="val">24×24 celle</td>
+        <td class="val">72×72 (576m)</td>
+        <td>2 metro + tram + bus</td>
+        <td class="val">4</td>
+      </tr>
+    </table>
+
+  </div>
+</div>
+
+<!-- 10. MEZZI PUBBLICI — DEPOSITI, TRACCIATI, FERMATE -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">10</span>
+    <span class="section-title">Trasporti Pubblici — Depositi · Tracciati · Fermate</span>
+  </div>
+  <div class="section-body">
+
+    <!-- BUS -->
+    <div style="border:1px solid var(--border);border-radius:3px;overflow:hidden;">
+      <div style="background:rgba(255,209,102,0.07);border-bottom:1px solid var(--border);padding:8px 14px;display:flex;align-items:center;gap:10px;">
+        <span style="font-size:1.1rem;">🚌</span>
+        <span style="font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#fff;font-size:0.95rem;">Bus</span>
+      </div>
+      <div style="padding:10px 14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:0.83rem;">
+        <div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:0.68rem;color:var(--muted);text-transform:uppercase;margin-bottom:5px;">Deposito</div>
+          <div style="color:var(--text)">Angolo tra <strong>collettore di ingresso e arteria</strong>, fuori dal distretto. Dimensione: <span class="val" style="font-size:0.8rem">6×8 celle</span>. Un deposito per max 15 bus. Il bus esce già orientato sul percorso — niente inversioni a vuoto nel residenziale.</div>
+        </div>
+        <div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:0.68rem;color:var(--muted);text-transform:uppercase;margin-bottom:5px;">Tracciato</div>
+          <div style="color:var(--text)">Solo su <strong>collettori</strong>, mai su strade locali o arteria. Due anelli concentrici: anello esterno sul perimetro delle corone, anello interno sul nucleo 3×3. Girano in senso opposto (uno CW, uno CCW) per raddoppiare la frequenza percepita.</div>
+        </div>
+        <div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:0.68rem;color:var(--muted);text-transform:uppercase;margin-bottom:5px;">Fermate</div>
+          <div style="color:var(--text)">Ogni <span class="val" style="font-size:0.8rem">25–38 celle (200–300m)</span>. Sempre <strong>dopo l'incrocio</strong>, mai prima — una fermata prima dell'incrocio blocca le auto che aspettano il verde. Su collettore a 2 corsie: fermata solo su strade con volume basso. Su 4 corsie: libera.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRAM -->
+    <div style="border:1px solid var(--border);border-radius:3px;overflow:hidden;">
+      <div style="background:rgba(90,184,74,0.07);border-bottom:1px solid var(--border);padding:8px 14px;display:flex;align-items:center;gap:10px;">
+        <span style="font-size:1.1rem;">🚊</span>
+        <span style="font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#fff;font-size:0.95rem;">Tram</span>
+      </div>
+      <div style="padding:10px 14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:0.83rem;">
+        <div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:0.68rem;color:var(--muted);text-transform:uppercase;margin-bottom:5px;">Deposito</div>
+          <div style="color:var(--text)">Bordo nord o est del distretto, su terreno non zonato. Raccordo di connessione alla linea: curva minima <span class="val" style="font-size:0.8rem">5 celle (40m)</span>, lunghezza raccordo <span class="val" style="font-size:0.8rem">min 8 celle</span>. Non costruire il deposito senza aver già tracciato il raccordo — altrimenti non si collega.</div>
+        </div>
+        <div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:0.68rem;color:var(--muted);text-transform:uppercase;margin-bottom:5px;">Tracciato</div>
+          <div style="color:var(--text)">Asse EW sulla <strong>fila commerciale sud</strong> (più spazio, meno residenti disturbati). Sale NS su un collettore interno verso il residenziale. Richiede corsia dedicata o collettore a 4 corsie (2 tram + 2 auto). Mai su strade a 2 corsie condivise.</div>
+        </div>
+        <div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:0.68rem;color:var(--muted);text-transform:uppercase;margin-bottom:5px;">Fermate</div>
+          <div style="color:var(--text)">Ogni <span class="val" style="font-size:0.8rem">38–50 celle (300–400m)</span>. Le fermate occupano carreggiata — posiziona dove le auto hanno corsia alternativa per sorpassare. Mai a ridosso di un incrocio con rotatoria (il tram fermo blocca l'ingresso alla rotonda).</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUBWAY -->
+    <div style="border:1px solid var(--border);border-radius:3px;overflow:hidden;">
+      <div style="background:rgba(0,229,192,0.06);border-bottom:1px solid var(--border);padding:8px 14px;display:flex;align-items:center;gap:10px;">
+        <span style="font-size:1.1rem;">🚇</span>
+        <span style="font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#fff;font-size:0.95rem;">Subway / Metro</span>
+      </div>
+      <div style="padding:10px 14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:0.83rem;">
+        <div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:0.68rem;color:var(--muted);text-transform:uppercase;margin-bottom:5px;">Deposito</div>
+          <div style="color:var(--text)">Al <strong>termine della linea</strong>, mai nel mezzo. Sotterraneo a <span class="val" style="font-size:0.8rem">-10m</span>. Raccordo dalla linea principale (-20m) al deposito (-10m): pendenza 10%, quindi servono <span class="val" style="font-size:0.8rem">min 100m (13 celle)</span> di raccordo. Accesso in superficie obbligatorio (strada vicina).</div>
+        </div>
+        <div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:0.68rem;color:var(--muted);text-transform:uppercase;margin-bottom:5px;">Tracciato</div>
+          <div style="color:var(--text)">Quota <span class="val" style="font-size:0.8rem">-20m</span> linea principale. Se due linee si incrociano, una va a <span class="val" style="font-size:0.8rem">-20m</span> e l'altra a <span class="val" style="font-size:0.8rem">-32m</span> (min 8–10m di separazione). Corre sotto il collettore interno centrale del distretto. Curva minima: <span class="val" style="font-size:0.8rem">5 celle (40m)</span>, consigliato 8 celle.</div>
+        </div>
+        <div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:0.68rem;color:var(--muted);text-transform:uppercase;margin-bottom:5px;">Stazioni</div>
+          <div style="color:var(--text)">Ogni <span class="val" style="font-size:0.8rem">50–75 celle (400–600m)</span>. Stazione: <span class="val" style="font-size:0.8rem">4×16 celle</span> in sottosuolo. Uscita superficie: <span class="val" style="font-size:0.8rem">2×2 celle</span> su marciapiede/piazza. Stazione 1 = ingresso sud (vicino al commerciale). Stazione 2 (F3+) = centro nucleo 3×3. Uscita sempre su collettore, mai su strada locale.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRENO -->
+    <div style="border:1px solid var(--border);border-radius:3px;overflow:hidden;">
+      <div style="background:rgba(255,107,53,0.06);border-bottom:1px solid var(--border);padding:8px 14px;display:flex;align-items:center;gap:10px;">
+        <span style="font-size:1.1rem;">🚂</span>
+        <span style="font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#fff;font-size:0.95rem;">Treno Intercity</span>
+      </div>
+      <div style="padding:10px 14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:0.83rem;">
+        <div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:0.68rem;color:var(--muted);text-transform:uppercase;margin-bottom:5px;">Deposito</div>
+          <div style="color:var(--text)">Bordo mappa o zona industriale, fuori dalla città. Al termine della linea. Distanza minima dall'ultima stazione: <span class="val" style="font-size:0.8rem">20 celle (160m)</span> per la decelerazione. Accesso via strada obbligatorio.</div>
+        </div>
+        <div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:0.68rem;color:var(--muted);text-transform:uppercase;margin-bottom:5px;">Tracciato</div>
+          <div style="color:var(--text)">Binari dedicati, quota <span class="val" style="font-size:0.8rem">-35/40m</span> se sotterraneo (sotto la metro a -20m). Curva minima: <span class="val" style="font-size:0.8rem">15 celle (120m)</span>, consigliato <span class="val" style="font-size:0.8rem">25 celle (200m)</span>. Rettilineo obbligatorio di <span class="val" style="font-size:0.8rem">min 20 celle</span> prima e dopo ogni stazione.</div>
+        </div>
+        <div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:0.68rem;color:var(--muted);text-transform:uppercase;margin-bottom:5px;">Stazione</div>
+          <div style="color:var(--text)">Una sola per distretto, sul <strong>bordo</strong>, mai interna. Dimensione: <span class="val" style="font-size:0.8rem">8×24 celle</span> min. All'esterno: fermata bus dedicata + uscita subway se la linea passa vicina. Accesso diretto al collettore principale senza attraversare residenziale.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- tabella posizione fermate per corona -->
+    <table>
+      <tr><th>Corona</th><th>🚇 Subway</th><th>🚊 Tram</th><th>🚌 Bus esterno</th><th>🚌 Bus interno</th></tr>
+      <tr>
+        <td><span class="tag tag-zon">Nucleo 3×3</span></td>
+        <td>Stazione centrale (F3+)</td>
+        <td>—</td>
+        <td>—</td>
+        <td>4 fermate angoli</td>
+      </tr>
+      <tr>
+        <td><span class="tag tag-col">Corona 1</span></td>
+        <td>Stazione ingresso sud</td>
+        <td>Fila sud EW + 1 NS</td>
+        <td>4 angoli</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td><span class="tag tag-art">Corona 2</span></td>
+        <td>—</td>
+        <td>Perimetro EW</td>
+        <td>4 angoli + mezzerie lati</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td><span class="tag tag-warn">Corona 3 (F4)</span></td>
+        <td>3ª stazione eventuale</td>
+        <td>—</td>
+        <td>8 fermate distribuite</td>
+        <td>—</td>
+      </tr>
+    </table>
+
+  </div>
+</div>
+
+<!-- 11. MAPPA DISTRETTO INTERATTIVA -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">11</span>
+    <span class="section-title">Mappa Distretto — Crescita a Corone (interattiva)</span>
+  </div>
+  <div class="section-body">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;" id="phase-btns">
+      <button onclick="setPhase(1)" id="btn1" style="font-family:'Share Tech Mono',monospace;font-size:0.75rem;padding:6px 14px;border-radius:3px;cursor:pointer;border:1px solid rgba(90,184,74,0.4);background:rgba(90,184,74,0.15);color:#7de87d;transition:all 0.2s;">FASE 1 ~2k ab.</button>
+      <button onclick="setPhase(2)" id="btn2" style="font-family:'Share Tech Mono',monospace;font-size:0.75rem;padding:6px 14px;border-radius:3px;cursor:pointer;border:1px solid rgba(74,159,212,0.3);background:rgba(74,159,212,0.08);color:#5a7070;transition:all 0.2s;">FASE 2 ~6k ab.</button>
+      <button onclick="setPhase(3)" id="btn3" style="font-family:'Share Tech Mono',monospace;font-size:0.75rem;padding:6px 14px;border-radius:3px;cursor:pointer;border:1px solid rgba(255,209,102,0.3);background:rgba(255,209,102,0.05);color:#5a7070;transition:all 0.2s;">FASE 3 ~15k ab.</button>
+      <button onclick="setPhase(4)" id="btn4" style="font-family:'Share Tech Mono',monospace;font-size:0.75rem;padding:6px 14px;border-radius:3px;cursor:pointer;border:1px solid rgba(255,107,53,0.3);background:rgba(255,107,53,0.05);color:#5a7070;transition:all 0.2s;">FASE 4 ~30k ab.</button>
+      <div style="margin-left:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap;" id="layer-btns">
+        <span style="font-family:'Share Tech Mono',monospace;font-size:0.68rem;color:#5a7070;">LAYER:</span>
+        <button onclick="toggleLayer('zone')" id="lbtn-zone" style="font-family:'Share Tech Mono',monospace;font-size:0.68rem;padding:4px 10px;border-radius:2px;cursor:pointer;border:1px solid rgba(90,184,74,0.4);background:rgba(90,184,74,0.15);color:#7de87d;">ZONE</button>
+        <button onclick="toggleLayer('roads')" id="lbtn-roads" style="font-family:'Share Tech Mono',monospace;font-size:0.68rem;padding:4px 10px;border-radius:2px;cursor:pointer;border:1px solid rgba(42,127,212,0.4);background:rgba(42,127,212,0.15);color:#6ab0ff;">STRADE</button>
+        <button onclick="toggleLayer('transit')" id="lbtn-transit" style="font-family:'Share Tech Mono',monospace;font-size:0.68rem;padding:4px 10px;border-radius:2px;cursor:pointer;border:1px solid rgba(0,229,192,0.3);background:rgba(0,229,192,0.05);color:#5a7070;">TPL</button>
+      </div>
+    </div>
+
+    <div style="position:relative;width:100%;max-width:700px;margin:0 auto;">
+      <canvas id="districtMap" width="700" height="700" style="width:100%;border:1px solid #1e2e32;border-radius:4px;background:#0a0e0f;display:block;"></canvas>
+      <div id="tooltip" style="position:absolute;pointer-events:none;background:#0f1518;border:1px solid #1e2e32;border-radius:3px;padding:6px 10px;font-family:'Share Tech Mono',monospace;font-size:0.72rem;color:#c8d8d8;display:none;z-index:10;max-width:180px;line-height:1.5;"></div>
+    </div>
+
+    <!-- Legend -->
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;font-size:0.78rem;">
+      <div style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;background:#4a9fd4;border-radius:2px;"></div>Commercio</div>
+      <div style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;background:#2a7fd4;border-radius:2px;"></div>Uffici</div>
+      <div style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;background:#5ab84a;border-radius:2px;"></div>Low Density</div>
+      <div style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;background:#8b6fd4;border-radius:2px;"></div>Medium Density</div>
+      <div style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;background:#c4aaff;border-radius:2px;"></div>High Density</div>
+      <div style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;background:#00e5c0;border-radius:2px;"></div>Hub intermodale</div>
+      <div style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;background:#1e2e32;border:1px solid #2a7fd4;border-radius:2px;"></div>Collettore 4c</div>
+      <div style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;background:#1e2e32;border:1px solid #1a9f6a;border-radius:2px;"></div>Collettore 2c</div>
+      <div style="display:flex;align-items:center;gap:5px;"><div style="width:3px;height:12px;background:#00e5c0;"></div>Subway</div>
+      <div style="display:flex;align-items:center;gap:5px;"><div style="width:3px;height:12px;background:#ffd166;"></div>Tram</div>
+      <div style="display:flex;align-items:center;gap:5px;"><div style="width:3px;height:12px;background:#ff6b35;"></div>Bus</div>
+      <div style="display:flex;align-items:center;gap:5px;"><div style="width:10px;height:10px;border-radius:50%;background:#00e5c0;"></div>Stazione metro</div>
+      <div style="display:flex;align-items:center;gap:5px;"><div style="width:8px;height:8px;border-radius:50%;background:#ffd166;"></div>Fermata tram</div>
+      <div style="display:flex;align-items:center;gap:5px;"><div style="width:8px;height:8px;border-radius:50%;background:#ff6b35;"></div>Fermata bus</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function() {
+  const canvas = document.getElementById('districtMap');
+  const ctx = canvas.getContext('2d');
+  const tooltip = document.getElementById('tooltip');
+
+  // State
+  let currentPhase = 1;
+  let layers = { zone: true, roads: true, transit: false };
+
+  // Canvas size
+  const W = 700, H = 700;
+  const MARGIN = 50;
+  const GRID = W - MARGIN * 2; // 600px drawable area
+
+  // Grid: 9×9 cells max (phase 4). Each cell = GRID/9
+  const CELLS = 9;
+  const CS = GRID / CELLS; // cell size in px
+
+  function cellX(c) { return MARGIN + c * CS; }
+  function cellY(r) { return MARGIN + r * CS; }
+
+  // Zone definitions per phase
+  // grid[row][col] = {type, label, phase_visible}
+  // row 0=north, row 8=south (collettore ingresso)
+  // phase 1: nucleo 3×3 = rows 3-5, cols 3-5 (centered on 9×9)
+  // phase 2: corona 1 = rows 2-6, cols 2-6 (5×5)
+  // phase 3: corona 2 = rows 1-7, cols 1-7 (7×7)
+  // phase 4: corona 3 = rows 0-8, cols 0-8 (9×9)
+
+  const ZONE_COLORS = {
+    'COM':  { fill:'rgba(74,159,212,0.35)',  stroke:'#4a9fd4', label:'Commercio' },
+    'OFF':  { fill:'rgba(42,127,212,0.35)',  stroke:'#2a7fd4', label:'Uffici' },
+    'LOW':  { fill:'rgba(90,184,74,0.25)',   stroke:'#5ab84a', label:'Low Density' },
+    'MED':  { fill:'rgba(139,111,212,0.3)',  stroke:'#8b6fd4', label:'Medium Density' },
+    'HIGH': { fill:'rgba(196,170,255,0.3)',  stroke:'#c4aaff', label:'High Density' },
+    'HUB':  { fill:'rgba(0,229,192,0.25)',   stroke:'#00e5c0', label:'Hub Intermodale' },
+    'LOW_R':{ fill:'rgba(232,160,32,0.2)',   stroke:'#e8a020', label:'Low Rent' },
+    'ROAD': { fill:'rgba(20,35,38,0.9)',     stroke:'#1a9f6a', label:'Collettore' },
+    'EMPTY':{ fill:'transparent',            stroke:'transparent', label:'' },
+  };
+
+  // 9×9 grid layout per phase (row 8 = south = collettore ingresso)
+  function getGrid(phase) {
+    const g = [];
+    for(let r=0;r<9;r++) { g[r]=[]; for(let c=0;c<9;c++) g[r][c]={type:'EMPTY',minPhase:99}; }
+
+    // Nucleo 3×3 (fase 1) — centrato: rows 3-5, cols 3-5
+    const nucleoLayout = [
+      ['COM','COM','COM'],
+      ['LOW','LOW','LOW'],
+      ['LOW','LOW','LOW'],
+    ];
+    for(let r=0;r<3;r++) for(let c=0;c<3;c++) {
+      g[3+r][3+c] = { type: nucleoLayout[r][c], minPhase:1, info: nucleoLayout[r][c]==='COM'?'Commercio fronte collettore, accesso diretto da sud':'Residenziale low density, strade interne ogni 8-10 celle' };
+    }
+
+    if(phase >= 2) {
+      // Corona 1: rows 2-6, cols 2-6 (5×5), escluso nucleo
+      const c1Layout = [
+        ['MED','MED','MED','MED','MED'],
+        ['MED','null','null','null','MED'],
+        ['MED','null','null','null','MED'],
+        ['MED','null','null','null','MED'],
+        ['COM','COM','OFF','COM','COM'],
+      ];
+      for(let r=0;r<5;r++) for(let c=0;c<5;c++) {
+        if(c1Layout[r][c]==='null') continue;
+        const gr=2+r, gc=2+c;
+        g[gr][gc] = { type:c1Layout[r][c], minPhase:2, info:
+          c1Layout[r][c]==='COM'?'Commercio corona 1, fronte collettore esterno':
+          c1Layout[r][c]==='OFF'?'Uffici: traffico di punta opposto al commercio, messi al centro':
+          'Medium density: densificazione della corona 1' };
+      }
+    }
+
+    if(phase >= 3) {
+      // Corona 2: rows 1-7, cols 1-7 (7×7), escluso corona 1
+      const c2Outer = [
+        // fila nord (row 1): MED MED MED MED MED MED MED
+        // fila sud (row 7): COM COM COM COM COM COM COM
+        // lati est/ovest: MED
+        // centro (row 4, col 4): HUB
+      ];
+      for(let c=0;c<7;c++) {
+        g[1][1+c] = { type:'MED', minPhase:3, info:'Medium density corona 2 nord' };
+        g[7][1+c] = { type:'COM', minPhase:3, info:'Commercio corona 2 sud, fronte collettore esterno' };
+      }
+      for(let r=2;r<7;r++) {
+        g[r][1] = { type:'MED', minPhase:3, info:'Medium density lato ovest' };
+        g[r][7] = { type:'MED', minPhase:3, info:'Medium density lato est' };
+      }
+      // HUB al centro (row 4, col 4)
+      g[4][4] = { type:'HUB', minPhase:3, info:'Hub intermodale: stazione metro + fermata bus. Uscita subway su piazza.' };
+    }
+
+    if(phase >= 4) {
+      // Corona 3: rows 0-8, cols 0-8 (9×9) bordi
+      for(let c=0;c<9;c++) {
+        g[0][c] = { type:'HIGH', minPhase:4, info:'High density: corona esterna nord, vicino HUB2 tram' };
+        g[8][c] = { type:'COM',  minPhase:4, info:'Commercio bordo sud, fronte collettore principale 4 corsie' };
+      }
+      for(let r=1;r<8;r++) {
+        g[r][0] = { type:'HIGH', minPhase:4, info:'High density lato ovest' };
+        g[r][8] = { type:'HIGH', minPhase:4, info:'High density lato est' };
+      }
+      // HUB2 nord
+      g[0][4] = { type:'HUB', minPhase:4, info:'HUB2: metro linea EW + tram. Secondo nodo intermodale.' };
+      // aggiorna centro con HUB1
+      g[4][4] = { type:'HUB', minPhase:3, info:'HUB1: incrocio linee metro NS+EW + bus anello interno.' };
+    }
+
+    return g;
+  }
+
+  // Roads to draw per phase
+  function getRoads(phase) {
+    const roads = [];
+    // Collettore ingresso (4 corsie) — entra da sud, col 3-5 (nucleo)
+    roads.push({ type:'collector4', x1:cellX(4), y1:H-10, x2:cellX(4), y2:cellY(6), phase:1, info:'Collettore 4 corsie di ingresso' });
+
+    // Strade perimetrali nucleo (fase 1)
+    // orizzontali
+    roads.push({ type:'collector2', x1:cellX(3), y1:cellY(3), x2:cellX(6), y2:cellY(3), phase:1 });
+    roads.push({ type:'collector2', x1:cellX(3), y1:cellY(6), x2:cellX(6), y2:cellY(6), phase:1 });
+    // verticali
+    roads.push({ type:'collector2', x1:cellX(3), y1:cellY(3), x2:cellX(3), y2:cellY(6), phase:1 });
+    roads.push({ type:'collector2', x1:cellX(6), y1:cellY(3), x2:cellX(6), y2:cellY(6), phase:1 });
+    // strada interna orizzontale
+    roads.push({ type:'local', x1:cellX(3), y1:cellY(4), x2:cellX(6), y2:cellY(4), phase:1 });
+    roads.push({ type:'local', x1:cellX(3), y1:cellY(5), x2:cellX(6), y2:cellY(5), phase:1 });
+    roads.push({ type:'local', x1:cellX(4), y1:cellY(3), x2:cellX(4), y2:cellY(6), phase:1 });
+    roads.push({ type:'local', x1:cellX(5), y1:cellY(3), x2:cellX(5), y2:cellY(6), phase:1 });
+
+    if(phase >= 2) {
+      // Perimetro corona 1 (5×5: rows 2-6, cols 2-6)
+      roads.push({ type:'collector2', x1:cellX(2), y1:cellY(2), x2:cellX(7), y2:cellY(2), phase:2 });
+      roads.push({ type:'collector2', x1:cellX(2), y1:cellY(7), x2:cellX(7), y2:cellY(7), phase:2 });
+      roads.push({ type:'collector2', x1:cellX(2), y1:cellY(2), x2:cellX(2), y2:cellY(7), phase:2 });
+      roads.push({ type:'collector2', x1:cellX(7), y1:cellY(2), x2:cellX(7), y2:cellY(7), phase:2 });
+      // 2 accessi al collettore principale
+      roads.push({ type:'collector4', x1:cellX(2), y1:cellY(7), x2:cellX(2), y2:H-10, phase:2, info:'Accesso ovest al collettore ingresso' });
+      roads.push({ type:'collector4', x1:cellX(7), y1:cellY(7), x2:cellX(7), y2:H-10, phase:2, info:'Accesso est al collettore ingresso' });
+    }
+
+    if(phase >= 3) {
+      // Perimetro corona 2 (7×7: rows 1-7, cols 1-7)
+      roads.push({ type:'collector2', x1:cellX(1), y1:cellY(1), x2:cellX(8), y2:cellY(1), phase:3 });
+      roads.push({ type:'collector2', x1:cellX(1), y1:cellY(8), x2:cellX(8), y2:cellY(8), phase:3 });
+      roads.push({ type:'collector2', x1:cellX(1), y1:cellY(1), x2:cellX(1), y2:cellY(8), phase:3 });
+      roads.push({ type:'collector2', x1:cellX(8), y1:cellY(1), x2:cellX(8), y2:cellY(8), phase:3 });
+      // 3° accesso nord
+      roads.push({ type:'collector2', x1:cellX(4), y1:cellY(1), x2:cellX(4), y2:10, phase:3, info:'Accesso nord (3°)' });
+    }
+
+    if(phase >= 4) {
+      // Perimetro corona 3 (9×9 = bordo canvas)
+      roads.push({ type:'collector2', x1:cellX(0), y1:cellY(0), x2:cellX(9), y2:cellY(0), phase:4 });
+      roads.push({ type:'collector2', x1:cellX(0), y1:cellY(0), x2:cellX(0), y2:cellY(9), phase:4 });
+      roads.push({ type:'collector2', x1:cellX(9), y1:cellY(0), x2:cellX(9), y2:cellY(9), phase:4 });
+      // 4° accesso
+      roads.push({ type:'collector4', x1:cellX(0), y1:cellY(4), x2:cellX(0)-10, y2:cellY(4), phase:4, info:'Accesso ovest (4°)' });
+    }
+
+    return roads.filter(r => (r.phase||1) <= phase);
+  }
+
+  // Transit lines per phase
+  function getTransit(phase) {
+    const t = [];
+    if(phase >= 1) {
+      // Bus anello interno nucleo (arancione)
+      t.push({ type:'bus', path:[
+        [cellX(3.5), cellY(3.5)],
+        [cellX(5.5), cellY(3.5)],
+        [cellX(5.5), cellY(5.5)],
+        [cellX(3.5), cellY(5.5)],
+        [cellX(3.5), cellY(3.5)],
+      ], phase:1 });
+      // Fermate bus
+      t.push({ type:'bus_stop', x:cellX(4.5), y:cellY(3.5), phase:1, info:'Fermata bus nord nucleo' });
+      t.push({ type:'bus_stop', x:cellX(5.5), y:cellY(4.5), phase:1, info:'Fermata bus est nucleo' });
+      t.push({ type:'bus_stop', x:cellX(4.5), y:cellY(5.5), phase:1, info:'Fermata bus sud nucleo' });
+      t.push({ type:'bus_stop', x:cellX(3.5), y:cellY(4.5), phase:1, info:'Fermata bus ovest nucleo' });
+    }
+
+    if(phase >= 2) {
+      // Bus anello esterno corona 1
+      t.push({ type:'bus', path:[
+        [cellX(2.5), cellY(2.5)],
+        [cellX(6.5), cellY(2.5)],
+        [cellX(6.5), cellY(6.5)],
+        [cellX(2.5), cellY(6.5)],
+        [cellX(2.5), cellY(2.5)],
+      ], phase:2 });
+      t.push({ type:'bus_stop', x:cellX(4.5), y:cellY(2.5), phase:2, info:'Fermata bus nord corona 1' });
+      t.push({ type:'bus_stop', x:cellX(6.5), y:cellY(4.5), phase:2, info:'Fermata bus est corona 1' });
+      t.push({ type:'bus_stop', x:cellX(4.5), y:cellY(6.5), phase:2, info:'Fermata bus sud corona 1' });
+      t.push({ type:'bus_stop', x:cellX(2.5), y:cellY(4.5), phase:2, info:'Fermata bus ovest corona 1' });
+    }
+
+    if(phase >= 3) {
+      // Subway NS
+      t.push({ type:'subway', path:[
+        [cellX(4.5), cellY(8.5)],
+        [cellX(4.5), cellY(5.8)], // stazione sud
+        [cellX(4.5), cellY(4.5)], // HUB
+        [cellX(4.5), cellY(1.5)],
+      ], phase:3 });
+      t.push({ type:'subway_station', x:cellX(4.5), y:cellY(5.8), phase:3, info:'Stazione metro sud — uscita su fila commerciale' });
+      t.push({ type:'subway_station', x:cellX(4.5), y:cellY(4.5), phase:3, info:'Stazione metro HUB1 — centro distretto, incrocio linee F4' });
+
+      // Tram EW sulla fila sud
+      t.push({ type:'tram', path:[
+        [cellX(1.5), cellY(7.5)],
+        [cellX(4.5), cellY(7.5)],
+        [cellX(7.5), cellY(7.5)],
+      ], phase:3 });
+      t.push({ type:'tram_stop', x:cellX(2.5), y:cellY(7.5), phase:3, info:'Fermata tram ovest fila commerciale' });
+      t.push({ type:'tram_stop', x:cellX(4.5), y:cellY(7.5), phase:3, info:'Fermata tram centro — connessione bus anello' });
+      t.push({ type:'tram_stop', x:cellX(6.5), y:cellY(7.5), phase:3, info:'Fermata tram est fila commerciale' });
+
+      // Bus anello corona 2
+      t.push({ type:'bus', path:[
+        [cellX(1.5), cellY(1.5)],
+        [cellX(7.5), cellY(1.5)],
+        [cellX(7.5), cellY(7.5)],
+        [cellX(1.5), cellY(7.5)],
+        [cellX(1.5), cellY(1.5)],
+      ], phase:3 });
+      t.push({ type:'bus_stop', x:cellX(4.5), y:cellY(1.5), phase:3 });
+      t.push({ type:'bus_stop', x:cellX(7.5), y:cellY(4.5), phase:3 });
+      t.push({ type:'bus_stop', x:cellX(1.5), y:cellY(4.5), phase:3 });
+    }
+
+    if(phase >= 4) {
+      // Subway EW (seconda linea)
+      t.push({ type:'subway', path:[
+        [cellX(0.5), cellY(4.5)],
+        [cellX(4.5), cellY(4.5)], // HUB1
+        [cellX(8.5), cellY(4.5)],
+      ], phase:4 });
+      t.push({ type:'subway_station', x:cellX(4.5), y:cellY(4.5), phase:4, info:'HUB1 — incrocio linee NS+EW' });
+
+      // Tram nord (HUB2)
+      t.push({ type:'tram', path:[
+        [cellX(1), cellY(0.5)],
+        [cellX(4.5), cellY(0.5)],
+        [cellX(8), cellY(0.5)],
+      ], phase:4 });
+      t.push({ type:'subway_station', x:cellX(4.5), y:cellY(0.5), phase:4, info:'HUB2 — metro EW + tram nord' });
+      t.push({ type:'tram_stop', x:cellX(2), y:cellY(0.5), phase:4 });
+      t.push({ type:'tram_stop', x:cellX(7), y:cellY(0.5), phase:4 });
+
+      // Bus corona 3
+      t.push({ type:'bus', path:[
+        [cellX(0.5), cellY(0.5)],
+        [cellX(8.5), cellY(0.5)],
+        [cellX(8.5), cellY(8.5)],
+        [cellX(0.5), cellY(8.5)],
+        [cellX(0.5), cellY(0.5)],
+      ], phase:4 });
+      for(let c of [2,4,6]) t.push({ type:'bus_stop', x:cellX(c+0.5), y:cellY(0.5), phase:4 });
+      for(let r of [2,4,6]) t.push({ type:'bus_stop', x:cellX(8.5), y:cellY(r+0.5), phase:4 });
+      for(let c of [2,4,6]) t.push({ type:'bus_stop', x:cellX(c+0.5), y:cellY(8.5), phase:4 });
+      for(let r of [2,4,6]) t.push({ type:'bus_stop', x:cellX(0.5), y:cellY(r+0.5), phase:4 });
+    }
+
+    return t.filter(x => (x.phase||1) <= phase);
+  }
+
+  function drawGrid(phase) {
+    ctx.clearRect(0,0,W,H);
+
+    // Background
+    ctx.fillStyle = '#0a0e0f';
+    ctx.fillRect(0,0,W,H);
+
+    const grid = getGrid(phase);
+
+    // Draw zones
+    if(layers.zone) {
+      for(let r=0;r<CELLS;r++) for(let c=0;c<CELLS;c++) {
+        const cell = grid[r][c];
+        if(cell.type==='EMPTY') continue;
+        const zc = ZONE_COLORS[cell.type];
+        if(!zc) continue;
+        const x=cellX(c), y=cellY(r);
+        ctx.fillStyle = zc.fill;
+        ctx.fillRect(x+1,y+1,CS-2,CS-2);
+        ctx.strokeStyle = zc.stroke;
+        ctx.lineWidth = 1;
+        ctx.strokeRect(x+1,y+1,CS-2,CS-2);
+        // Label
+        ctx.fillStyle = zc.stroke;
+        ctx.font = `bold ${Math.max(8,CS*0.18)}px 'Share Tech Mono', monospace`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(cell.type, x+CS/2, y+CS/2);
+      }
+    }
+
+    // Grid lines (faint)
+    ctx.strokeStyle = 'rgba(30,46,50,0.4)';
+    ctx.lineWidth = 0.5;
+    for(let i=0;i<=CELLS;i++) {
+      ctx.beginPath(); ctx.moveTo(cellX(i),cellY(0)); ctx.lineTo(cellX(i),cellY(CELLS)); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cellX(0),cellY(i)); ctx.lineTo(cellX(CELLS),cellY(i)); ctx.stroke();
+    }
+
+    // Draw roads
+    if(layers.roads) {
+      const roads = getRoads(phase);
+      for(const road of roads) {
+        ctx.beginPath();
+        ctx.moveTo(road.x1, road.y1);
+        ctx.lineTo(road.x2, road.y2);
+        if(road.type==='collector4') {
+          ctx.strokeStyle='rgba(42,127,212,0.8)';
+          ctx.lineWidth=5;
+        } else if(road.type==='collector2') {
+          ctx.strokeStyle='rgba(26,159,106,0.7)';
+          ctx.lineWidth=3;
+        } else {
+          ctx.strokeStyle='rgba(90,90,90,0.5)';
+          ctx.lineWidth=1.5;
+        }
+        ctx.stroke();
+      }
+
+      // Collettore ingresso label
+      ctx.fillStyle='rgba(42,127,212,0.9)';
+      ctx.font='bold 10px Share Tech Mono, monospace';
+      ctx.textAlign='center';
+      ctx.textBaseline='top';
+      ctx.fillText('COLLETTORE 4C INGRESSO', W/2, H-22);
+      // Arrow
+      ctx.fillStyle='rgba(42,127,212,0.7)';
+      ctx.font='14px monospace';
+      ctx.fillText('↑', cellX(4)+CS/2, H-36);
+    }
+
+    // Draw transit
+    if(layers.transit) {
+      const transit = getTransit(phase);
+      const lineColors = { bus:'#ff6b35', tram:'#ffd166', subway:'#00e5c0' };
+
+      // Draw lines
+      for(const t of transit) {
+        if(!t.path) continue;
+        const col = lineColors[t.type] || '#fff';
+        ctx.beginPath();
+        ctx.strokeStyle = col;
+        ctx.lineWidth = t.type==='subway' ? 3 : 2;
+        if(t.type==='subway') ctx.setLineDash([]);
+        else if(t.type==='tram') ctx.setLineDash([8,3]);
+        else ctx.setLineDash([5,4]);
+        ctx.moveTo(t.path[0][0], t.path[0][1]);
+        for(let i=1;i<t.path.length;i++) ctx.lineTo(t.path[i][0], t.path[i][1]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // Draw stops/stations
+      for(const t of transit) {
+        if(t.type==='subway_station') {
+          ctx.beginPath();
+          ctx.arc(t.x, t.y, 7, 0, Math.PI*2);
+          ctx.fillStyle='#00e5c0';
+          ctx.fill();
+          ctx.strokeStyle='#0a0e0f';
+          ctx.lineWidth=2;
+          ctx.stroke();
+        } else if(t.type==='tram_stop') {
+          ctx.beginPath();
+          ctx.arc(t.x, t.y, 5, 0, Math.PI*2);
+          ctx.fillStyle='#ffd166';
+          ctx.fill();
+          ctx.strokeStyle='#0a0e0f';
+          ctx.lineWidth=1.5;
+          ctx.stroke();
+        } else if(t.type==='bus_stop') {
+          ctx.beginPath();
+          ctx.arc(t.x, t.y, 4, 0, Math.PI*2);
+          ctx.fillStyle='#ff6b35';
+          ctx.fill();
+          ctx.strokeStyle='#0a0e0f';
+          ctx.lineWidth=1.5;
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Corner labels
+    ctx.fillStyle='#1e2e32';
+    ctx.font='10px Share Tech Mono, monospace';
+    ctx.textAlign='left'; ctx.textBaseline='top';
+    ctx.fillText('N', MARGIN-16, MARGIN+2);
+    ctx.textAlign='left'; ctx.textBaseline='bottom';
+    ctx.fillText('S', MARGIN-16, H-MARGIN-2);
+
+    // Phase label
+    const phaseLabels = ['','FASE 1 — Nucleo 3×3','FASE 2 — Corona 1 (5×5)','FASE 3 — Corona 2 (7×7)','FASE 4 — Corona 3 (9×9)'];
+    ctx.fillStyle='rgba(0,229,192,0.7)';
+    ctx.font='bold 11px Share Tech Mono, monospace';
+    ctx.textAlign='left'; ctx.textBaseline='top';
+    ctx.fillText(phaseLabels[phase], MARGIN, 12);
+  }
+
+  // Tooltip on hover
+  canvas.addEventListener('mousemove', function(e) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = W / rect.width;
+    const mx = (e.clientX - rect.left) * scaleX;
+    const my = (e.clientY - rect.top) * scaleX;
+    const col = Math.floor((mx - MARGIN) / CS);
+    const row = Math.floor((my - MARGIN) / CS);
+
+    if(col >= 0 && col < CELLS && row >= 0 && row < CELLS) {
+      const grid = getGrid(currentPhase);
+      const cell = grid[row][col];
+      if(cell.type !== 'EMPTY') {
+        const zc = ZONE_COLORS[cell.type];
+        const lines = [
+          `<strong style="color:${zc?.stroke||'#fff'}">${zc?.label||cell.type}</strong>`,
+          `Riga ${row+1}, Col ${col+1}`,
+          cell.info ? `<span style="color:#5a7070">${cell.info}</span>` : '',
+        ].filter(Boolean).join('<br>');
+        tooltip.innerHTML = lines;
+        tooltip.style.display = 'block';
+        const px = (e.clientX - rect.left) + 12;
+        const py = (e.clientY - rect.top) + 12;
+        tooltip.style.left = px + 'px';
+        tooltip.style.top = py + 'px';
+        return;
+      }
+
+      // Check transit
+      if(layers.transit) {
+        const transit = getTransit(currentPhase);
+        for(const t of transit) {
+          if(!t.x) continue;
+          const dx = (t.x - mx), dy = (t.y - my);
+          if(Math.sqrt(dx*dx+dy*dy) < 10) {
+            tooltip.innerHTML = t.info || t.type;
+            tooltip.style.display = 'block';
+            tooltip.style.left = (e.clientX - rect.left + 12) + 'px';
+            tooltip.style.top = (e.clientY - rect.top + 12) + 'px';
+            return;
+          }
+        }
+      }
+    }
+    tooltip.style.display = 'none';
+  });
+  canvas.addEventListener('mouseleave', () => tooltip.style.display='none');
+
+  window.setPhase = function(p) {
+    currentPhase = p;
+    drawGrid(p);
+    [1,2,3,4].forEach(i => {
+      const btn = document.getElementById('btn'+i);
+      const colors = ['','rgba(90,184,74,0.15)','rgba(74,159,212,0.08)','rgba(255,209,102,0.05)','rgba(255,107,53,0.05)'];
+      const bcolors = ['','rgba(90,184,74,0.4)','rgba(74,159,212,0.3)','rgba(255,209,102,0.3)','rgba(255,107,53,0.3)'];
+      const tcolors = ['','#7de87d','#4a9fd4','#ffd166','#ff6b35'];
+      if(i === p) {
+        btn.style.opacity = '1';
+        btn.style.background = colors[i];
+        btn.style.borderColor = bcolors[i];
+        btn.style.color = tcolors[i];
+        btn.style.boxShadow = `0 0 8px ${bcolors[i]}`;
+      } else {
+        btn.style.opacity = '0.45';
+        btn.style.boxShadow = 'none';
+        btn.style.background = 'transparent';
+        btn.style.color = '#5a7070';
+        btn.style.borderColor = 'rgba(80,100,100,0.3)';
+      }
+    });
+  };
+
+  window.toggleLayer = function(l) {
+    layers[l] = !layers[l];
+    const btn = document.getElementById('lbtn-'+l);
+    if(layers[l]) {
+      btn.style.opacity='1';
+      btn.style.background = l==='zone'?'rgba(90,184,74,0.15)':l==='roads'?'rgba(42,127,212,0.15)':'rgba(0,229,192,0.1)';
+    } else {
+      btn.style.opacity='0.35';
+      btn.style.background='transparent';
+    }
+    drawGrid(currentPhase);
+  };
+
+  // Init
+  drawGrid(1);
+  window.setPhase(1);
+})();
+</script>
 
 </body>
 </html>
