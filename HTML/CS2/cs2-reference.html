@@ -1,3 +1,705 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CS2 Reference Sheet</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700&display=swap');
+
+  :root {
+    --bg: #0a0e0f;
+    --panel: #0f1518;
+    --border: #1e2e32;
+    --accent: #00e5c0;
+    --accent2: #ff6b35;
+    --accent3: #ffd166;
+    --text: #c8d8d8;
+    --muted: #5a7070;
+    --road-art: #2a7fd4;
+    --road-col: #1a9f6a;
+    --road-res: #8b6fd4;
+    --zone-ind: #e8a020;
+    --zone-com: #4a9fd4;
+    --zone-res: #5ab84a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    padding: 24px 16px;
+  }
+
+  .header {
+    border-left: 4px solid var(--accent);
+    padding-left: 16px;
+    margin-bottom: 32px;
+  }
+
+  .header h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #fff;
+    text-transform: uppercase;
+  }
+
+  .header p {
+    color: var(--muted);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    margin-top: 4px;
+  }
+
+  .header span {
+    color: var(--accent);
+  }
+
+  .section {
+    margin-bottom: 28px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .section-header {
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-num {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    background: rgba(0,229,192,0.08);
+    border: 1px solid rgba(0,229,192,0.2);
+    padding: 2px 7px;
+    border-radius: 2px;
+  }
+
+  .section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #fff;
+  }
+
+  .section-body {
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+
+  th {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    text-align: left;
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,0.02);
+  }
+
+  td {
+    padding: 7px 10px;
+    border-bottom: 1px solid rgba(30,46,50,0.6);
+    vertical-align: top;
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  .val {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--accent3);
+    white-space: nowrap;
+  }
+
+  .tag {
+    display: inline-block;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.68rem;
+    padding: 1px 6px;
+    border-radius: 2px;
+    margin-right: 4px;
+  }
+
+  .tag-art { background: rgba(42,127,212,0.15); color: var(--road-art); border: 1px solid rgba(42,127,212,0.3); }
+  .tag-col { background: rgba(26,159,106,0.15); color: var(--road-col); border: 1px solid rgba(26,159,106,0.3); }
+  .tag-res { background: rgba(139,111,212,0.15); color: var(--road-res); border: 1px solid rgba(139,111,212,0.3); }
+  .tag-ind { background: rgba(232,160,32,0.15); color: var(--zone-ind); border: 1px solid rgba(232,160,32,0.3); }
+  .tag-com { background: rgba(74,159,212,0.15); color: var(--zone-com); border: 1px solid rgba(74,159,212,0.3); }
+  .tag-zon { background: rgba(90,184,74,0.15); color: var(--zone-res); border: 1px solid rgba(90,184,74,0.3); }
+  .tag-warn { background: rgba(255,107,53,0.15); color: var(--accent2); border: 1px solid rgba(255,107,53,0.3); }
+  .tag-ok { background: rgba(0,229,192,0.1); color: var(--accent); border: 1px solid rgba(0,229,192,0.2); }
+
+  .note {
+    font-size: 0.82rem;
+    color: var(--muted);
+    padding: 8px 12px;
+    border-left: 2px solid var(--border);
+    background: rgba(255,255,255,0.02);
+    border-radius: 0 3px 3px 0;
+  }
+
+  .note strong { color: var(--accent2); }
+  .note .ok { color: var(--accent); }
+
+  .rule-block {
+    background: rgba(0,229,192,0.04);
+    border: 1px solid rgba(0,229,192,0.12);
+    border-radius: 3px;
+    padding: 10px 14px;
+    font-size: 0.88rem;
+  }
+
+  .rule-block .rule-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .hierarchy {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .h-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.02);
+    font-size: 0.88rem;
+  }
+
+  .h-arrow {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--muted);
+    font-size: 0.7rem;
+    margin: 0 4px;
+    align-self: center;
+  }
+
+  .h-name { flex: 1; font-weight: 600; }
+  .h-vals { font-family: 'Share Tech Mono', monospace; font-size: 0.75rem; color: var(--accent3); }
+
+  .grid-zone {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .zone-card {
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.02);
+  }
+
+  .zone-card-title {
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .zone-card .line {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.82rem;
+    padding: 2px 0;
+    color: var(--muted);
+  }
+
+  .zone-card .line span:last-child {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--accent3);
+  }
+
+  .underground-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .u-layer {
+    display: flex;
+    align-items: stretch;
+    border-radius: 3px;
+    overflow: hidden;
+    font-size: 0.85rem;
+  }
+
+  .u-depth {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.72rem;
+    background: rgba(0,0,0,0.4);
+    color: var(--accent);
+    padding: 6px 10px;
+    min-width: 80px;
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--border);
+    border-right: none;
+    border-radius: 3px 0 0 3px;
+  }
+
+  .u-content {
+    flex: 1;
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 0 3px 3px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .curve-box {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+  }
+
+  .curve-box .c-title {
+    font-weight: 700;
+    color: var(--accent3);
+    margin-bottom: 6px;
+    font-size: 0.88rem;
+  }
+
+  .formula {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--accent);
+    background: rgba(0,229,192,0.06);
+    padding: 4px 8px;
+    border-radius: 2px;
+    display: inline-block;
+    margin: 3px 0;
+  }
+
+  .pt-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .pt-card {
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 9px 11px;
+    background: rgba(255,255,255,0.02);
+    font-size: 0.83rem;
+  }
+
+  .pt-card .pt-title {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    margin-bottom: 5px;
+    color: #fff;
+  }
+
+  .pt-card .pt-line {
+    color: var(--muted);
+    padding: 1px 0;
+  }
+
+  .pt-card .pt-line span {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--accent3);
+  }
+
+  @media (max-width: 600px) {
+    .grid-zone, .pt-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>CS2 <span>Reference</span></h1>
+  <p>1 CELLA = 8m &nbsp;|&nbsp; AGGIORNATO APR 2026</p>
+</div>
+
+<!-- 1. GERARCHIA STRADALE -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <span class="section-title">Gerarchia Stradale</span>
+  </div>
+  <div class="section-body">
+    <div class="hierarchy">
+      <div class="h-row">
+        <span class="tag tag-art">AUTOSTRADA</span>
+        <span class="h-name">2 carreggiate separate</span>
+        <span class="h-vals">130 km/h &nbsp;|&nbsp; nessun accesso diretto</span>
+      </div>
+      <div class="h-arrow" style="padding-left:20px">↓ svincolo ogni 1500–2000m (188–250 celle)</div>
+      <div class="h-row">
+        <span class="tag tag-art">ARTERIA</span>
+        <span class="h-name">4 corsie</span>
+        <span class="h-vals">50 km/h &nbsp;|&nbsp; solo rotatorie, no accessi diretti</span>
+      </div>
+      <div class="h-arrow" style="padding-left:20px">↓ innesto ogni 240–300m (30–38 celle)</div>
+      <div class="h-row">
+        <span class="tag tag-col">COLLETTORE</span>
+        <span class="h-name">2 corsie largo</span>
+        <span class="h-vals">40 km/h &nbsp;|&nbsp; max 1 innesto ogni 80m (10 celle)</span>
+      </div>
+      <div class="h-arrow" style="padding-left:20px">↓ innesto ogni 80–120m (10–15 celle)</div>
+      <div class="h-row">
+        <span class="tag tag-res">LOCALE</span>
+        <span class="h-name">2 corsie stretto</span>
+        <span class="h-vals">30 km/h &nbsp;|&nbsp; accessi edifici, griglia interna</span>
+      </div>
+    </div>
+    <div class="note">
+      <strong>Regola chiave:</strong> ogni livello serve SOLO il livello adiacente. Le strade locali non sboccano mai sull'arteria. I collettori non sboccano mai sull'autostrada.
+    </div>
+  </div>
+</div>
+
+<!-- 2. INTERSEZIONI E DISTANZE -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <span class="section-title">Intersezioni e Distanze</span>
+  </div>
+  <div class="section-body">
+    <table>
+      <tr>
+        <th>Tipo strada</th>
+        <th>Distanza tra intersezioni</th>
+        <th>Celle</th>
+        <th>Note</th>
+      </tr>
+      <tr>
+        <td><span class="tag tag-art">ARTERIA</span></td>
+        <td class="val">240–300m</td>
+        <td class="val">30–38</td>
+        <td>Solo rotatorie, mai a T</td>
+      </tr>
+      <tr>
+        <td><span class="tag tag-col">COLLETTORE esterno</span> (suburbano)</td>
+        <td class="val">120–160m</td>
+        <td class="val">15–20</td>
+        <td>Incrocio o rotatoria piccola</td>
+      </tr>
+      <tr>
+        <td><span class="tag tag-col">COLLETTORE interno</span> (urbano)</td>
+        <td class="val">80–100m</td>
+        <td class="val">10–13</td>
+        <td>Incrocio semaforizzato ok</td>
+      </tr>
+      <tr>
+        <td><span class="tag tag-res">LOCALE residenziale</span></td>
+        <td class="val">64–80m</td>
+        <td class="val">8–10</td>
+        <td>Griglia interna blocco</td>
+      </tr>
+      <tr>
+        <td><span class="tag tag-ind">LOCALE industriale</span></td>
+        <td class="val">80–100m</td>
+        <td class="val">10–13</td>
+        <td>Collettori, non strade strette</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<!-- 3. ROTATORIE -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <span class="section-title">Rotatorie</span>
+  </div>
+  <div class="section-body">
+    <table>
+      <tr>
+        <th>Posizione</th>
+        <th>Diametro interno</th>
+        <th>Celle</th>
+        <th>Priorità upgrade</th>
+      </tr>
+      <tr>
+        <td>Svincolo autostradale</td>
+        <td class="val">64m</td>
+        <td class="val">8</td>
+        <td><span class="tag tag-warn">1° da upgradare</span></td>
+      </tr>
+      <tr>
+        <td>Nodo centrale (arteria×arteria)</td>
+        <td class="val">48–64m</td>
+        <td class="val">6–8</td>
+        <td><span class="tag tag-warn">2° da upgradare</span></td>
+      </tr>
+      <tr>
+        <td>Arteria → collettore</td>
+        <td class="val">32–40m</td>
+        <td class="val">4–5</td>
+        <td><span class="tag tag-ok">3°</span></td>
+      </tr>
+      <tr>
+        <td>Collettore → locale</td>
+        <td class="val">24m</td>
+        <td class="val">3</td>
+        <td>Bassa priorità, o3 regge a lungo</td>
+      </tr>
+    </table>
+    <div class="note">
+      <strong>Mai</strong> rotatoria direttamente sull'uscita autostradale — lascia sempre <span class="ok">6–8 celle di decelerazione</span> prima. <strong>Mai</strong> due rotatorie a meno di 15 celle una dall'altra sulla stessa arteria.
+    </div>
+  </div>
+</div>
+
+<!-- 4. ZONIZZAZIONE -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <span class="section-title">Zonizzazione — Primo Quartiere Misto</span>
+  </div>
+  <div class="section-body">
+    <div class="grid-zone">
+      <div class="zone-card">
+        <div class="zone-card-title" style="color:var(--zone-ind)">Industriale</div>
+        <div class="line"><span>Dimensione blocco</span><span>50×50 celle (400m)</span></div>
+        <div class="line"><span>Accessi arteria</span><span>min 2, dist 20 celle</span></div>
+        <div class="line"><span>Strade interne</span><span>collettori 10×10</span></div>
+        <div class="line"><span>Distanza dall'arteria</span><span>max 10 celle</span></div>
+        <div class="line"><span>% sulla mappa</span><span>15–20%</span></div>
+      </div>
+      <div class="zone-card">
+        <div class="zone-card-title" style="color:var(--zone-com)">Commercio + Uffici</div>
+        <div class="line"><span>Dimensione blocco</span><span>30×30 celle (240m)</span></div>
+        <div class="line"><span>Profondità dal collettore</span><span>max 15 celle</span></div>
+        <div class="line"><span>Fronte strada</span><span>collettore, non arteria</span></div>
+        <div class="line"><span>Buffer con residenziale</span><span>min 5 celle</span></div>
+        <div class="line"><span>% sulla mappa</span><span>15–20%</span></div>
+      </div>
+      <div class="zone-card">
+        <div class="zone-card-title" style="color:var(--zone-res)">Residenziale Low Density</div>
+        <div class="line"><span>Dimensione blocco</span><span>40×40 celle (320m)</span></div>
+        <div class="line"><span>Strade interne</span><span>ogni 8–10 celle</span></div>
+        <div class="line"><span>Distanza dall'arteria</span><span>min 3 celle buffer</span></div>
+        <div class="line"><span>% del residenziale</span><span>40%</span></div>
+      </div>
+      <div class="zone-card">
+        <div class="zone-card-title" style="color:#8bc4a0">Residenziale Medium + Low Rent</div>
+        <div class="line"><span>Dimensione blocco</span><span>30×30 celle (240m)</span></div>
+        <div class="line"><span>Posizione</span><span>vicino servizi/metro</span></div>
+        <div class="line"><span>% del residenziale</span><span>40% med / 20% low rent</span></div>
+        <div class="line"><span>Low rent</span><span>vicino industria, bordo zona</span></div>
+      </div>
+    </div>
+    <div class="rule-block">
+      <div class="rule-title">Ordine di posizionamento nel quartiere (da autostrada verso interno)</div>
+      Industria → buffer 5 celle → Commercio/Uffici → buffer 3 celle → Low Rent → Medium Density → Low Density (più lontano dall'autostrada, più quieto)
+    </div>
+  </div>
+</div>
+
+<!-- 5. MEZZI PUBBLICI GENERALI -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <span class="section-title">Trasporti Pubblici - Principi Generali</span>
+  </div>
+  <div class="section-body">
+    <div class="pt-grid">
+      <div class="pt-card">
+        <div class="pt-title">🚇 Subway / Metro</div>
+        <div class="pt-line">Distanza tra fermate: <span>400–600m (50–75 celle)</span></div>
+        <div class="pt-line">Posizione: <span>nodi collettore, non arteria</span></div>
+        <div class="pt-line">Logica: <span>connetti distretti, non coprire tutto</span></div>
+        <div class="pt-line">Frequenza target: <span>ogni 2–3 min</span></div>
+      </div>
+      <div class="pt-card">
+        <div class="pt-title">🚌 Bus</div>
+        <div class="pt-line">Distanza tra fermate: <span>200–300m (25–38 celle)</span></div>
+        <div class="pt-line">Posizione: <span>collettori, mai arteria</span></div>
+        <div class="pt-line">Logica: <span>alimenta la metro, non la duplica</span></div>
+        <div class="pt-line">Frequenza target: <span>ogni 4–6 min</span></div>
+      </div>
+      <div class="pt-card">
+        <div class="pt-title">🚊 Tram</div>
+        <div class="pt-line">Distanza tra fermate: <span>300–400m (38–50 celle)</span></div>
+        <div class="pt-line">Posizione: <span>arteria secondaria dedicata</span></div>
+        <div class="pt-line">Logica: <span>asse ad alta densità, sostituisce bus</span></div>
+      </div>
+      <div class="pt-card">
+        <div class="pt-title">🚂 Treno intercity</div>
+        <div class="pt-line">Posizione stazione: <span>bordo zona, non centro</span></div>
+        <div class="pt-line">Connessione: <span>metro o bus dedicato alla stazione</span></div>
+        <div class="pt-line">Logica: <span>import/export lavoratori, non mobilità interna</span></div>
+      </div>
+    </div>
+    <table>
+      <tr><th>Errore comune</th><th>Correzione</th></tr>
+      <tr><td>Metro parallela all'autostrada</td><td>Metro deve attraversare i distretti perpendicolarmente</td></tr>
+      <tr><td>Fermata bus sull'arteria</td><td>Fermata sul collettore, a 1–2 celle dall'incrocio</td></tr>
+      <tr><td>Troppi bus sulla stessa linea</td><td>Frequenza alta su poche linee &gt; tante linee sparse</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- 6. SOTTERRANEO -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">06</span>
+    <span class="section-title">Sotterraneo — Quote e Separazione</span>
+  </div>
+  <div class="section-body">
+    <div class="underground-grid">
+      <div class="u-layer">
+        <div class="u-depth">0 → -8m</div>
+        <div class="u-content">
+          <span class="tag tag-col">PIPES acqua</span>
+          <span class="tag tag-col">PIPES fognatura</span>
+          <span style="color:var(--muted);font-size:0.8rem">Cavi elettrici (auto-interrati)</span>
+        </div>
+      </div>
+      <div class="u-layer">
+        <div class="u-depth">-10 → -20m</div>
+        <div class="u-content">
+          <span class="tag tag-art">METRO superficiale</span>
+          <span style="color:var(--muted);font-size:0.8rem">Stazioni con accesso da 0m</span>
+        </div>
+      </div>
+      <div class="u-layer">
+        <div class="u-depth">-20 → -35m</div>
+        <div class="u-content">
+          <span class="tag tag-art">METRO profonda</span>
+          <span class="tag tag-res">TUNNEL auto</span>
+          <span style="color:var(--muted);font-size:0.8rem">Incroci sotterranei</span>
+        </div>
+      </div>
+      <div class="u-layer">
+        <div class="u-depth">-35 → -50m</div>
+        <div class="u-content">
+          <span class="tag tag-ind">TRENO merci</span>
+          <span class="tag tag-ind">TRENO intercity</span>
+          <span style="color:var(--muted);font-size:0.8rem">Passaggi lunghi, curve ampie</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="rule-block">
+      <div class="rule-title">Slope Too Steep — Calcolo pendenza</div>
+      CS2 limite pendenza: <span class="formula">max 10% = 1m ogni 10m orizzontali</span><br><br>
+      Per scendere di <strong>10m</strong> di profondità servono almeno <span class="formula">100m orizzontali = 13 celle</span><br>
+      Per scendere di <strong>20m</strong> servono almeno <span class="formula">200m = 25 celle</span><br>
+      Per scendere di <strong>35m</strong> (metro profonda) servono almeno <span class="formula">350m = 44 celle</span><br><br>
+      <span style="color:var(--muted);font-size:0.82rem">Usa sempre il 120–130% di queste distanze per sicurezza: il gioco calcola la pendenza sul segmento, non sulla media.</span>
+    </div>
+  </div>
+</div>
+
+<!-- 7. CURVE -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">07</span>
+    <span class="section-title">Curve — Raggi Minimi</span>
+  </div>
+  <div class="section-body">
+    <table>
+      <tr>
+        <th>Tipo veicolo / linea</th>
+        <th>Raggio minimo</th>
+        <th>Celle</th>
+        <th>Raggio consigliato</th>
+      </tr>
+      <tr>
+        <td>Auto, bus urbano</td>
+        <td class="val">20m</td>
+        <td class="val">3</td>
+        <td class="val">40–60m (5–8 celle)</td>
+      </tr>
+      <tr>
+        <td>Camion, autoarticolato</td>
+        <td class="val">40m</td>
+        <td class="val">5</td>
+        <td class="val">80m (10 celle)</td>
+      </tr>
+      <tr>
+        <td>Metro / Tram</td>
+        <td class="val">40m</td>
+        <td class="val">5</td>
+        <td class="val">80–100m (10–13 celle)</td>
+      </tr>
+      <tr>
+        <td>Treno passeggeri</td>
+        <td class="val">80m</td>
+        <td class="val">10</td>
+        <td class="val">160m (20 celle)</td>
+      </tr>
+      <tr>
+        <td>Treno merci</td>
+        <td class="val">120m</td>
+        <td class="val">15</td>
+        <td class="val">200m+ (25+ celle)</td>
+      </tr>
+    </table>
+    <div class="note">
+      <strong>Curva + discesa combinata:</strong> quando una curva è anche in pendenza, usa il raggio <span class="ok">1.5× il minimo</span>. Una curva a raggio 5 celle in piano diventa 8 celle se è anche in discesa. Questo vale specialmente per metro e treni.
+    </div>
+    <div class="curve-box">
+      <div class="c-title">Come costruire una curva precisa</div>
+      Usa lo strumento curva in CS2: primo click = inizio, secondo click = punto di controllo (determina il raggio), terzo click = fine. Per ottenere un raggio preciso, il punto di controllo deve essere a circa <span class="formula">0.7 × raggio_desiderato</span> dal centro della curva ideale. Per curve a 90°: se vuoi raggio 80m, metti il punto di controllo a 56m dal vertice dell'angolo.
+    </div>
+  </div>
+</div>
+
+<!-- 8. ENERGIA EOLICA -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">08</span>
+    <span class="section-title">Energia Eolica — Posizionamento</span>
+  </div>
+  <div class="section-body">
+    <table>
+      <tr><th>Parametro</th><th>Valore</th></tr>
+      <tr><td>Distanza minima tra turbine</td><td class="val">10 celle (80m)</td></tr>
+      <tr><td>Orientamento fila (vento NE→SW)</td><td class="val">perpendicolare al vento = fila NW–SE</td></tr>
+      <tr><td>Distanza minima da zone abitate</td><td class="val">15 celle (120m)</td></tr>
+      <tr><td>Distanza minima da edifici industriali</td><td class="val">8 celle (64m)</td></tr>
+      <tr><td>Altitudine ottimale</td><td class="val">più alta possibile, evita valli</td></tr>
+    </table>
+    <div class="note">Le turbine si "rubano" vento solo lungo l'asse del vento, non lateralmente. Puoi metterle vicine lateralmente (5 celle) senza perdita se sono in fila perpendicolare al vento.</div>
+  </div>
+</div>
+
+<!-- 9. DISTRETTO RES/COM — CRESCITA A CORONE -->
 <div class="section">
   <div class="section-header">
     <span class="section-num">09</span>
@@ -48,6 +750,7 @@
   </div>
 </div>
 
+<!-- 10. MEZZI PUBBLICI — REGOLE FISICHE -->
 <div class="section">
   <div class="section-header">
     <span class="section-num">10</span>
@@ -56,27 +759,27 @@
   <div class="section-body">
     <div class="grid-zone">
       <div class="zone-card">
-        <div class="zone-card-title">🚌 Bus (Adduzione)</div>
+        <div class="zone-card-title" style="color:var(--accent2)">🚌 Bus (Adduzione)</div>
         <div class="line"><span>Posizione Fermata</span><span>Sempre DOPO l'incrocio (2-3 celle)</span></div>
         <div class="line"><span>Strade consentite</span><span>Solo Collettori</span></div>
         <div class="line"><span>Distanza</span><span>25–38 celle</span></div>
         <div style="font-size: 0.8rem; color: var(--muted); margin-top: 5px;">Se metti la fermata prima dell'incrocio, il bus bloccherà la corsia di svolta paralizzando il traffico.</div>
       </div>
       <div class="zone-card">
-        <div class="zone-card-title">🚇 Metro (Connessione)</div>
+        <div class="zone-card-title" style="color:var(--accent)">🚇 Metro (Connessione)</div>
         <div class="line"><span>Posizione Stazione</span><span>Incroci centrali (Uffici/Medium)</span></div>
         <div class="line"><span>Affaccio</span><span>Su Collettore (spazio per pedoni)</span></div>
         <div class="line"><span>Distanza</span><span>50–75 celle</span></div>
         <div style="font-size: 0.8rem; color: var(--muted); margin-top: 5px;">Le stazioni occupano spazio in superficie. Sacrifica un pezzo di zonizzazione per creare una piazza pedonale d'accesso.</div>
       </div>
       <div class="zone-card">
-        <div class="zone-card-title">🚊 Tram (Alta Capacità)</div>
+        <div class="zone-card-title" style="color:var(--accent3)">🚊 Tram (Alta Capacità)</div>
         <div class="line"><span>Corsie minime</span><span>Strada a 4 corsie (2 auto + 2 tram)</span></div>
-        <div class="line"><span>Tracciato</span><span>Asse rettilineo commerciale</span></div>
+        <div class="line"><span>Tracciato</span><span>Asse rettilineo commerciale / Alta densità</span></div>
         <div style="font-size: 0.8rem; color: var(--muted); margin-top: 5px;">Mai su strade a 2 corsie condivise con le auto. Il pathfinding delle IA impazzisce e si creano ingorghi.</div>
       </div>
       <div class="zone-card">
-        <div class="zone-card-title">🚂 Treno (Intercity)</div>
+        <div class="zone-card-title" style="color:#d44a4a">🚂 Treno (Intercity)</div>
         <div class="line"><span>Posizione Stazione</span><span>Bordi esterni estremi della città</span></div>
         <div class="line"><span>Logica</span><span>Import/Export, non mobilità interna</span></div>
       </div>
@@ -84,6 +787,7 @@
   </div>
 </div>
 
+<!-- 11. MAPPA DISTRETTO INTERATTIVA -->
 <div class="section">
   <div class="section-header">
     <span class="section-num">11</span>
@@ -101,6 +805,7 @@
       <canvas id="districtMap" width="600" height="600" style="width:100%;border:1px solid #1e2e32;border-radius:4px;background:#0a0e0f;display:block;"></canvas>
     </div>
     
+    <!-- Legend -->
     <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;font-size:0.78rem;">
       <div style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;background:#4a9fd4;border-radius:2px;"></div>Commercio</div>
       <div style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;background:#2a7fd4;border-radius:2px;"></div>Uffici</div>
@@ -108,6 +813,7 @@
       <div style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;background:#8b6fd4;border-radius:2px;"></div>Medium Density</div>
       <div style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;background:#c4aaff;border-radius:2px;"></div>High Density</div>
       <div style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;background:#00e5c0;border-radius:2px;"></div>Hub Metro</div>
+      <div style="display:flex;align-items:center;gap:5px;"><div style="width:3px;height:12px;background:#ffd166; margin-left:10px;"></div>Linea Tram (Fase 4)</div>
     </div>
   </div>
 </div>
@@ -116,33 +822,38 @@
 (function() {
   const canvas = document.getElementById('districtMap');
   const ctx = canvas.getContext('2d');
+  
+  // Impostiamo la scala interna del Canvas per essere nitida anche rimpicciolita
   const W = 600, H = 600;
-  const CELLS = 9; // Griglia massima (9x9)
-  const CS = W / CELLS; // Dimensione cella sul canvas
+  const CELLS = 9; // Griglia massima 9x9 per le 4 fasi
+  const CS = W / CELLS; // Dimensione in pixel di un blocco/modulo
 
   const COLORS = {
     'COM': '#4a9fd4', 'OFF': '#2a7fd4', 'LOW': '#5ab84a',
     'MED': '#8b6fd4', 'HIGH': '#c4aaff', 'HUB': '#00e5c0'
   };
 
-  // Funzione per disegnare un blocco
+  // Funzione helper per disegnare il singolo blocco sulla griglia
   function drawBlock(c, r, type, phaseRequired, currentPhase) {
-    if (currentPhase < phaseRequired) return;
+    if (currentPhase < phaseRequired) return; // Non disegnarlo se non siamo alla fase giusta
     
-    // Aggiornamento dinamico densità: I LOW diventano MED in fase 3
+    // Logica di riconversione urbana: i Low Density si densificano a Medium dalla fase 3
     if (type === 'LOW' && currentPhase >= 3) type = 'MED';
 
+    // Sfondo del blocco (semi trasparente)
     ctx.fillStyle = COLORS[type];
-    ctx.globalAlpha = 0.4;
+    ctx.globalAlpha = 0.35;
     ctx.fillRect(c * CS + 2, r * CS + 2, CS - 4, CS - 4);
     
+    // Bordo del blocco (solido)
     ctx.strokeStyle = COLORS[type];
     ctx.globalAlpha = 1.0;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 1.5;
     ctx.strokeRect(c * CS + 2, r * CS + 2, CS - 4, CS - 4);
     
+    // Testo / Etichetta
     ctx.fillStyle = '#fff';
-    ctx.font = "bold 12px 'Share Tech Mono'";
+    ctx.font = "bold 13px 'Share Tech Mono', monospace";
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(type, c * CS + CS/2, r * CS + CS/2);
@@ -150,77 +861,108 @@
 
   function drawGrid(phase) {
     ctx.clearRect(0, 0, W, H);
+    
+    // Background principale
     ctx.fillStyle = '#0a0e0f';
     ctx.fillRect(0, 0, W, H);
 
-    // Disegna la griglia di base (strade)
-    ctx.strokeStyle = 'rgba(30,46,50,0.4)';
+    // Disegna la rete stradale (le linee della griglia fungono da strade locali/collettori)
+    ctx.strokeStyle = 'rgba(30,46,50,0.6)';
     ctx.lineWidth = 1;
     for(let i = 0; i <= CELLS; i++) {
       ctx.beginPath(); ctx.moveTo(i * CS, 0); ctx.lineTo(i * CS, H); ctx.stroke();
       ctx.beginPath(); ctx.moveTo(0, i * CS); ctx.lineTo(W, i * CS); ctx.stroke();
     }
 
-    // Collettore di Ingresso Sud (fisso)
-    ctx.strokeStyle = 'rgba(42,127,212,0.8)';
+    // Strade principali e ingressi evidenziati
+    // Collettore principale di ingresso (proveniente da Sud verso il nucleo)
+    ctx.strokeStyle = 'rgba(42,127,212,0.8)'; // Blu Arteria/Collettore principale
     ctx.lineWidth = 6;
-    ctx.beginPath(); ctx.moveTo(W/2, H); ctx.lineTo(W/2, H - (CS*1.5)); ctx.stroke();
+    ctx.beginPath(); 
+    ctx.moveTo(W/2, H); 
+    // Sale verso l'interno a seconda della fase
+    if(phase === 1) ctx.lineTo(W/2, H - (CS * 3));
+    if(phase === 2) ctx.lineTo(W/2, H - (CS * 4));
+    if(phase >= 3) ctx.lineTo(W/2, 0); // Attraversa tutto
+    ctx.stroke();
 
-    // -- FASE 1: NUCLEO 3x3 (Centro: R:3-5, C:3-5) --
+    // ==========================================
+    // CRESCITA DISTRETTO - LOGICA A CORONE
+    // Coordinate della griglia: col(x), row(y) - Origine 0,0 è in alto a sx.
+    // Il Sud (ingresso) è in basso (y elevate).
+    // ==========================================
+
+    // -- FASE 1: NUCLEO 3x3 (Centro mappa, spostato leggermente a sud)
+    // Colonne 3, 4, 5. Righe 5, 4, 3 (il sud è riga 5)
     drawBlock(3, 5, 'COM', 1, phase); drawBlock(4, 5, 'COM', 1, phase); drawBlock(5, 5, 'COM', 1, phase);
     drawBlock(3, 4, 'LOW', 1, phase); drawBlock(4, 4, 'LOW', 1, phase); drawBlock(5, 4, 'LOW', 1, phase);
     drawBlock(3, 3, 'LOW', 1, phase); drawBlock(4, 3, 'LOW', 1, phase); drawBlock(5, 3, 'LOW', 1, phase);
 
     // -- FASE 2: CORONA 1 (5x5) --
+    // Avvolge il nucleo. Colonne 2-6, Righe 2-6.
     for(let c=2; c<=6; c++) { drawBlock(c, 2, 'MED', 2, phase); drawBlock(c, 6, 'COM', 2, phase); }
     drawBlock(2, 3, 'MED', 2, phase); drawBlock(6, 3, 'MED', 2, phase);
     drawBlock(2, 4, 'OFF', 2, phase); drawBlock(6, 4, 'OFF', 2, phase);
     drawBlock(2, 5, 'OFF', 2, phase); drawBlock(6, 5, 'OFF', 2, phase);
 
     // -- FASE 3: CORONA 2 (7x7) --
+    // Avvolge la corona 1. Colonne 1-7, Righe 1-7.
     for(let c=1; c<=7; c++) { drawBlock(c, 1, 'MED', 3, phase); drawBlock(c, 7, 'COM', 3, phase); }
     for(let r=2; r<=6; r++) { drawBlock(1, r, 'MED', 3, phase); drawBlock(7, r, 'MED', 3, phase); }
-    // HUB Metro al centro (sostituisce il blocco residenziale)
+    // HUB Metro al centro perfetto (riga 4, colonna 4). In fase 3 sacrifica un vecchio blocco residenziale.
     drawBlock(4, 4, 'HUB', 3, phase);
 
     // -- FASE 4: METROPOLI (9x9) --
+    // L'ultimo anello, bordi esterni mappa. Colonne 0-8, Righe 0-8.
     for(let c=0; c<=8; c++) { drawBlock(c, 0, 'HIGH', 4, phase); drawBlock(c, 8, 'COM', 4, phase); }
     for(let r=1; r<=7; r++) { drawBlock(0, r, 'HIGH', 4, phase); drawBlock(8, r, 'HIGH', 4, phase); }
 
-    // Disegna Linea Tram (Fase 4)
+    // Disegna Infrastruttura di Trasporto Pesante (Linea Tram in Fase 4)
     if (phase >= 4) {
-      ctx.strokeStyle = '#ffd166';
+      ctx.strokeStyle = '#ffd166'; // Giallo Tram
       ctx.lineWidth = 4;
-      ctx.setLineDash([10, 5]);
+      ctx.setLineDash([12, 6]);
       ctx.beginPath();
-      ctx.moveTo(0, CS * 0.5); // Attraversa la zona nord ad alta densità
-      ctx.lineTo(W, CS * 0.5);
+      // Il tram attraversa il collettore nord ad alta densità (sulla riga y=1 separando la riga 0 e 1)
+      ctx.moveTo(0, CS * 1); 
+      ctx.lineTo(W, CS * 1);
       ctx.stroke();
       ctx.setLineDash([]);
+      
+      // Etichetta tram
+      ctx.fillStyle = '#ffd166';
+      ctx.font = "12px 'Share Tech Mono', monospace";
+      ctx.textAlign = 'left';
+      ctx.fillText("Linea Tram ->", 10, CS * 1 - 10);
     }
   }
 
+  // Gestione bottoni UI
   window.setPhase = function(p) {
     drawGrid(p);
     [1,2,3,4].forEach(i => {
       const btn = document.getElementById('btn'+i);
       const bcolors = ['','rgba(90,184,74,0.4)','rgba(74,159,212,0.3)','rgba(255,209,102,0.3)','rgba(255,107,53,0.3)'];
+      const bgcolors = ['','rgba(90,184,74,0.15)','rgba(74,159,212,0.08)','rgba(255,209,102,0.05)','rgba(255,107,53,0.05)'];
       const tcolors = ['','#7de87d','#4a9fd4','#ffd166','#ff6b35'];
+      
       if(i === p) {
         btn.style.opacity = '1';
         btn.style.color = tcolors[i];
+        btn.style.background = bgcolors[i];
         btn.style.borderColor = bcolors[i];
         btn.style.boxShadow = `0 0 8px ${bcolors[i]}`;
       } else {
         btn.style.opacity = '0.45';
         btn.style.color = '#5a7070';
+        btn.style.background = 'transparent';
         btn.style.boxShadow = 'none';
         btn.style.borderColor = 'rgba(80,100,100,0.3)';
       }
     });
   };
 
-  // Inizializzazione
+  // Inizializzazione della vista al caricamento
   setPhase(1);
 })();
 </script>
