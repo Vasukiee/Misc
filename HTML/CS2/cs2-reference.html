@@ -3,237 +3,246 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CS2 Reference Sheet</title>
+<title>CS2 Reference Sheet - Dark Engineer</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
 
   :root {
-    --bg: #0a0e0f;
-    --panel: #0f1518;
-    --border: #1e2e32;
-    --accent: #00e5c0;
-    --accent2: #ff6b35;
-    --accent3: #ffd166;
-    --text: #c8d8d8;
-    --muted: #5a7070;
-    --road-art: #2a7fd4;
-    --road-col: #1a9f6a;
-    --road-res: #8b6fd4;
-    --zone-ind: #e8a020;
-    --zone-com: #4a9fd4;
-    --zone-res: #5ab84a;
-    --zone-lowrent: #c2a878;
-    --zone-park: #95a5a6;
-    --srv-edu: #2ecc71;
-    --srv-fire: #e74c3c;
-    --srv-pol: #3498db;
-    --srv-med: #ff9ff3;
-    --srv-post: #f1c40f;
-    --srv-death: #9b59b6;
+    /* Muted / Ash / Tetro Palette */
+    --bg: #0a0b0c;           /* Deep ash void */
+    --panel: #111214;        /* Dark iron */
+    --border: #2a2d30;       /* Cold grey border */
+    --accent: #8b8c89;       /* Silver / Ash */
+    --accent2: #948b76;      /* Tarnished brass / bone */
+    --accent3: #a3a8a8;      /* Pale stone */
+    --text: #9a9fa3;         /* Grey text */
+    --muted: #52585b;        /* Tombstone grey */
+    
+    /* Desaturated Zones */
+    --zone-com: #283747;     
+    --zone-off: #2f2538;     
+    --zone-res: #263326;     
+    --zone-lowrent: #3b3026; 
+    --zone-med: #342436;     
+    --zone-high: #3b2929;    
+    --zone-ind: #403622;     
+    --zone-park: #17181a;    
+
+    /* Desaturated Services (No bright red) */
+    --srv-edu: #5c6b54;      /* Muted olive */
+    --srv-fire: #8c5a45;     /* Rust / Dried clay */
+    --srv-pol: #455a6b;      /* Slate blue */
+    --srv-med: #7a6368;      /* Faded mauve / ash rose */
+    --srv-post: #7a7452;     /* Oxidized brass */
+    --srv-death: #8a8f91;    /* Pale grey */
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    background: var(--bg);
+    background-color: var(--bg);
+    background-image: repeating-linear-gradient(45deg, #0d0e10 0px, #0d0e10 2px, var(--bg) 2px, var(--bg) 6px);
     color: var(--text);
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 15px;
-    line-height: 1.5;
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    line-height: 1.6;
     padding: 24px 16px;
   }
 
+  h1, h2, h3, h4, .section-title {
+    font-family: 'Cinzel', serif;
+  }
+
   .header {
-    border-left: 4px solid var(--accent);
-    padding-left: 16px;
+    border-left: 8px solid var(--accent2);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 20px;
     margin-bottom: 32px;
+    background: linear-gradient(90deg, rgba(148, 139, 118, 0.05) 0%, transparent 100%);
   }
 
   .header h1 {
-    font-size: 2.2rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    color: #fff;
+    font-size: 2.8rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    color: var(--accent3);
     text-transform: uppercase;
   }
 
   .header p {
-    color: var(--muted);
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.8rem;
-    margin-top: 4px;
+    color: var(--accent);
+    font-size: 0.9rem;
+    margin-top: 8px;
+    letter-spacing: 0.05em;
   }
 
   .header span {
-    color: var(--accent);
+    color: var(--accent2);
   }
 
   .section {
-    margin-bottom: 28px;
+    margin-bottom: 32px;
+    background: var(--panel);
     border: 1px solid var(--border);
-    border-radius: 4px;
-    overflow: hidden;
+    border-top: 2px solid var(--accent);
+    box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.6);
+    position: relative;
   }
 
   .section-header {
-    background: var(--panel);
+    background: #0c0d0f;
     border-bottom: 1px solid var(--border);
-    padding: 10px 16px;
+    padding: 12px 16px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
   }
 
   .section-num {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.7rem;
-    color: var(--accent);
-    background: rgba(0,229,192,0.08);
-    border: 1px solid rgba(0,229,192,0.2);
-    padding: 2px 7px;
-    border-radius: 2px;
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    color: var(--bg);
+    background: var(--accent);
+    padding: 2px 8px;
+    font-weight: 800;
   }
 
   .section-title {
-    font-size: 1rem;
-    font-weight: 700;
+    font-size: 1.1rem;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: #fff;
+    color: var(--accent3);
   }
 
   .section-body {
-    padding: 14px 16px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
   }
 
   /* Tables */
   table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.88rem;
+    font-size: 0.85rem;
+    border: 1px solid var(--border);
   }
 
   th {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--muted);
+    font-family: 'Cinzel', serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+    color: var(--accent2);
     text-align: left;
-    padding: 6px 10px;
+    padding: 10px 12px;
     border-bottom: 1px solid var(--border);
-    background: rgba(255,255,255,0.02);
+    background: #090a0b;
   }
 
   td {
-    padding: 7px 10px;
-    border-bottom: 1px solid rgba(30,46,50,0.6);
+    padding: 10px 12px;
+    border-bottom: 1px dashed var(--border);
     vertical-align: top;
   }
 
   tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
 
   .val {
-    font-family: 'Share Tech Mono', monospace;
     color: var(--accent3);
-    white-space: nowrap;
+    font-weight: bold;
   }
 
   .tag {
     display: inline-block;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.68rem;
-    padding: 1px 6px;
-    border-radius: 2px;
-    margin-right: 4px;
+    font-size: 0.75rem;
+    padding: 2px 6px;
+    margin-right: 6px;
+    border: 1px solid currentColor;
+    background: #000;
   }
 
-  .tag-art { background: rgba(42,127,212,0.15); color: var(--road-art); border: 1px solid rgba(42,127,212,0.3); }
-  .tag-col { background: rgba(26,159,106,0.15); color: var(--road-col); border: 1px solid rgba(26,159,106,0.3); }
-  .tag-res { background: rgba(139,111,212,0.15); color: var(--road-res); border: 1px solid rgba(139,111,212,0.3); }
-  .tag-ind { background: rgba(232,160,32,0.15); color: var(--zone-ind); border: 1px solid rgba(232,160,32,0.3); }
-  .tag-com { background: rgba(74,159,212,0.15); color: var(--zone-com); border: 1px solid rgba(74,159,212,0.3); }
-  .tag-zon { background: rgba(90,184,74,0.15); color: var(--zone-res); border: 1px solid rgba(90,184,74,0.3); }
-  .tag-warn { background: rgba(255,107,53,0.15); color: var(--accent2); border: 1px solid rgba(255,107,53,0.3); }
-  .tag-ok { background: rgba(0,229,192,0.1); color: var(--accent); border: 1px solid rgba(0,229,192,0.2); }
+  .tag-art { color: var(--accent3); }
+  .tag-col { color: var(--accent2); }
+  .tag-res { color: var(--muted); }
+  .tag-ind { color: #8c8266; }
+  .tag-com { color: #667e94; }
+  .tag-zon { color: #638563; }
+  .tag-warn { color: var(--accent); }
+  .tag-ok { color: var(--accent2); }
 
   .note {
-    font-size: 0.82rem;
-    color: var(--muted);
-    padding: 8px 12px;
-    border-left: 2px solid var(--border);
-    background: rgba(255,255,255,0.02);
-    border-radius: 0 3px 3px 0;
+    font-size: 0.85rem;
+    color: var(--text);
+    padding: 12px 16px;
+    border-left: 3px solid var(--accent2);
+    background: #0c0d0f;
   }
 
-  .note strong { color: var(--accent2); }
-  .note .ok { color: var(--accent); }
+  .note strong { color: var(--accent3); font-weight: bold; }
+  .note .ok { color: var(--accent2); }
 
   .rule-block {
-    background: rgba(0,229,192,0.04);
-    border: 1px solid rgba(0,229,192,0.12);
-    border-radius: 3px;
-    padding: 10px 14px;
-    font-size: 0.88rem;
+    background: #090a0b;
+    border: 1px solid var(--border);
+    padding: 12px 16px;
+    font-size: 0.85rem;
   }
 
   .rule-block .rule-title {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.72rem;
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
     color: var(--accent);
+    margin-bottom: 8px;
     text-transform: uppercase;
-    margin-bottom: 6px;
   }
 
   .hierarchy {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 8px;
   }
 
   .h-row {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 6px 10px;
-    border-radius: 3px;
+    gap: 12px;
+    padding: 10px 12px;
     border: 1px solid var(--border);
-    background: rgba(255,255,255,0.02);
-    font-size: 0.88rem;
+    background: #0c0d0f;
+    font-size: 0.85rem;
   }
 
   .h-arrow {
-    font-family: 'Share Tech Mono', monospace;
-    color: var(--muted);
-    font-size: 0.7rem;
-    margin: 0 4px;
+    color: var(--accent);
+    font-size: 0.9rem;
+    margin: 2px 4px;
     align-self: center;
   }
 
-  .h-name { flex: 1; font-weight: 600; }
-  .h-vals { font-family: 'Share Tech Mono', monospace; font-size: 0.75rem; color: var(--accent3); }
+  .h-name { flex: 1; font-weight: 700; color: var(--accent3); }
+  .h-vals { color: var(--accent2); }
 
   .grid-zone {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    gap: 16px;
   }
 
   .zone-card {
     border: 1px solid var(--border);
-    border-radius: 3px;
-    padding: 10px 12px;
-    background: rgba(255,255,255,0.02);
+    padding: 14px;
+    background: #0c0d0f;
+    position: relative;
   }
 
   .zone-card-title {
-    font-weight: 700;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    margin-bottom: 6px;
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    color: var(--accent3);
+    margin-bottom: 10px;
     padding-bottom: 6px;
     border-bottom: 1px solid var(--border);
   }
@@ -241,52 +250,46 @@
   .zone-card .line {
     display: flex;
     justify-content: space-between;
-    font-size: 0.82rem;
-    padding: 2px 0;
-    color: var(--muted);
+    font-size: 0.85rem;
+    padding: 4px 0;
+    color: var(--text);
   }
 
   .zone-card .line span:last-child {
-    font-family: 'Share Tech Mono', monospace;
-    color: var(--accent3);
+    color: var(--accent2);
   }
 
   .underground-grid {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 6px;
   }
 
   .u-layer {
     display: flex;
     align-items: stretch;
-    border-radius: 3px;
-    overflow: hidden;
+    border: 1px solid var(--border);
+    background: #0c0d0f;
     font-size: 0.85rem;
   }
 
   .u-depth {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.72rem;
-    background: rgba(0,0,0,0.4);
-    color: var(--accent);
-    padding: 6px 10px;
-    min-width: 80px;
+    background: var(--border);
+    color: var(--accent3);
+    padding: 10px 14px;
+    min-width: 100px;
     display: flex;
     align-items: center;
-    border: 1px solid var(--border);
-    border-right: none;
-    border-radius: 3px 0 0 3px;
+    border-right: 1px solid var(--border);
+    font-weight: bold;
   }
 
   .u-content {
     flex: 1;
-    padding: 6px 12px;
-    border: 1px solid var(--border);
-    border-radius: 0 3px 3px 0;
+    padding: 10px 14px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     flex-wrap: wrap;
   }
 
@@ -295,70 +298,76 @@
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
     align-items: center;
+    background: #090a0b;
+    padding: 10px;
+    border: 1px solid var(--border);
   }
 
   .ctrl-label {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.75rem;
-    color: var(--muted);
-    text-transform: uppercase;
+    font-size: 0.85rem;
+    color: var(--accent3);
     width: 60px;
+    font-weight: bold;
   }
 
   .btn {
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'Space Mono', monospace;
     font-size: 0.75rem;
-    padding: 6px 14px;
-    border-radius: 3px;
+    padding: 6px 12px;
     cursor: pointer;
+    background: #0d0e10;
+    border: 1px solid var(--muted);
+    color: var(--muted);
+    text-transform: uppercase;
+    font-weight: bold;
     transition: all 0.2s;
-    background: transparent;
-    border: 1px solid rgba(80,100,100,0.3);
-    color: #5a7070;
   }
 
   .btn:hover {
-    background: rgba(255,255,255,0.05);
+    border-color: var(--accent3);
+    color: var(--accent3);
   }
 
   .btn.active {
-    opacity: 1;
-    box-shadow: 0 0 8px currentColor;
+    background: var(--border);
+    color: var(--accent3) !important;
+    border-color: var(--accent);
   }
 
   .legend-item {
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 0.78rem;
-    margin-right: 8px;
-    margin-bottom: 4px;
+    gap: 8px;
+    font-size: 0.8rem;
+    margin-right: 14px;
+    margin-bottom: 8px;
+    color: #999;
   }
 
   /* Calculator Styles */
   .calc-panel {
-    background: rgba(0, 229, 192, 0.03);
-    border: 1px solid rgba(0, 229, 192, 0.15);
-    border-radius: 4px;
-    padding: 12px 16px;
-    margin-top: 14px;
+    background: #090a0b;
+    border: 1px solid var(--border);
+    padding: 16px;
+    margin-top: 16px;
   }
 
   .calc-header {
-    font-family: 'Share Tech Mono', monospace;
-    color: var(--accent);
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    margin-bottom: 10px;
+    font-family: 'Cinzel', serif;
+    color: var(--accent3);
+    font-size: 0.95rem;
+    margin-bottom: 16px;
+    border-bottom: 1px dashed var(--muted);
+    padding-bottom: 8px;
   }
 
   .slider-container {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 14px;
+    gap: 16px;
+    margin-bottom: 16px;
   }
 
   .slider-container input[type=range] {
@@ -369,130 +378,115 @@
 
   .slider-container input[type=range]::-webkit-slider-thumb {
     -webkit-appearance: none;
-    height: 16px;
-    width: 16px;
-    border-radius: 50%;
-    background: var(--accent);
-    cursor: pointer;
-    margin-top: -6px;
+    height: 18px;
+    width: 8px;
+    background: var(--accent2);
+    cursor: crosshair;
+    margin-top: -7px;
+    border: 1px solid #000;
   }
 
   .slider-container input[type=range]::-webkit-slider-runnable-track {
     width: 100%;
     height: 4px;
     cursor: pointer;
-    background: rgba(255,255,255,0.1);
-    border-radius: 2px;
+    background: var(--muted);
   }
 
   #popDisplay {
-    font-family: 'Share Tech Mono', monospace;
     color: var(--accent3);
     font-weight: bold;
-    min-width: 95px;
+    min-width: 110px;
     text-align: right;
+    font-size: 1rem;
   }
 
   .calc-row {
     display: flex;
     justify-content: space-between;
-    padding: 5px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding: 6px 0;
+    border-bottom: 1px dashed var(--border);
     font-size: 0.85rem;
   }
 
-  .calc-row:last-child {
-    border-bottom: none;
-  }
+  .calc-row:last-child { border-bottom: none; }
+  .calc-row span:last-child { color: var(--accent3); font-weight: bold; }
+  .calc-empty { font-size: 0.8rem; color: var(--muted); font-style: italic; }
 
-  .calc-row span:last-child {
-    font-family: 'Share Tech Mono', monospace;
-  }
-
-  .calc-empty {
-    font-size: 0.8rem;
-    color: var(--muted);
-    font-style: italic;
-  }
-
-  @media (max-width: 600px) {
-    .grid-zone { grid-template-columns: 1fr; }
-  }
+  @media (max-width: 600px) { .grid-zone { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <h1>CS2 <span>Reference</span></h1>
+  <h1>CS2 // <span>Reference</span></h1>
   <p>1 CELLA = 8m &nbsp;|&nbsp; AGGIORNATO APR 2026</p>
 </div>
 
 <!-- 01. MAPPA DISTRETTO INTERATTIVA -->
 <div class="section">
   <div class="section-header">
-    <span class="section-num">01</span>
+    <span class="section-num">I</span>
     <span class="section-title">Visualizzatore Espansione, Network & Servizi</span>
   </div>
   <div class="section-body">
-    <div class="note" style="margin-bottom:12px">
-      <strong>Algoritmo di Posizionamento:</strong> Usa i layer per studiare la viabilità. L'algoritmo impone: <strong>Mezzi d'emergenza veloci</strong> (Polizia/Ospedali) sui collettori a 4 corsie per poter sorpassare. <strong>Scuole Superiori</strong> sugli assi Tramviari per il TPL. <strong>Poste e Rifiuti (Camion Lenti)</strong> sulle grandi arterie ai bordi estremi. <strong>Scuole Elementari</strong> nei quartieri 2-corsie, accessibili a piedi e lontane dal traffico pesante.
+    <div class="note">
+      <strong>Algoritmo di Posizionamento:</strong> Usa i layer per studiare la viabilità. <strong>Mezzi d'emergenza veloci</strong> (Polizia/Ospedali) sui collettori a 4 corsie per sorpassare il traffico. <strong>Scuole Superiori</strong> sugli assi Tramviari. <strong>Poste e Rifiuti (Camion Lenti)</strong> sulle grandi arterie esterne. <strong>Scuole Elementari</strong> nei quartieri residenziali.
     </div>
 
     <div class="control-group" id="phase-btns">
       <span class="ctrl-label">Fase:</span>
-      <button onclick="setPhase(1)" id="btn-ph1" class="btn" style="color:#7de87d;">1. BORGO INIZIALE</button>
-      <button onclick="setPhase(2)" id="btn-ph2" class="btn" style="color:#4a9fd4;">2. ESPANSIONE</button>
-      <button onclick="setPhase(3)" id="btn-ph3" class="btn" style="color:#ffd166;">3. CENTRO CITTÀ</button>
-      <button onclick="setPhase(4)" id="btn-ph4" class="btn" style="color:#ff6b35;">4. METROPOLI</button>
-      <button onclick="setPhase(5)" id="btn-ph5" class="btn" style="color:#e84393;">5. HUB GLOBALE</button>
+      <button onclick="setPhase(1)" id="btn-ph1" class="btn">1. BORGO INIZIALE</button>
+      <button onclick="setPhase(2)" id="btn-ph2" class="btn">2. ESPANSIONE</button>
+      <button onclick="setPhase(3)" id="btn-ph3" class="btn">3. CENTRO CITTÀ</button>
+      <button onclick="setPhase(4)" id="btn-ph4" class="btn">4. METROPOLI</button>
+      <button onclick="setPhase(5)" id="btn-ph5" class="btn">5. HUB GLOBALE</button>
     </div>
 
     <div class="control-group" id="layer-btns">
       <span class="ctrl-label">Layer:</span>
-      <button onclick="toggleLayer('zones')" id="btn-ly-zones" class="btn active" style="color:var(--zone-res);">ZONIZZAZIONE</button>
-      <button onclick="toggleLayer('roads')" id="btn-ly-roads" class="btn active" style="color:var(--text);">STRADE</button>
-      <button onclick="toggleLayer('services')" id="btn-ly-services" class="btn active" style="color:var(--srv-edu); border-color:var(--srv-edu);">SERVIZI (Logica)</button>
-      <button onclick="toggleLayer('bus')" id="btn-ly-bus" class="btn active" style="color:var(--accent2);">BUS (Capillari)</button>
-      <button onclick="toggleLayer('tram')" id="btn-ly-tram" class="btn active" style="color:var(--accent3);">TRAM (Assi)</button>
-      <button onclick="toggleLayer('metro')" id="btn-ly-metro" class="btn active" style="color:var(--accent);">METRO (Hubs)</button>
-      <button onclick="toggleLayer('park')" id="btn-ly-park" class="btn active" style="color:var(--zone-park);">PARCHEGGI</button>
+      <button onclick="toggleLayer('zones')" id="btn-ly-zones" class="btn active">ZONIZZAZIONE</button>
+      <button onclick="toggleLayer('roads')" id="btn-ly-roads" class="btn active">STRADE</button>
+      <button onclick="toggleLayer('services')" id="btn-ly-services" class="btn active">SERVIZI (Logica)</button>
+      <button onclick="toggleLayer('bus')" id="btn-ly-bus" class="btn active">BUS (Capillari)</button>
+      <button onclick="toggleLayer('tram')" id="btn-ly-tram" class="btn active">TRAM (Assi)</button>
+      <button onclick="toggleLayer('metro')" id="btn-ly-metro" class="btn active">METRO (Hubs)</button>
+      <button onclick="toggleLayer('park')" id="btn-ly-park" class="btn active">PARCHEGGI</button>
     </div>
 
     <!-- TPL Calculator Panel -->
     <div class="calc-panel">
-      <div class="calc-header">📊 Calcolatore Veicoli TPL (Adattivo per Linea)</div>
+      <div class="calc-header">Calcolatore Veicoli TPL (Adattivo per Linea)</div>
       <div class="slider-container">
-        <span style="font-size:0.8rem; color:var(--muted);">ABITANTI:</span>
+        <span style="font-size:0.85rem; color:var(--muted);">ABITANTI:</span>
         <input type="range" id="popSlider" min="0" max="30000" step="500" value="2000" oninput="updateTransitCalc()">
         <span id="popDisplay">2.000 Ab.</span>
       </div>
-      <div id="transitResults">
-        <!-- Generato dinamicamente -->
-      </div>
+      <div id="transitResults"></div>
     </div>
 
-    <div style="position:relative;width:100%;max-width:600px;margin:0 auto; margin-top: 10px;">
-      <canvas id="districtMap" width="600" height="600" style="width:100%;border:1px solid #1e2e32;border-radius:4px;background:#0a0e0f;display:block;"></canvas>
+    <div style="position:relative;width:100%;max-width:600px;margin:0 auto; margin-top: 16px; border: 1px solid var(--border); box-shadow: 4px 4px 0px rgba(0,0,0,0.5);">
+      <canvas id="districtMap" width="600" height="600" style="width:100%;background:#090a0b;display:block;"></canvas>
     </div>
     
     <!-- Legend -->
-    <div style="display:flex;flex-wrap:wrap;margin-top:10px;font-size:0.78rem;">
-      <div class="legend-item"><div style="width:12px;height:12px;background:#4a9fd4;border-radius:2px;"></div>Commercio</div>
-      <div class="legend-item"><div style="width:12px;height:12px;background:#2a7fd4;border-radius:2px;"></div>Uffici</div>
-      <div class="legend-item"><div style="width:12px;height:12px;background:#5ab84a;border-radius:2px;"></div>Low Density</div>
-      <div class="legend-item"><div style="width:12px;height:12px;background:#c2a878;border-radius:2px;"></div>Low Rent</div>
-      <div class="legend-item"><div style="width:12px;height:12px;background:#8b6fd4;border-radius:2px;"></div>Medium Density</div>
-      <div class="legend-item"><div style="width:12px;height:12px;background:#c4aaff;border-radius:2px;"></div>High Density</div>
-      <div style="width: 100%; height: 6px;"></div> <!-- Spacing -->
-      <div class="legend-item"><div style="width:16px;height:6px;background:#4a5c60;"></div>Arteria (6c)</div>
-      <div class="legend-item"><div style="width:16px;height:4px;background:#3e4e52;"></div>Collettore (4c)</div>
-      <div class="legend-item"><div style="width:16px;height:2px;background:#2a3538;"></div>Locale (2c)</div>
-      <div class="legend-item"><div style="width:16px;height:2px;border-top:1px dashed #5ab84a;"></div>Pedonale</div>
-      <div class="legend-item"><div style="width:16px;height:2px;border-top:1px dotted #1e2528;"></div>Alley</div>
-      <div style="width: 100%; height: 6px;"></div> <!-- Spacing -->
-      <div class="legend-item"><div style="width:10px;height:10px;border: 2px solid #00e5c0; background: #0f1518;"></div>Stazione Metro</div>
-      <div class="legend-item"><div style="width:12px;height:12px;border: 1px solid #fff; background: #95a5a6; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:bold; color:#fff;">P</div>Parcheggio (P&R)</div>
-      <div class="legend-item"><div style="width:12px;height:12px;background:#d44a4a;"></div>Treno Esterno</div>
+    <div style="display:flex;flex-wrap:wrap;margin-top:16px;font-size:0.75rem; background:#0c0d0f; padding:12px; border:1px solid var(--border);">
+      <div class="legend-item"><div style="width:12px;height:12px;background:var(--zone-com);"></div>Commercio</div>
+      <div class="legend-item"><div style="width:12px;height:12px;background:var(--zone-off);"></div>Uffici</div>
+      <div class="legend-item"><div style="width:12px;height:12px;background:var(--zone-res);"></div>Low Density</div>
+      <div class="legend-item"><div style="width:12px;height:12px;background:var(--zone-lowrent);"></div>Low Rent</div>
+      <div class="legend-item"><div style="width:12px;height:12px;background:var(--zone-med);"></div>Medium Density</div>
+      <div class="legend-item"><div style="width:12px;height:12px;background:var(--zone-high);"></div>High Density</div>
+      <div style="width: 100%; height: 4px;"></div>
+      <div class="legend-item"><div style="width:16px;height:6px;background:#2f3336;"></div>Arteria (6c)</div>
+      <div class="legend-item"><div style="width:16px;height:4px;background:#232629;"></div>Collettore (4c)</div>
+      <div class="legend-item"><div style="width:16px;height:2px;background:#1a1c1e;"></div>Locale (2c)</div>
+      <div class="legend-item"><div style="width:16px;height:2px;border-top:1px dashed #414d45;"></div>Pedonale</div>
+      <div class="legend-item"><div style="width:16px;height:2px;border-top:1px dotted #3a3f42;"></div>Alley</div>
+      <div style="width: 100%; height: 4px;"></div>
+      <div class="legend-item"><div style="width:10px;height:10px;border: 2px solid var(--muted); background: #1a1c1e;"></div>Staz. Metro</div>
+      <div class="legend-item"><div style="width:12px;height:12px;border: 1px solid var(--muted); background: #202326; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:bold; color:var(--muted);">P</div>Parcheggio</div>
+      <div class="legend-item"><div style="width:12px;height:12px;background:#66554e;border:1px solid #444;"></div>Treno Esterno</div>
       <div class="legend-item"><div style="width:12px;height:12px;background:var(--srv-edu);"></div>Educazione</div>
       <div class="legend-item"><div style="width:12px;height:12px;background:var(--srv-fire);"></div>Fuoco</div>
       <div class="legend-item"><div style="width:12px;height:12px;background:var(--srv-pol);"></div>Polizia</div>
@@ -506,35 +500,35 @@
 <!-- 01.1 SETTORE INDUSTRIALE: GRIGLIA E MEGA-STRUTTURE -->
 <div class="section">
   <div class="section-header">
-    <span class="section-num">01.1</span>
+    <span class="section-num">II</span>
     <span class="section-title">Settore Industriale — Griglia Fabbriche vs Mega-Strutture (Yards)</span>
   </div>
   <div class="section-body">
     <div class="grid-zone" style="margin-bottom: 16px;">
       <div class="zone-card">
-        <div class="zone-card-title" style="color:var(--zone-ind)">Fabbriche (Zonizzazione Gialla)</div>
-        <div class="line"><span>Strade necessarie</span><span>Locali (2 corsie) o Vicoli (1 corsia)</span></div>
-        <div class="line"><span>Dimensioni isolato ottimali</span><span>12×12 o 12×24 celle</span></div>
-        <div class="line"><span>Logica</span><span>Griglia a scacchiera compatta interna. Nessun buco in mezzo. Le strade assorbono traffico diffuso ma leggero.</span></div>
+        <div class="zone-card-title" style="color:#8c8266">Fabbriche (Zoning)</div>
+        <div class="line"><span>Strade</span><span>Locali (2c) / Alley (1c)</span></div>
+        <div class="line"><span>Dimensioni Ottimali</span><span>12×12 o 12×24 celle</span></div>
+        <div class="line"><span>Logica</span><span>Griglia a scacchiera compatta. Le strade assorbono traffico diffuso.</span></div>
       </div>
       <div class="zone-card">
-        <div class="zone-card-title" style="color:#e74c3c">Mega-Strutture (Yards e Scali)</div>
-        <div class="line"><span>Strade necessarie</span><span>Collettori (4c) o Arterie (6c)</span></div>
-        <div class="line"><span>Esempi</span><span>Depositi TPL (Treni/Metro), Scalo Merci</span></div>
-        <div class="line"><span>Logica</span><span>Vanno sul <strong>perimetro esterno</strong> industriale. I depositi (Yards) creano inquinamento acustico estremo: tienili qui e collegali alla città con binari di servizio.</span></div>
+        <div class="zone-card-title" style="color:var(--accent3)">Mega-Strutture (Yards)</div>
+        <div class="line"><span>Strade</span><span>Collettori (4c) / Arterie (6c)</span></div>
+        <div class="line"><span>Esempi</span><span>Depositi TPL, Scalo Merci</span></div>
+        <div class="line"><span>Logica</span><span>Anello perimetrale esterno. Connettili con binari di servizio isolati.</span></div>
       </div>
     </div>
 
-    <div style="position:relative;width:100%;max-width:600px;margin:0 auto; overflow: hidden; border:1px solid #1e2e32; border-radius:4px;">
-      <canvas id="industryMap" width="600" height="400" style="width:100%; height:auto; background:#0a0e0f; display:block;"></canvas>
+    <div style="position:relative;width:100%;max-width:600px;margin:0 auto; overflow: hidden; border:1px solid var(--border); box-shadow: 4px 4px 0px rgba(0,0,0,0.5);">
+      <canvas id="industryMap" width="600" height="400" style="width:100%; height:auto; background:#090a0b; display:block;"></canvas>
     </div>
 
-    <div style="display:flex;flex-wrap:wrap;margin-top:10px;gap: 12px;font-size:0.78rem;">
-      <div style="display:flex;align-items:center;gap:6px;"><div style="width:16px;height:6px;background:#4a5c60;"></div>Arteria Principale (6c)</div>
-      <div style="display:flex;align-items:center;gap:6px;"><div style="width:16px;height:4px;background:#3e4e52;"></div>Anello Collettore (4c)</div>
-      <div style="display:flex;align-items:center;gap:6px;"><div style="width:16px;height:2px;background:#2a3538;"></div>Griglia Locale (2c/1c)</div>
-      <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;background:rgba(232,160,32,0.35);border:1px solid #e8a020;"></div>Fabbriche Dense (12x24)</div>
-      <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;background:#2c3e50;border:1px solid #e74c3c;"></div>Mega-Strutture (Yards)</div>
+    <div style="display:flex;flex-wrap:wrap;margin-top:16px;gap: 12px;font-size:0.75rem; color:var(--text);">
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:16px;height:6px;background:#2f3336;"></div>Arteria (6c)</div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:16px;height:4px;background:#232629;"></div>Anello Collettore (4c)</div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:16px;height:2px;background:#1a1c1e;"></div>Griglia Locale (2c)</div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;background:rgba(64, 54, 34, 0.5);"></div>Fabbriche Dense</div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;background:#1a1c1e;border:1px solid var(--border);"></div>Yards / Impianti</div>
     </div>
   </div>
 </div>
@@ -545,46 +539,44 @@
   const ctx = c.getContext('2d');
   const W = 600, H = 400;
 
-  ctx.fillStyle = '#0a0e0f';
+  ctx.fillStyle = '#090a0b';
   ctx.fillRect(0, 0, W, H);
 
   // Arteria
-  ctx.strokeStyle = '#4a5c60'; ctx.lineWidth = 14;
+  ctx.strokeStyle = '#2f3336'; ctx.lineWidth = 14;
   ctx.beginPath(); ctx.moveTo(0, H - 30); ctx.lineTo(W, H - 30); ctx.stroke();
-  ctx.strokeStyle = '#ffd166'; ctx.lineWidth = 1.5; ctx.setLineDash([10, 10]);
+  ctx.strokeStyle = '#545c58'; ctx.lineWidth = 1; ctx.setLineDash([10, 10]);
   ctx.beginPath(); ctx.moveTo(0, H - 30); ctx.lineTo(W, H - 30); ctx.stroke();
   ctx.setLineDash([]);
 
-  // Anello Collettore Perimetrale
-  ctx.strokeStyle = '#3e4e52'; ctx.lineWidth = 8;
+  // Anello Collettore
+  ctx.strokeStyle = '#232629'; ctx.lineWidth = 8;
   ctx.strokeRect(100, 40, 380, 290); 
   ctx.beginPath(); ctx.moveTo(150, 330); ctx.lineTo(150, H - 30); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(430, 330); ctx.lineTo(430, H - 30); ctx.stroke();
 
-  // Griglia Locale Interna
-  ctx.strokeStyle = '#2a3538'; ctx.lineWidth = 3;
+  // Griglia Locale
+  ctx.strokeStyle = '#1a1c1e'; ctx.lineWidth = 3;
   ctx.beginPath(); ctx.moveTo(226, 40); ctx.lineTo(226, 330); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(353, 40); ctx.lineTo(353, 330); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(100, 185); ctx.lineTo(480, 185); ctx.stroke();
 
-  // Blocchi di Zonizzazione Gialla
   const drawGrowableBlock = (x, y, w, h) => {
-    ctx.fillStyle = 'rgba(232, 160, 32, 0.35)';
-    ctx.strokeStyle = '#e8a020';
-    ctx.lineWidth = 1.5;
+    ctx.fillStyle = 'rgba(64, 54, 34, 0.4)';
+    ctx.strokeStyle = '#4a3f29';
+    ctx.lineWidth = 1;
     ctx.fillRect(x + 3, y + 3, w - 6, h - 6);
     ctx.strokeRect(x + 3, y + 3, w - 6, h - 6);
     
-    ctx.strokeStyle = 'rgba(232, 160, 32, 0.15)';
-    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(64, 54, 34, 0.2)';
     for(let i = y + 10; i < y + h - 5; i += 8) {
       ctx.beginPath(); ctx.moveTo(x + 4, i); ctx.lineTo(x + w - 4, i); ctx.stroke();
     }
 
-    ctx.fillStyle = '#fff';
-    ctx.font = "bold 12px 'Barlow Condensed'";
+    ctx.fillStyle = '#827863';
+    ctx.font = "bold 12px 'Space Mono'";
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText("100% ZONING", x + w/2, y + h/2);
+    ctx.fillText("ZONING", x + w/2, y + h/2);
   };
 
   drawGrowableBlock(100, 40, 126, 145);
@@ -594,28 +586,27 @@
   drawGrowableBlock(226, 185, 127, 145);
   drawGrowableBlock(353, 185, 127, 145);
 
-  // Mega-Strutture (Ploppables e YARDS)
   const drawPloppable = (x, y, w, h, title, subtitle) => {
-    ctx.fillStyle = '#2c3e50';
+    ctx.fillStyle = '#17181a';
     ctx.fillRect(x, y, w, h);
-    ctx.strokeStyle = '#e74c3c';
+    ctx.strokeStyle = '#3d3835';
     ctx.lineWidth = 2;
     ctx.strokeRect(x, y, w, h);
     
-    ctx.fillStyle = '#fff';
-    ctx.font = "bold 14px 'Share Tech Mono'";
+    ctx.fillStyle = '#a3a8a8';
+    ctx.font = "bold 13px 'Space Mono'";
     ctx.textAlign = 'center';
     ctx.fillText(title, x + w/2, y + h/2 - 6);
-    ctx.fillStyle = '#e74c3c';
-    ctx.font = "10px 'Barlow Condensed'";
+    ctx.fillStyle = '#7a7063';
+    ctx.font = "10px 'Space Mono'";
     ctx.fillText(subtitle, x + w/2, y + h/2 + 10);
   };
 
-  drawPloppable(10, 150, 75, 120, "CENTRALE", "(Sull'Arteria)");
-  ctx.strokeStyle = '#3e4e52'; ctx.lineWidth = 6;
+  drawPloppable(10, 150, 75, 120, "IMPIANTO", "(Arteria)");
+  ctx.strokeStyle = '#232629'; ctx.lineWidth = 6;
   ctx.beginPath(); ctx.moveTo(47, 270); ctx.lineTo(47, H - 30); ctx.stroke();
 
-  drawPloppable(150, 10, 280, 50, "YARDS (TPL) E SCALO MERCI", "(Sul Collettore Esterno)");
+  drawPloppable(150, 10, 280, 50, "YARDS (TPL) / SCALO MERCI", "(Collettore)");
 
   const drawTrafficArrow = (x, y, dir, color) => {
     ctx.fillStyle = color;
@@ -627,19 +618,19 @@
     ctx.fill();
   };
 
-  drawTrafficArrow(150, 305, 'down', '#e74c3c');
-  drawTrafficArrow(430, 305, 'down', '#e74c3c');
-  drawTrafficArrow(100, 75, 'left', '#e74c3c');
-  drawTrafficArrow(480, 75, 'right', '#e74c3c');
+  drawTrafficArrow(150, 305, 'down', '#7a7063');
+  drawTrafficArrow(430, 305, 'down', '#7a7063');
+  drawTrafficArrow(100, 75, 'left', '#7a7063');
+  drawTrafficArrow(480, 75, 'right', '#7a7063');
 
-  ctx.strokeStyle = '#00e5c0'; ctx.lineWidth = 1; ctx.setLineDash([2, 2]);
+  ctx.strokeStyle = '#52585b'; ctx.lineWidth = 1; ctx.setLineDash([2, 2]);
   ctx.beginPath(); ctx.moveTo(226, 20); ctx.lineTo(353, 20); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(226, 15); ctx.lineTo(226, 25); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(353, 15); ctx.lineTo(353, 25); ctx.stroke();
   ctx.setLineDash([]);
-  ctx.fillStyle = '#00e5c0';
-  ctx.font = "12px 'Barlow Condensed'";
-  ctx.fillText("Max 12 celle (Nessun vuoto al centro)", 289, 12);
+  ctx.fillStyle = '#7a7063';
+  ctx.font = "11px 'Space Mono'";
+  ctx.fillText("Max 12 celle", 289, 12);
 
 })();
 </script>
@@ -647,26 +638,26 @@
 <!-- 01.2 VISTA MACRO: AUTOSTRADA E HUB GLOBALE -->
 <div class="section">
   <div class="section-header">
-    <span class="section-num">01.2</span>
-    <span class="section-title">Vista Macro Regionale — Svincoli, Distanze e Hub Globale (Fase 5)</span>
+    <span class="section-num">III</span>
+    <span class="section-title">Vista Macro Regionale — Svincoli e Hub Globale (Fase 5)</span>
   </div>
   <div class="section-body">
-    <div class="note" style="margin-bottom:12px; border-color: var(--road-art);">
-      <strong>La Regola del Buffer e dei Treni:</strong> Mai attaccare la griglia urbana direttamente allo svincolo. Lascia un'Arteria a 6 corsie libera per almeno <strong>240-300 metri</strong>. In <em>Fase 5</em>, la linea Ferroviaria deve costeggiare il lato <strong>Nord</strong> della metropoli (creando un confine pulito) senza scavalcare la maglia urbana o i buffer di traffico, mentre la Metro si prolunga verso l'Aeroporto.
+    <div class="note" style="margin-bottom:12px;">
+      <strong>La Regola del Buffer e dei Treni:</strong> Mai attaccare la griglia urbana allo svincolo. Lascia un'Arteria a 6 corsie libera per <strong>240-300 metri</strong>. La linea Ferroviaria costeggia il lato <strong>Nord</strong> della metropoli senza scavalcare i buffer, mentre la Metro si prolunga verso l'Aeroporto.
     </div>
 
-    <div style="position:relative;width:100%;max-width:800px;margin:0 auto; overflow: hidden; border:1px solid #1e2e32; border-radius:4px;">
-      <canvas id="macroMap" width="800" height="420" style="width:100%; height:auto; background:#0a0e0f; display:block;"></canvas>
+    <div style="position:relative;width:100%;max-width:800px;margin:0 auto; overflow: hidden; border:1px solid var(--border); box-shadow: 4px 4px 0px rgba(0,0,0,0.5);">
+      <canvas id="macroMap" width="800" height="420" style="width:100%; height:auto; background:#090a0b; display:block;"></canvas>
     </div>
 
     <!-- Legend Macro -->
-    <div style="display:flex;flex-wrap:wrap;margin-top:10px;gap: 12px;font-size:0.78rem;">
-      <div style="display:flex;align-items:center;gap:6px;"><div style="width:16px;height:6px;background:#2a7fd4; border-top:1px dashed #fff; border-bottom:1px dashed #fff;"></div>Autostrada (2+2)</div>
-      <div style="display:flex;align-items:center;gap:6px;"><div style="width:16px;height:6px;background:#4a5c60;"></div>Arteria (6c)</div>
-      <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;background:#e8a020;opacity:0.6;border:1px solid #e8a020;"></div>Industria</div>
-      <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;background:#c4aaff;opacity:0.6;border:1px solid #c4aaff;"></div>Metropoli (Fase 5)</div>
-      <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;background:#2c3e50;border:1px solid #d44a4a;"></div>Yards / Stazioni</div>
-      <div style="display:flex;align-items:center;gap:6px;"><div style="width:16px;height:4px;border-top:2px dashed #00e5c0;"></div>Metro vs Aeroporto</div>
+    <div style="display:flex;flex-wrap:wrap;margin-top:16px;gap: 12px;font-size:0.75rem; color:var(--text);">
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:16px;height:6px;background:#2a3138; border-top:1px dashed #555; border-bottom:1px dashed #555;"></div>Autostrada</div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:16px;height:6px;background:#2f3336;"></div>Arteria (6c)</div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;background:var(--zone-ind);opacity:0.4;"></div>Industria</div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;background:#3b2929;opacity:0.6;"></div>Metropoli</div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;background:#17181a;border:1px solid #3d3835;"></div>Yards / Stazioni</div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:16px;height:4px;border-top:2px dashed #526b6b;"></div>Metro EXT</div>
     </div>
   </div>
 </div>
@@ -678,28 +669,14 @@
   const W = 800, H = 420;
 
   function drawArrow(x, y, angle, color) {
-    cx.save();
-    cx.translate(x, y);
-    cx.rotate(angle);
-    cx.beginPath();
-    cx.moveTo(0, 0);
-    cx.lineTo(-6, -4);
-    cx.lineTo(-6, 4);
-    cx.closePath();
-    cx.fillStyle = color;
-    cx.fill();
-    cx.restore();
+    cx.save(); cx.translate(x, y); cx.rotate(angle);
+    cx.beginPath(); cx.moveTo(0, 0); cx.lineTo(-6, -4); cx.lineTo(-6, 4); cx.closePath();
+    cx.fillStyle = color; cx.fill(); cx.restore();
   }
 
   function drawDimLine(x1, y1, x2, y2, text, isVertical = false) {
-    cx.strokeStyle = '#00e5c0';
-    cx.lineWidth = 1;
-    cx.setLineDash([4, 2]);
-    cx.beginPath();
-    cx.moveTo(x1, y1);
-    cx.lineTo(x2, y2);
-    cx.stroke();
-    cx.setLineDash([]);
+    cx.strokeStyle = '#52585b'; cx.lineWidth = 1; cx.setLineDash([4, 2]);
+    cx.beginPath(); cx.moveTo(x1, y1); cx.lineTo(x2, y2); cx.stroke(); cx.setLineDash([]);
     
     if (isVertical) {
       cx.beginPath(); cx.moveTo(x1-5, y1); cx.lineTo(x1+5, y1); cx.stroke();
@@ -709,223 +686,147 @@
       cx.beginPath(); cx.moveTo(x2, y2-5); cx.lineTo(x2, y2+5); cx.stroke();
     }
 
-    cx.fillStyle = '#00e5c0';
-    cx.font = "11px 'Share Tech Mono'";
-    cx.textAlign = 'center';
-    cx.textBaseline = 'middle';
+    cx.fillStyle = '#a3a8a8'; cx.font = "11px 'Space Mono'"; cx.textAlign = 'center'; cx.textBaseline = 'middle';
     
     if (isVertical) {
-      cx.save();
-      cx.translate(x1 + 10, y1 + (y2-y1)/2);
-      cx.rotate(-Math.PI/2);
-      cx.fillStyle = '#0a0e0f';
-      let w = cx.measureText(text).width + 6;
-      cx.fillRect(-w/2, -8, w, 16);
-      cx.fillStyle = '#00e5c0';
-      cx.fillText(text, 0, 0);
-      cx.restore();
+      cx.save(); cx.translate(x1 + 10, y1 + (y2-y1)/2); cx.rotate(-Math.PI/2);
+      cx.fillStyle = '#090a0b'; let w = cx.measureText(text).width + 6; cx.fillRect(-w/2, -8, w, 16);
+      cx.fillStyle = '#948b76'; cx.fillText(text, 0, 0); cx.restore();
     } else {
-      let w = cx.measureText(text).width + 6;
-      cx.fillStyle = '#0a0e0f';
+      let w = cx.measureText(text).width + 6; cx.fillStyle = '#090a0b';
       cx.fillRect(x1 + (x2-x1)/2 - w/2, y1 - 18, w, 16);
-      cx.fillStyle = '#00e5c0';
-      cx.fillText(text, x1 + (x2-x1)/2, y1 - 10);
+      cx.fillStyle = '#948b76'; cx.fillText(text, x1 + (x2-x1)/2, y1 - 10);
     }
   }
 
-  // Background
-  cx.fillStyle = '#0a0e0f';
-  cx.fillRect(0, 0, W, H);
+  cx.fillStyle = '#090a0b'; cx.fillRect(0, 0, W, H);
 
-  // 1. Vento (Spostato per non incrociare i treni a Nord)
   const windY = 45;
-  cx.strokeStyle = '#c8d8d8';
-  cx.lineWidth = 2;
-  cx.setLineDash([5, 5]);
+  cx.strokeStyle = '#52585b'; cx.lineWidth = 2; cx.setLineDash([5, 5]);
   cx.beginPath(); cx.moveTo(W - 40, windY); cx.lineTo(W - 120, windY); cx.stroke();
-  cx.setLineDash([]);
-  drawArrow(W - 120, windY, Math.PI, '#c8d8d8');
-  cx.fillStyle = '#c8d8d8';
-  cx.font = "12px 'Share Tech Mono'";
-  cx.textAlign = 'right';
+  cx.setLineDash([]); drawArrow(W - 120, windY, Math.PI, '#52585b');
+  cx.fillStyle = '#7a7063'; cx.font = "12px 'Space Mono'"; cx.textAlign = 'right';
   cx.fillText("DIREZIONE VENTO", W - 40, windY - 14);
 
-  // 2. Zone Industriali (Sinistra)
   const indX = 40, indY = 60, indW = 220, indH = 320;
-  cx.fillStyle = 'rgba(232,160,32,0.2)';
-  cx.strokeStyle = '#e8a020';
-  cx.lineWidth = 2;
-  cx.fillRect(indX, indY, indW, indH);
-  cx.strokeRect(indX, indY, indW, indH);
-  
+  cx.fillStyle = 'rgba(64, 54, 34, 0.3)'; cx.strokeStyle = '#4a3f29'; cx.lineWidth = 2;
+  cx.fillRect(indX, indY, indW, indH); cx.strokeRect(indX, indY, indW, indH);
   cx.beginPath(); cx.moveTo(indX, indY + indH/2); cx.lineTo(indX + indW, indY + indH/2); cx.stroke();
   cx.beginPath(); cx.moveTo(indX + indW/2, indY); cx.lineTo(indX + indW/2, indY + indH); cx.stroke();
-
-  cx.fillStyle = '#e8a020';
-  cx.font = "bold 16px 'Barlow Condensed'";
-  cx.textAlign = 'center';
+  cx.fillStyle = '#827863'; cx.font = "bold 14px 'Cinzel'"; cx.textAlign = 'center';
   cx.fillText("SETTORE INDUSTRIALE", indX + indW/2, indY - 15);
 
-  // 3. Metropoli Fase 5 (Destra)
   const cityX = W/2 + 130, cityY = 60, cityW = 220, cityH = 320;
-  
-  cx.fillStyle = 'rgba(90,184,74,0.2)'; cx.strokeStyle = '#5ab84a';
-  cx.fillRect(cityX, cityY, cityW, cityH); cx.strokeRect(cityX, cityY, cityW, cityH);
-  
-  cx.fillStyle = 'rgba(139,111,212,0.25)'; cx.strokeStyle = '#8b6fd4';
-  cx.fillRect(cityX+30, cityY+40, cityW-60, cityH-80); cx.strokeRect(cityX+30, cityY+40, cityW-60, cityH-80);
-  
-  cx.fillStyle = 'rgba(196,170,255,0.3)'; cx.strokeStyle = '#c4aaff';
-  cx.fillRect(cityX+60, cityY+80, cityW-120, cityH-160); cx.strokeRect(cityX+60, cityY+80, cityW-120, cityH-160);
+  cx.fillStyle = 'rgba(38, 51, 38, 0.4)'; cx.fillRect(cityX, cityY, cityW, cityH); 
+  cx.fillStyle = 'rgba(52, 36, 54, 0.5)'; cx.fillRect(cityX+30, cityY+40, cityW-60, cityH-80); 
+  cx.fillStyle = 'rgba(59, 41, 41, 0.6)'; cx.fillRect(cityX+60, cityY+80, cityW-120, cityH-160); 
+  cx.strokeStyle = '#2a2d30'; cx.strokeRect(cityX, cityY, cityW, cityH);
+  cx.fillStyle = '#8c7b6c'; cx.font = "bold 14px 'Cinzel'"; cx.textAlign = 'center';
+  cx.fillText("METROPOLI (FASE 5)", cityX + cityW/2, cityY - 15);
 
-  cx.fillStyle = '#c4aaff';
-  cx.font = "bold 16px 'Barlow Condensed'";
-  cx.textAlign = 'center';
-  cx.fillText("HUB GLOBALE (FASE 5)", cityX + cityW/2, cityY - 15);
-
-  // 4. Autostrada (Centro, Verticale)
   const hwX = W/2;
-  cx.strokeStyle = '#2a7fd4'; cx.lineWidth = 10;
+  cx.strokeStyle = '#2a3138'; cx.lineWidth = 10;
   cx.beginPath(); cx.moveTo(hwX - 10, 0); cx.lineTo(hwX - 10, H); cx.stroke();
-  cx.strokeStyle = '#fff'; cx.lineWidth = 1; cx.setLineDash([8, 8]);
+  cx.strokeStyle = '#52585b'; cx.lineWidth = 1; cx.setLineDash([8, 8]);
   cx.beginPath(); cx.moveTo(hwX - 10, 0); cx.lineTo(hwX - 10, H); cx.stroke();
-  cx.setLineDash([]);
-  drawArrow(hwX - 10, 100, Math.PI/2, '#fff');
-  drawArrow(hwX - 10, H - 80, Math.PI/2, '#fff');
+  cx.setLineDash([]); drawArrow(hwX - 10, 100, Math.PI/2, '#7a7063'); drawArrow(hwX - 10, H - 80, Math.PI/2, '#7a7063');
   
-  cx.strokeStyle = '#2a7fd4'; cx.lineWidth = 10;
+  cx.strokeStyle = '#2a3138'; cx.lineWidth = 10;
   cx.beginPath(); cx.moveTo(hwX + 10, 0); cx.lineTo(hwX + 10, H); cx.stroke();
-  cx.strokeStyle = '#fff'; cx.lineWidth = 1; cx.setLineDash([8, 8]);
+  cx.strokeStyle = '#52585b'; cx.lineWidth = 1; cx.setLineDash([8, 8]);
   cx.beginPath(); cx.moveTo(hwX + 10, 0); cx.lineTo(hwX + 10, H); cx.stroke();
-  cx.setLineDash([]);
-  drawArrow(hwX + 10, 100, -Math.PI/2, '#fff');
-  drawArrow(hwX + 10, H - 80, -Math.PI/2, '#fff');
+  cx.setLineDash([]); drawArrow(hwX + 10, 100, -Math.PI/2, '#7a7063'); drawArrow(hwX + 10, H - 80, -Math.PI/2, '#7a7063');
 
-  cx.fillStyle = '#4a9fd4';
-  cx.font = "bold 13px 'Share Tech Mono'";
-  cx.textAlign = 'left';
-  cx.fillText("AUTOSTRADA ESTERNA (130km/h)", hwX + 25, 65);
-  cx.fillText("↓ VERSO PORTO E SCALI 🚢", hwX + 25, H - 20);
+  cx.fillStyle = '#8b8c89'; cx.font = "bold 12px 'Space Mono'"; cx.textAlign = 'left';
+  cx.fillText("AUTOSTRADA EST. (130km/h)", hwX + 25, 65); cx.fillText("↓ VERSO PORTI / SCALI", hwX + 25, H - 20);
 
-  // 5. Arteria Orizzontale a 6 Corsie
   const artY = H/2 + 20;
-  cx.strokeStyle = '#4a5c60'; cx.lineWidth = 12;
+  cx.strokeStyle = '#2f3336'; cx.lineWidth = 12;
   cx.beginPath(); cx.moveTo(hwX + 15, artY); cx.lineTo(cityX + cityW/2, artY); cx.stroke();
   cx.beginPath(); cx.moveTo(hwX - 15, artY); cx.lineTo(indX + indW/2, artY); cx.stroke();
 
-  // 6. Svincolo a Diamante (Stilizzato)
-  cx.strokeStyle = '#2a7fd4'; cx.lineWidth = 4;
-  cx.beginPath();
-  cx.moveTo(hwX, artY - 60);
-  cx.lineTo(hwX + 60, artY);
-  cx.lineTo(hwX, artY + 60);
-  cx.lineTo(hwX - 60, artY);
-  cx.closePath();
-  cx.stroke();
+  cx.strokeStyle = '#2a3138'; cx.lineWidth = 4;
+  cx.beginPath(); cx.moveTo(hwX, artY - 60); cx.lineTo(hwX + 60, artY); cx.lineTo(hwX, artY + 60); cx.lineTo(hwX - 60, artY); cx.closePath(); cx.stroke();
+  cx.fillStyle = '#090a0b'; cx.strokeStyle = '#2f3336'; cx.lineWidth = 2;
+  cx.beginPath(); cx.arc(hwX + 60, artY, 10, 0, Math.PI*2); cx.fill(); cx.stroke();
+  cx.beginPath(); cx.arc(hwX - 60, artY, 10, 0, Math.PI*2); cx.fill(); cx.stroke();
+  cx.beginPath(); cx.arc(cityX, artY, 8, 0, Math.PI*2); cx.fill(); cx.stroke();
 
-  cx.fillStyle = '#0a0e0f'; cx.strokeStyle = '#4a5c60'; cx.lineWidth = 3;
-  cx.beginPath(); cx.arc(hwX + 60, artY, 12, 0, Math.PI*2); cx.fill(); cx.stroke();
-  cx.beginPath(); cx.arc(hwX - 60, artY, 12, 0, Math.PI*2); cx.fill(); cx.stroke();
-  cx.beginPath(); cx.arc(cityX, artY, 10, 0, Math.PI*2); cx.fill(); cx.stroke();
-
-  // 7. FASE 5: Rete Ferroviaria a Nord
   const trainY = 18;
-  
-  // Linea Ferroviaria Principale (Orizzontale, taglia il Nord) - Fatta a viadotto sull'autostrada
-  cx.strokeStyle = '#3e4e52'; cx.lineWidth = 6;
+  cx.strokeStyle = '#232629'; cx.lineWidth = 6;
   cx.beginPath(); cx.moveTo(0, trainY); cx.lineTo(W, trainY); cx.stroke();
-  cx.strokeStyle = '#95a5a6'; cx.lineWidth = 2; cx.setLineDash([4, 6]);
-  cx.beginPath(); cx.moveTo(0, trainY); cx.lineTo(W, trainY); cx.stroke();
-  cx.setLineDash([]);
+  cx.strokeStyle = '#66554e'; cx.lineWidth = 2; cx.setLineDash([4, 6]);
+  cx.beginPath(); cx.moveTo(0, trainY); cx.lineTo(W, trainY); cx.stroke(); cx.setLineDash([]);
   
-  // Stazione Passeggeri (Sopra la Metropoli)
-  const stationW = 120, stationH = 24;
-  const stationX = cityX + cityW/2 - stationW/2;
-  cx.fillStyle = '#2c3e50'; cx.fillRect(stationX, trainY - stationH/2, stationW, stationH);
-  cx.strokeStyle = '#d44a4a'; cx.lineWidth = 2; cx.strokeRect(stationX, trainY - stationH/2, stationW, stationH);
-  cx.fillStyle = '#fff'; cx.font = "14px 'Segoe UI Emoji', sans-serif"; cx.textAlign = 'center'; cx.textBaseline = 'middle';
-  cx.fillText("🚂 STAZIONE", stationX + stationW/2, trainY);
+  const stationW = 120, stationH = 24; const stationX = cityX + cityW/2 - stationW/2;
+  cx.fillStyle = '#17181a'; cx.fillRect(stationX, trainY - stationH/2, stationW, stationH);
+  cx.strokeStyle = '#3d3835'; cx.lineWidth = 2; cx.strokeRect(stationX, trainY - stationH/2, stationW, stationH);
+  cx.fillStyle = '#a3a8a8'; cx.font = "12px 'Space Mono'"; cx.textAlign = 'center'; cx.textBaseline = 'middle';
+  cx.fillText("STAZIONE", stationX + stationW/2, trainY);
   
-  // Binario di Servizio verso i YARDS (Zona Industriale)
   const branchX = indX + indW/2; 
-  cx.strokeStyle = '#3e4e52'; cx.lineWidth = 4;
-  cx.beginPath(); cx.moveTo(branchX + 40, trainY); 
-  cx.quadraticCurveTo(branchX, trainY, branchX, trainY + 40);
-  cx.lineTo(branchX, indY + 20); cx.stroke();
-  
-  cx.strokeStyle = '#95a5a6'; cx.lineWidth = 1.5; cx.setLineDash([3, 5]);
-  cx.beginPath(); cx.moveTo(branchX + 40, trainY); 
-  cx.quadraticCurveTo(branchX, trainY, branchX, trainY + 40);
-  cx.lineTo(branchX, indY + 20); cx.stroke();
-  cx.setLineDash([]);
+  cx.strokeStyle = '#232629'; cx.lineWidth = 4;
+  cx.beginPath(); cx.moveTo(branchX + 40, trainY); cx.quadraticCurveTo(branchX, trainY, branchX, trainY + 40); cx.lineTo(branchX, indY + 20); cx.stroke();
+  cx.strokeStyle = '#66554e'; cx.lineWidth = 1.5; cx.setLineDash([3, 5]);
+  cx.beginPath(); cx.moveTo(branchX + 40, trainY); cx.quadraticCurveTo(branchX, trainY, branchX, trainY + 40); cx.lineTo(branchX, indY + 20); cx.stroke(); cx.setLineDash([]);
 
-  // YARDS TPL (Deposito dentro l'Industria)
   const yardW = 100, yardH = 40;
-  cx.fillStyle = '#2c3e50'; cx.fillRect(branchX - yardW/2, indY + 20, yardW, yardH);
-  cx.strokeStyle = '#d44a4a'; cx.lineWidth = 2; cx.strokeRect(branchX - yardW/2, indY + 20, yardW, yardH);
-  cx.fillStyle = '#fff'; cx.font = "bold 11px 'Share Tech Mono'"; cx.textAlign = 'center'; cx.textBaseline = 'middle';
-  cx.fillText("YARDS TPL", branchX, indY + 40);
+  cx.fillStyle = '#17181a'; cx.fillRect(branchX - yardW/2, indY + 20, yardW, yardH);
+  cx.strokeStyle = '#3d3835'; cx.lineWidth = 2; cx.strokeRect(branchX - yardW/2, indY + 20, yardW, yardH);
+  cx.fillStyle = '#a3a8a8'; cx.font = "bold 11px 'Space Mono'"; cx.textAlign = 'center'; cx.textBaseline = 'middle';
+  cx.fillText("YARDS / DEPOSITI", branchX, indY + 40);
 
-  // Prolungamento Metro verso Aeroporto
-  cx.strokeStyle = 'rgba(0, 229, 192, 0.8)'; cx.lineWidth = 4;
-  cx.setLineDash([8, 8]);
-  cx.beginPath(); 
-  cx.moveTo(cityX + cityW/2, cityY + cityH/2); 
-  cx.lineTo(cityX + cityW - 10, H - 40); 
-  cx.lineTo(W, H - 40); 
-  cx.stroke(); cx.setLineDash([]);
-  
-  cx.fillStyle = '#00e5c0'; cx.font = "bold 11px 'Share Tech Mono'"; cx.textAlign = 'right';
-  cx.fillText("METRO -> AEROPORTO ✈️", W - 10, H - 50);
+  cx.strokeStyle = '#526b6b'; cx.lineWidth = 2; cx.setLineDash([6, 6]);
+  cx.beginPath(); cx.moveTo(cityX + cityW/2, cityY + cityH/2); cx.lineTo(cityX + cityW - 10, H - 40); cx.lineTo(W, H - 40); cx.stroke(); cx.setLineDash([]);
+  cx.fillStyle = '#526b6b'; cx.font = "bold 10px 'Space Mono'"; cx.textAlign = 'right';
+  cx.fillText("METRO -> AEROPORTO", W - 10, H - 50);
 
-  // 8. Dimensioni / Quote
-  drawDimLine(hwX + 72, artY - 30, cityX - 5, artY - 30, "Buffer Traffico: 240m");
-  drawDimLine(indX + indW + 5, artY + 30, hwX - 72, artY + 30, "Buffer Pesante: 160m");
-
+  drawDimLine(hwX + 72, artY - 30, cityX - 5, artY - 30, "BUFFER: 240m");
+  drawDimLine(indX + indW + 5, artY + 30, hwX - 72, artY + 30, "BUFFER PESANTE: 160m");
 })();
 </script>
 
 <!-- 02. ZONIZZAZIONE E SVILUPPO ADDITIVO -->
 <div class="section">
   <div class="section-header">
-    <span class="section-num">02</span>
-    <span class="section-title">Zonizzazione — Sviluppo Additivo (Zero Demolizioni)</span>
+    <span class="section-num">IV</span>
+    <span class="section-title">Zonizzazione — Sviluppo Additivo</span>
   </div>
   <div class="section-body">
-    <div class="note" style="margin-bottom:4px">
-      <strong>La meccanica dei Livelli (XP):</strong> Ogni volta che demolisci una zona residenziale o commerciale per aumentare la densità, resetti il livello degli edifici da 5 a 1. I cittadini perdono ricchezza, istruzione vicina e le aziende perdono efficienza. <span class="ok">Sviluppa in modo ADDITIVO espandendo la città, preservando i vecchi quartieri.</span>
+    <div class="note">
+      <strong>Livelli (XP) Override:</strong> Demolire zone per densificare = reset del livello da 5 a 1. I cittadini perdono ricchezza, le attività perdono efficienza. <span class="ok">Costruisci in modo ADDITIVO, estendendo la griglia e preservando i blocchi storici.</span>
     </div>
 
     <table>
       <tr>
         <th>Fase</th>
-        <th>Dimensioni Mappa</th>
-        <th>Dinamica di Zonizzazione</th>
+        <th>Coordinate</th>
+        <th>Zoning Override</th>
       </tr>
       <tr>
-        <td><span class="tag tag-zon">1. Borgo</span></td>
-        <td class="val">Base Sud</td>
-        <td>Fondi la città vicino allo svincolo autostradale (Sud). Crea l'arteria commerciale. Il resto è puro <strong>Low Density</strong>. Lascia che livellino a 5 stelle in pace.</td>
+        <td><span class="tag tag-res">1. BORGO INIZIALE</span></td>
+        <td class="val">Origin Sud</td>
+        <td>Fondi la città vicino allo svincolo (Sud). Crea l'arteria commerciale. Il resto è puro <strong>Low Density</strong>.</td>
       </tr>
       <tr>
-        <td><span class="tag tag-com">2. Espansione</span></td>
-        <td class="val">Fascia Media</td>
-        <td>Quando sblocchi la densità media, NON demolire la Fase 1. Estendi la maglia stradale a Nord. Costruisci i nuovi lotti come <strong>Medium Density e Low Rent</strong>.</td>
+        <td><span class="tag" style="color:var(--accent3);">2. ESPANSIONE</span></td>
+        <td class="val">Fascia Y-Mid</td>
+        <td>Sblocco densità media. Estendi la maglia a Nord. Nuovi lotti come <strong>Medium Density e Low Rent</strong>.</td>
       </tr>
       <tr>
-        <td><span class="tag tag-warn">3. Centro Direz.</span></td>
-        <td class="val">Nuovo Cuore Nord</td>
-        <td>La domanda di uffici e High Density esplode. Costruisci un nuovo "Centro Città" ancora più a Nord. Usa <strong>Uffici</strong> per separare le case dalle future arterie rumorose.</td>
+        <td><span class="tag" style="color:var(--accent2);">3. CENTRO CITTÀ</span></td>
+        <td class="val">Nord Core</td>
+        <td>Esplosione uffici e High Density. Usa gli <strong>Uffici</strong> come scudo acustico per le arterie rumorose.</td>
       </tr>
       <tr>
-        <td><span class="tag" style="background:rgba(255,107,53,0.15);color:var(--accent2);border:1px solid rgba(255,107,53,0.3);">4. Metropoli</span></td>
+        <td><span class="tag" style="color:var(--accent);">4. METROPOLI</span></td>
         <td class="val">Periferie</td>
-        <td>Il Land Value al centro è altissimo. Congela l'espansione ad alta densità qui, e ricomincia a costruire nuovi sobborghi Low Density ai bordi estremi, connessi via Metro.</td>
+        <td>Land Value critico al centro. Congela il nucleo, spawna nuovi sobborghi Low Density ai bordi.</td>
       </tr>
       <tr>
-        <td><span class="tag" style="background:rgba(232,67,147,0.15);color:#e84393;border:1px solid rgba(232,67,147,0.3);">5. Hub Globale</span></td>
-        <td class="val">Connessioni Esterne</td>
-        <td>Il distretto è maturo. Si costruisce la Stazione Ferroviaria ai margini (per non tagliare la città coi binari) e si prolungano Arterie e Metro verso Porto e Aeroporto fuori mappa.</td>
+        <td><span class="tag" style="color:var(--muted);">5. HUB GLOBALE</span></td>
+        <td class="val">Connessioni EXT</td>
+        <td>Innesta Stazione Ferroviaria al margine Nord e prolunga la Metro verso gli scali esterni.</td>
       </tr>
     </table>
   </div>
@@ -934,38 +835,38 @@
 <!-- 03. TRASPORTI PUBBLICI E CAPILLARITA' -->
 <div class="section">
   <div class="section-header">
-    <span class="section-num">03</span>
-    <span class="section-title">Trasporti Pubblici — Capillarità e Libertà Architettonica</span>
+    <span class="section-num">V</span>
+    <span class="section-title">Transit Network — Capillarità</span>
   </div>
   <div class="section-body">
-    <div class="note" style="border-color: var(--accent2); margin-bottom: 12px;">
-      <strong>L'Errore Fatale:</strong> Far camminare i pedoni per 1 km per raggiungere una fermata perimetrale. In CS2, se la fermata è troppo lontana o manca il parcheggio (vedi sezione successiva), le IA prenderanno la propria auto privata, intasando i collettori.
+    <div class="note">
+      <strong>Pathfinding Error:</strong> Camminata > 1km = L'IA forza l'auto privata = Gridlock. Garantisci copertura capillare.
     </div>
     
     <div class="grid-zone">
       <div class="zone-card">
-        <div class="zone-card-title" style="color:var(--accent2)">🚌 Rete Bus (Capillare)</div>
-        <div class="line"><span>Ruolo</span><span>Penetrazione nel quartiere</span></div>
-        <div class="line"><span>Distanza casa-fermata</span><span>Max 400m (50 celle)</span></div>
-        <div style="font-size: 0.8rem; color: var(--muted); margin-top: 5px;">Le linee bus <strong>devono intrecciarsi</strong>. Crea una linea "Interna" per i primi servizi, ed espandi con linee "Periferiche" che raggiungano i bordi (Est, Ovest, Nord), portando i pendolari ai Tram o alla Metro senza far usare loro l'auto.</div>
+        <div class="zone-card-title" style="color:var(--accent2)">Bus (Micro-Routing)</div>
+        <div class="line"><span>Ruolo</span><span>Penetrazione blocchi</span></div>
+        <div class="line"><span>Distanza Max</span><span>400m (50 celle)</span></div>
+        <div style="font-size: 0.8rem; color: var(--text); margin-top: 5px;">Linee a serpentina. Raccogli i pedoni dalle zone a bassa densità e scaricali sul Tram/Metro.</div>
       </div>
       <div class="zone-card">
-        <div class="zone-card-title" style="color:var(--accent3)">🚊 Tram (Asse di Forza)</div>
-        <div class="line"><span>Ruolo</span><span>Spostamento di massa in superficie</span></div>
-        <div class="line"><span>Posizione</span><span>Arterie larghe (4 corsie) / Assi Commerciali</span></div>
-        <div style="font-size: 0.8rem; color: var(--muted); margin-top: 5px;">I tram non si infilano nei viottoli. Viaggiano dritti sui viali principali commerciali e uffici per raccogliere il flusso dei bus e portarlo agli Hub Metro.</div>
+        <div class="zone-card-title" style="color:var(--srv-med)">Tram (Asse di Forza)</div>
+        <div class="line"><span>Ruolo</span><span>Spostamento di massa</span></div>
+        <div class="line"><span>Posizione</span><span>Arterie 4c / Assi Com.</span></div>
+        <div style="font-size: 0.8rem; color: var(--text); margin-top: 5px;">I tram corrono dritti per convogliare il carico dei bus verso l'Hub Metropolitano.</div>
       </div>
       <div class="zone-card">
-        <div class="zone-card-title" style="color:var(--accent)">🚇 Metro (Libertà Sotterranea)</div>
-        <div class="line"><span>Ruolo</span><span>Connessione inter-distrettuale veloce</span></div>
-        <div class="line"><span>Posizione Tunnel</span><span>Ovunque (Ignora la griglia di superficie)</span></div>
-        <div style="font-size: 0.8rem; color: var(--muted); margin-top: 5px;">I tunnel della metropolitana si scavano a -20m. <strong>Usa le diagonali e le curve fluide!</strong> Risparmia tempo e soldi non seguendo il tracciato delle strade sovrastanti. Punta dritto da Hub a Hub.</div>
+        <div class="zone-card-title" style="color:#526b6b">Metro (Deep Underground)</div>
+        <div class="line"><span>Ruolo</span><span>Link Inter-Distretto</span></div>
+        <div class="line"><span>Posizione</span><span>Ignora la superficie</span></div>
+        <div style="font-size: 0.8rem; color: var(--text); margin-top: 5px;">Scava a -20m. Taglia in diagonale. Punta dritto da Hub a Hub per la via più veloce.</div>
       </div>
       <div class="zone-card">
-        <div class="zone-card-title" style="color:#d44a4a">🚂 Treno (Intercity)</div>
-        <div class="line"><span>Ruolo</span><span>Turismo / Lavoratori Esterni</span></div>
-        <div class="line"><span>Impatto Acustico</span><span>Estremo</span></div>
-        <div style="font-size: 0.8rem; color: var(--muted); margin-top: 5px;">Posizionalo fuori città, magari vicino al comparto industriale, ed estendi una linea Metro dedicata per portare i turisti in centro senza che usino l'auto.</div>
+        <div class="zone-card-title" style="color:#66554e">Treno (Intercity)</div>
+        <div class="line"><span>Ruolo</span><span>Import Lavoratori</span></div>
+        <div class="line"><span>Acustica</span><span>Impatto Letale</span></div>
+        <div style="font-size: 0.8rem; color: var(--text); margin-top: 5px;">Tienilo ai bordi della mappa. Scambia con il TPL per non riversare auto in strada.</div>
       </div>
     </div>
   </div>
@@ -974,42 +875,35 @@
 <!-- 04. GESTIONE PARCHEGGI E LOGICA DI PATHFINDING -->
 <div class="section">
   <div class="section-header">
-    <span class="section-num">04</span>
-    <span class="section-title">Gestione Parcheggi (Park & Ride)</span>
+    <span class="section-num">VI</span>
+    <span class="section-title">Stoccaggio Veicoli (Park & Ride)</span>
   </div>
   <div class="section-body">
-    <div class="note" style="margin-bottom:12px">
-      <strong>La Logica Occulta di CS2:</strong> Nel motore di pathfinding del gioco, un cittadino calcola il tragitto in auto <em>solo se sa che troverà parcheggio</em>. Se mancano parcheggi al lavoro o ai negozi, comincerà a guidare a vuoto creando traffico infinito, oppure rinuncerà ad uscire di casa.
+    <div class="note">
+      <strong>Pathfinding IA:</strong> Un cittadino calcola il tragitto in auto <em>solo se sa che troverà parcheggio</em>. Nessun parcheggio = Usa il bus o resta a casa.
     </div>
 
     <div class="hierarchy">
       <div class="h-row">
-        <span class="tag tag-res" style="background:#0f1518; border-color:var(--zone-park); color:var(--zone-park);">SUBURBI (Low Density)</span>
-        <span class="h-name">Zero parcheggi pubblici</span>
-        <span class="h-vals">Ogni casa ha il suo vialetto privato</span>
+        <span class="tag" style="color:var(--zone-res);">SUBURBI (Low Density)</span>
+        <span class="h-name">Nessun Parcheggio Pubblico</span>
+        <span class="h-vals">Privato Only</span>
       </div>
-      <div class="h-arrow" style="padding-left:20px">Inutile sprecare soldi e spazio per parcheggi qui.</div>
-      
       <div class="h-row">
-        <span class="tag tag-art" style="background:#0f1518; border-color:var(--zone-park); color:var(--zone-park);">HUB METRO / TRAM</span>
-        <span class="h-name">Grandi parcheggi (Park & Ride)</span>
-        <span class="h-vals">Sotterranei o Multipiano adiacenti alla stazione</span>
+        <span class="tag" style="color:var(--accent3);">HUB METRO / TRAM</span>
+        <span class="h-name">Park & Ride Massiccio</span>
+        <span class="h-vals">Sotterranei / Multipiano</span>
       </div>
-      <div class="h-arrow" style="padding-left:20px">Intercetta chi arriva dalla periferia in auto, facendolo scendere e prendere il treno per il centro.</div>
-
       <div class="h-row">
-        <span class="tag tag-col" style="background:#0f1518; border-color:var(--zone-park); color:var(--zone-park);">CENTRO CITTÀ (High Density)</span>
-        <span class="h-name">Pochi e costosi</span>
-        <span class="h-vals">Tariffa al massimo (50$)</span>
+        <span class="tag" style="color:var(--zone-high);">CENTRO CITTÀ (High Density)</span>
+        <span class="h-name">Pochi e molto costosi</span>
+        <span class="h-vals">Tariffa Max (50$)</span>
       </div>
-      <div class="h-arrow" style="padding-left:20px">Disincentiva fisicamente l'utilizzo dell'auto privata per i pendolari, forzando l'uso del trasporto pubblico.</div>
-
       <div class="h-row">
-        <span class="tag tag-com" style="background:#0f1518; border-color:var(--zone-park); color:var(--zone-park);">ARTERIE COMMERCIALI</span>
-        <span class="h-name">Rimuovi la sosta in strada</span>
-        <span class="h-vals">Aggiungi alberi/erba ai lati della carreggiata</span>
+        <span class="tag" style="color:var(--zone-com);">ARTERIE COMMERCIALI</span>
+        <span class="h-name">Sosta in strada Disabilitata</span>
+        <span class="h-vals">Aggiungi alberi ai lati</span>
       </div>
-      <div class="h-arrow" style="padding-left:20px">Costruisci un parcheggio dedicato a 1-2 isolati di distanza. Le auto che si fermano a bordo strada paralizzano i collettori.</div>
     </div>
   </div>
 </div>
@@ -1017,44 +911,38 @@
 <!-- 05. SERVIZI CITTADINI (PLOPPABLES) -->
 <div class="section">
   <div class="section-header">
-    <span class="section-num">05</span>
-    <span class="section-title">Servizi Cittadini (Ploppables) — Posizionamento e Upgrade</span>
+    <span class="section-num">VII</span>
+    <span class="section-title">Gestione Servizi (Ploppables)</span>
   </div>
   <div class="section-body">
-    <div class="note" style="margin-bottom:12px; border-color: #3498db;">
-      <strong>Regola dell'Espansione Modulare:</strong> In CS2, i servizi (scuole, ospedali, caserme) ricevono <em>upgrade fisici</em>. Lascia sempre <strong>almeno 4-6 celle vuote</strong> ai lati o sul retro dell'edificio per le future espansioni, oppure usa quello spazio per parcheggi di superficie che potrai demolire senza perdere cittadini.
-    </div>
-    
-    <div class="note" style="margin-bottom:12px; background:rgba(255,255,255,0.02); border-left:2px solid var(--border);">
-      <strong>Doppio Funzionamento:</strong> 
-      1. <em>Passivo (AoE):</em> Colora le strade di verde, alza il Land Value e la felicità locale.<br>
-      2. <em>Attivo (Mezzi):</em> Le auto fisiche (volanti, ambulanze, camion) devono navigare nel traffico. Se piazzi una caserma su una stradina locale, i mezzi di soccorso rimarranno imbottigliati nel traffico residenziale.
+    <div class="note">
+      <strong>Espansione Modulare:</strong> I servizi ricevono <em>upgrade fisici</em>. Lascia <strong>4-6 celle vuote</strong> attorno all'edificio. Doppio funzionamento: <em>Passivo (AoE)</em> e <em>Attivo (Veicoli fisici nel traffico)</em>.
     </div>
 
     <div class="grid-zone">
       <div class="zone-card">
-        <div class="zone-card-title" style="color:var(--srv-med)">🏥 Sanità e Morte (Fase 1)</div>
-        <div class="line"><span>Posizione Clinica</span><span>Cuore del borgo iniziale</span></div>
-        <div class="line"><span>Posizione Cimitero</span><span>Bordi silenziosi residenziali</span></div>
-        <div style="font-size: 0.8rem; color: var(--muted); margin-top: 5px;">I cittadini si ammalano e muoiono subito. La clinica va al centro della Fase 1 per la massima copertura. Il cimitero va ai bordi: i carri rallentano il traffico, ma l'edificio funge da parco aumentando enormemente il Land Value.</div>
+        <div class="zone-card-title" style="color:var(--srv-med)">Sanità & Morte</div>
+        <div class="line"><span>Clinica</span><span>Cuore del borgo</span></div>
+        <div class="line"><span>Cimitero</span><span>Bordi isolati</span></div>
+        <div style="font-size: 0.8rem; color: var(--text); margin-top: 5px;">Clinica centrale. Il cimitero funge da parco per il Land Value attenuando il traffico funebre.</div>
       </div>
       <div class="zone-card">
-        <div class="zone-card-title" style="color:var(--srv-fire)">🚒 Fuoco e Polizia (Fase 2/3)</div>
-        <div class="line"><span>Posizione ideale</span><span>Collettori centrali (4c)</span></div>
-        <div class="line"><span>Da evitare</span><span>Vicoli, Strade Locali</span></div>
-        <div style="font-size: 0.8rem; color: var(--muted); margin-top: 5px;">Possono aspettare le prime espansioni. Devono poter raggiungere ogni punto velocemente. Su una strada a 4 corsie i mezzi di soccorso a sirene spiegate possono sorpassare il traffico civile in coda.</div>
+        <div class="zone-card-title" style="color:var(--srv-fire)">Fuoco & Polizia</div>
+        <div class="line"><span>Posizione</span><span>Collettori (4c)</span></div>
+        <div class="line"><span>Avoid</span><span>Strade Locali</span></div>
+        <div style="font-size: 0.8rem; color: var(--text); margin-top: 5px;">Le volanti e ambulanze su una 4 corsie possono sorpassare agevolmente la coda.</div>
       </div>
       <div class="zone-card">
-        <div class="zone-card-title" style="color:var(--srv-edu)">📚 Educazione (Scuole, College)</div>
-        <div class="line"><span>Elem. (Fase 2/3)</span><span>Cuore dei quartieri pedonali</span></div>
-        <div class="line"><span>Sup/Uni (Fase 3/4)</span><span>Nodi TPL (Tram/Metro)</span></div>
-        <div style="font-size: 0.8rem; color: var(--muted); margin-top: 5px;">Le Scuole Elementari non attirano auto da lontano: mettile tra le case. High School e College muovono migliaia di studenti da tutto il distretto: mettile SULLE fermate di tram/bus per impedire che tutti vengano in auto.</div>
+        <div class="zone-card-title" style="color:var(--srv-edu)">Educazione</div>
+        <div class="line"><span>Elementari</span><span>Centri pedonali</span></div>
+        <div class="line"><span>College</span><span>Nodi TPL (Tram/Metro)</span></div>
+        <div style="font-size: 0.8rem; color: var(--text); margin-top: 5px;">Costringi gli studenti a prendere i mezzi, o il flusso di auto soffocherà i collettori.</div>
       </div>
       <div class="zone-card">
-        <div class="zone-card-title" style="color:var(--srv-post)">🗑️ Poste e Rifiuti (Fase 3)</div>
-        <div class="line"><span>Posizione ideale</span><span>Estremi bordi sull'Arteria (6c)</span></div>
-        <div class="line"><span>Impatto Traffico</span><span>Camion continui e lenti</span></div>
-        <div style="font-size: 0.8rem; color: var(--muted); margin-top: 5px;">I mezzi logistici fermano e ripartono in continuazione. Poni i depositi alle uscite della città, così i furgoni si riversano sull'arteria veloce e defluiscono prima di intasare le zone dense. Usa le buchette manuali nei quartieri.</div>
+        <div class="zone-card-title" style="color:var(--srv-post)">Logistica Lenta</div>
+        <div class="line"><span>Posizione</span><span>Bordi estremi (Arterie 6c)</span></div>
+        <div class="line"><span>Traffico</span><span>Camion continui</span></div>
+        <div style="font-size: 0.8rem; color: var(--text); margin-top: 5px;">Rifiuti e Poste generano furgoni lenti. Piazzali all'uscita della città verso l'autostrada.</div>
       </div>
     </div>
   </div>
@@ -1063,39 +951,39 @@
 <!-- 06. GERARCHIA STRADALE -->
 <div class="section">
   <div class="section-header">
-    <span class="section-num">06</span>
-    <span class="section-title">Gerarchia Stradale e Regole Base</span>
+    <span class="section-num">VIII</span>
+    <span class="section-title">Gerarchia Stradale Base</span>
   </div>
   <div class="section-body">
     <div class="hierarchy">
       <div class="h-row">
-        <span class="tag tag-art">AUTOSTRADA</span>
+        <span class="tag">AUTOSTRADA</span>
         <span class="h-name">2 carreggiate separate</span>
-        <span class="h-vals">130 km/h &nbsp;|&nbsp; nessun accesso diretto</span>
+        <span class="h-vals">130 km/h</span>
       </div>
       <div class="h-arrow" style="padding-left:20px">↓ svincolo ogni 1500–2000m (188–250 celle)</div>
       <div class="h-row">
-        <span class="tag tag-art">ARTERIA</span>
+        <span class="tag">ARTERIA</span>
         <span class="h-name">6 corsie (Grande Viabilità)</span>
-        <span class="h-vals">60 km/h &nbsp;|&nbsp; confini di distretto, scorrimento</span>
+        <span class="h-vals">60 km/h</span>
       </div>
       <div class="h-arrow" style="padding-left:20px">↓ innesto ogni 300–400m</div>
       <div class="h-row">
-        <span class="tag tag-col">COLLETTORE PRIMARIO</span>
+        <span class="tag">COLLETTORE PRIM.</span>
         <span class="h-name">4 corsie</span>
-        <span class="h-vals">50 km/h &nbsp;|&nbsp; ospita le linee di Tram</span>
+        <span class="h-vals">50 km/h &nbsp;//&nbsp; TRAM</span>
       </div>
       <div class="h-arrow" style="padding-left:20px">↓ innesto ogni 100–150m</div>
       <div class="h-row">
-        <span class="tag tag-col">COLLETTORE SECONDARIO</span>
+        <span class="tag">COLLETTORE SEC.</span>
         <span class="h-name">2 corsie</span>
-        <span class="h-vals">40 km/h &nbsp;|&nbsp; arteria interna del quartiere, ospita i Bus</span>
+        <span class="h-vals">40 km/h &nbsp;//&nbsp; BUS</span>
       </div>
       <div class="h-arrow" style="padding-left:20px">↓ innesto capillare</div>
       <div class="h-row">
-        <span class="tag tag-res">LOCALE / ALLEY</span>
-        <span class="h-name">2 corsie strette / 1 corsia</span>
-        <span class="h-vals">30 km/h &nbsp;|&nbsp; traffico residenziale lento</span>
+        <span class="tag">LOCALE / ALLEY</span>
+        <span class="h-name">2 corsie / 1 corsia</span>
+        <span class="h-vals">30 km/h</span>
       </div>
     </div>
   </div>
@@ -1104,48 +992,47 @@
 <!-- 07. SOTTERRANEO E PENDENZE -->
 <div class="section">
   <div class="section-header">
-    <span class="section-num">07</span>
-    <span class="section-title">Sotterraneo — Quote e Slope Too Steep</span>
+    <span class="section-num">IX</span>
+    <span class="section-title">Infrastrutture Sottosuolo</span>
   </div>
   <div class="section-body">
     <div class="underground-grid">
       <div class="u-layer">
         <div class="u-depth">0 → -8m</div>
         <div class="u-content">
-          <span class="tag tag-col">PIPES acqua/fognatura</span>
-          <span style="color:var(--muted);font-size:0.8rem">Cavi elettrici (auto-interrati)</span>
+          <span class="tag">PIPES</span>
+          <span style="color:var(--text);font-size:0.85rem">Acqua / Fognatura / Cavi</span>
         </div>
       </div>
       <div class="u-layer">
         <div class="u-depth">-10 → -20m</div>
         <div class="u-content">
-          <span class="tag tag-art">METRO superficiale</span>
-          <span style="color:var(--muted);font-size:0.8rem">Tunnel diretti verso stazioni vicine</span>
+          <span class="tag">METRO SUP.</span>
+          <span style="color:var(--text);font-size:0.85rem">Tunnel verso stazioni</span>
         </div>
       </div>
       <div class="u-layer">
         <div class="u-depth">-20 → -35m</div>
         <div class="u-content">
-          <span class="tag tag-art">METRO profonda</span>
-          <span class="tag tag-res">TUNNEL auto</span>
-          <span style="color:var(--muted);font-size:0.8rem">Incroci sotterranei e diagonali libere</span>
+          <span class="tag">METRO PROF.</span>
+          <span style="color:var(--text);font-size:0.85rem">Diagonali libere nel buio</span>
         </div>
       </div>
       <div class="u-layer">
         <div class="u-depth">-35 → -50m</div>
         <div class="u-content">
-          <span class="tag tag-ind">TRENO merci/intercity</span>
-          <span style="color:var(--muted);font-size:0.8rem">Passaggi lunghi, curve molto ampie</span>
+          <span class="tag">TRENO PESANTE</span>
+          <span style="color:var(--text);font-size:0.85rem">Merci / Regionale (Curve enormi)</span>
         </div>
       </div>
     </div>
 
     <div class="rule-block" style="margin-top: 12px;">
-      <div class="rule-title">Slope Too Steep — Calcolo pendenza</div>
-      CS2 limite pendenza: <span class="formula">max 10% = 1m di discesa ogni 10m orizzontali</span><br><br>
-      Per scendere di <strong>10m</strong> di profondità servono almeno <span class="formula">100m orizzontali = 13 celle</span><br>
-      Per scendere a <strong>-35m</strong> (metro profonda) servono almeno <span class="formula">350m = 44 celle</span><br><br>
-      <span style="color:var(--muted);font-size:0.82rem">Usa sempre il 120–130% di queste distanze per sicurezza. Una curva in discesa aggrava l'errore: raddoppia il raggio minimo se curvi scendendo.</span>
+      <div class="rule-title">Calcolo pendenza</div>
+      CS2 limite: <span style="color:var(--accent3);">max 10% = 1m discesa ogni 10m orizzontali</span><br><br>
+      Per <strong>-10m</strong> servono <span>100m = 13 celle</span><br>
+      Per <strong>-35m</strong> (metro) servono <span>350m = 44 celle</span><br><br>
+      <span style="color:var(--muted);font-size:0.85rem">Usa il 130% di base. Curve in discesa raddoppiano l'errore.</span>
     </div>
   </div>
 </div>
@@ -1160,25 +1047,16 @@
   const CS = W / CELLS; 
 
   const COLORS = {
-    'COM': '#4a9fd4', 'OFF': '#2a7fd4', 'LOW': '#5ab84a',
-    'LOW_R': '#c2a878', 'MED': '#8b6fd4', 'HIGH': '#c4aaff',
-    'STATION': '#0f1518', 'PARK': '#95a5a6'
+    'COM': '#283747', 'OFF': '#2f2538', 'LOW': '#263326',
+    'LOW_R': '#3b3026', 'MED': '#342436', 'HIGH': '#3b2929',
+    'STATION': '#1a1c1e', 'PARK': '#202326'
   };
 
   let currentPhase = 1;
   let activeLayers = {
-    zones: true,
-    roads: true,
-    bus: true,
-    tram: true,
-    metro: true,
-    park: true,
-    services: true
+    zones: true, roads: true, bus: true, tram: true,
+    metro: true, park: true, services: true
   };
-
-  // =====================================
-  // DATI STRUTTURALI DELLA MAPPA
-  // =====================================
 
   const zoneMap = [
     ['LOW','LOW','LOW',  'MED',  'STATION',  'MED',  'LOW','LOW','LOW'], 
@@ -1204,24 +1082,16 @@
     [1, 1, 1, 1, 1, 1, 1, 1, 1]  
   ];
 
-  // Configurazione dei Servizi (Ploppables) Algoritmica
   const servicesData = [
-    // Sanità e Morte (Necessità assolute in Fase 1)
-    {c: 4, r: 6, minPhase: 1, color: 'var(--srv-med)', icon: '🏥', label: 'CLINICA'}, 
-    {c: 6, r: 6, minPhase: 1, color: 'var(--srv-death)', icon: '⚰️', label: 'CIMITERO'}, 
-
-    // Emergenze e Sicurezza (Possono aspettare Fase 2 e 3)
-    {c: 2, r: 5, minPhase: 2, color: 'var(--srv-fire)', icon: '🚒', label: 'FUOCO'},  
-    {c: 5, r: 3, minPhase: 3, color: 'var(--srv-pol)', icon: '🚓', label: 'POLIZIA'}, 
-    
-    // Educazione (Cresce con le fasi)
-    {c: 2, r: 2, minPhase: 3, color: 'var(--srv-edu)', icon: '📚', label: 'ELEM.'},
-    {c: 6, r: 2, minPhase: 3, color: 'var(--srv-edu)', icon: '📚', label: 'ELEM.'},
-    {c: 2, r: 4, minPhase: 3, color: 'var(--srv-edu)', icon: '🎓', label: 'HIGH S.'},
-    {c: 6, r: 4, minPhase: 4, color: 'var(--srv-edu)', icon: '🏛️', label: 'COLLEGE'},
-    
-    // Logistica Lenta 
-    {c: 1, r: 8, minPhase: 3, color: 'var(--srv-post)', icon: '📦', label: 'POSTE'}
+    {c: 4, r: 6, minPhase: 1, color: '#7a6368', icon: '🏥', label: 'CLINICA'}, 
+    {c: 6, r: 6, minPhase: 1, color: '#8a8f91', icon: '⚰️', label: 'CIMITERO'}, 
+    {c: 2, r: 5, minPhase: 2, color: '#8c5a45', icon: '🚒', label: 'FUOCO'},  
+    {c: 5, r: 3, minPhase: 3, color: '#455a6b', icon: '🚓', label: 'POLIZIA'}, 
+    {c: 2, r: 2, minPhase: 3, color: '#5c6b54', icon: '📚', label: 'ELEM.'},
+    {c: 6, r: 2, minPhase: 3, color: '#5c6b54', icon: '📚', label: 'ELEM.'},
+    {c: 2, r: 4, minPhase: 3, color: '#5c6b54', icon: '🎓', label: 'HIGH S.'},
+    {c: 6, r: 4, minPhase: 4, color: '#5c6b54', icon: '🏛️', label: 'COLLEGE'},
+    {c: 1, r: 8, minPhase: 3, color: '#7a7452', icon: '📦', label: 'POSTE'}
   ];
 
   function getHorizontalRoadType(r) {
@@ -1248,11 +1118,11 @@
     if (type === 'STATION' && activeLayers.metro) {
       ctx.fillStyle = COLORS.STATION;
       ctx.fillRect(c * CS + 2, r * CS + 2, CS - 4, CS - 4);
-      ctx.strokeStyle = '#00e5c0';
+      ctx.strokeStyle = '#526b6b';
       ctx.lineWidth = 2;
       ctx.strokeRect(c * CS + 2, r * CS + 2, CS - 4, CS - 4);
-      ctx.fillStyle = '#00e5c0';
-      ctx.font = "bold 20px 'Share Tech Mono'";
+      ctx.fillStyle = '#a3a8a8';
+      ctx.font = "bold 20px 'Cinzel'";
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillText("M", c * CS + CS/2, r * CS + CS/2);
       return;
@@ -1261,41 +1131,37 @@
     if (!activeLayers.zones) return; 
 
     ctx.fillStyle = COLORS[type];
-    ctx.globalAlpha = 0.35;
     ctx.fillRect(c * CS + 2, r * CS + 2, CS - 4, CS - 4);
     
-    ctx.strokeStyle = COLORS[type];
-    ctx.globalAlpha = 1.0;
-    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = '#111';
+    ctx.lineWidth = 1;
     ctx.strokeRect(c * CS + 2, r * CS + 2, CS - 4, CS - 4);
     
-    ctx.fillStyle = '#fff';
-    ctx.font = "bold 13px 'Share Tech Mono', monospace";
+    ctx.fillStyle = '#8c8c8c';
+    ctx.font = "bold 12px 'Space Mono'";
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    let label = type === 'LOW_R' ? 'LOW RENT' : type;
+    let label = type === 'LOW_R' ? 'L_RENT' : type;
     ctx.fillText(label, c * CS + CS/2, r * CS + CS/2);
   }
 
   function drawService(s, phase) {
     if (!activeLayers.services || phase < s.minPhase) return;
 
-    ctx.fillStyle = s.color;
-    ctx.globalAlpha = 0.9;
+    ctx.fillStyle = '#111214';
     ctx.fillRect(s.c * CS + 5, s.r * CS + 5, CS - 10, CS - 10);
     
-    ctx.strokeStyle = '#fff';
-    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = s.color;
+    ctx.lineWidth = 2;
     ctx.strokeRect(s.c * CS + 5, s.r * CS + 5, CS - 10, CS - 10);
 
-    ctx.globalAlpha = 1.0;
-    ctx.fillStyle = '#fff';
-    ctx.font = "18px 'Segoe UI Emoji', sans-serif";
+    ctx.fillStyle = s.color;
+    ctx.font = "16px 'Segoe UI Emoji', sans-serif";
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(s.icon, s.c * CS + CS/2, s.r * CS + CS/2 - 6);
 
-    ctx.font = "bold 9px 'Barlow Condensed'";
-    ctx.fillStyle = '#fff';
+    ctx.font = "bold 9px 'Space Mono'";
+    ctx.fillStyle = '#a3a8a8';
     ctx.fillText(s.label, s.c * CS + CS/2, s.r * CS + CS/2 + 12);
   }
 
@@ -1303,19 +1169,18 @@
     if (!activeLayers.park) return;
     
     ctx.fillStyle = COLORS.PARK;
-    ctx.globalAlpha = 0.8;
     ctx.fillRect(c * CS + 6, r * CS + 6, CS - 12, CS - 12);
-    ctx.strokeStyle = '#fff';
-    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = '#52585b';
+    ctx.lineWidth = 1;
     ctx.strokeRect(c * CS + 6, r * CS + 6, CS - 12, CS - 12);
 
-    ctx.fillStyle = '#fff';
-    ctx.font = "bold 16px 'Share Tech Mono'";
+    ctx.fillStyle = '#948b76';
+    ctx.font = "bold 16px 'Cinzel'";
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText("P", c * CS + CS/2, r * CS + CS/2 - 4);
 
-    ctx.font = "9px 'Barlow Condensed'";
-    let label = type === 'underground' ? 'SOTT.' : (type === 'multistory' ? 'MULTIP.' : 'SUP.');
+    ctx.font = "9px 'Space Mono'";
+    let label = type === 'underground' ? 'SUB' : (type === 'multistory' ? 'MULTI' : 'SURF');
     ctx.fillText(label, c * CS + CS/2, r * CS + CS/2 + 10);
   }
 
@@ -1325,19 +1190,19 @@
     ctx.lineTo(x2, y2);
     
     if (type === '6lane') {
-      ctx.lineWidth = 8; ctx.strokeStyle = '#4a5c60'; ctx.stroke();
+      ctx.lineWidth = 8; ctx.strokeStyle = '#2f3336'; ctx.stroke();
       ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
-      ctx.lineWidth = 1; ctx.strokeStyle = '#ffd166'; ctx.stroke();
+      ctx.lineWidth = 1; ctx.strokeStyle = '#545c58'; ctx.stroke();
     } else if (type === '4lane') {
-      ctx.lineWidth = 5; ctx.strokeStyle = '#3e4e52'; ctx.stroke();
+      ctx.lineWidth = 5; ctx.strokeStyle = '#232629'; ctx.stroke();
     } else if (type === '2lane') {
-      ctx.lineWidth = 2.5; ctx.strokeStyle = '#2a3538'; ctx.stroke();
+      ctx.lineWidth = 2.5; ctx.strokeStyle = '#1a1c1e'; ctx.stroke();
     } else if (type === 'alley') {
-      ctx.lineWidth = 1.5; ctx.strokeStyle = '#1e2528';
-      ctx.setLineDash([4, 4]); ctx.stroke(); ctx.setLineDash([]);
+      ctx.lineWidth = 1.5; ctx.strokeStyle = '#3a3f42';
+      ctx.setLineDash([2, 4]); ctx.stroke(); ctx.setLineDash([]);
     } else if (type === 'ped') {
-      ctx.lineWidth = 3; ctx.strokeStyle = '#5ab84a';
-      ctx.setLineDash([2, 3]); ctx.stroke(); ctx.setLineDash([]);
+      ctx.lineWidth = 3; ctx.strokeStyle = '#414d45';
+      ctx.setLineDash([2, 4]); ctx.stroke(); ctx.setLineDash([]);
     }
   }
 
@@ -1377,18 +1242,19 @@
 
     ctx.beginPath();
     ctx.arc(cx, cy, 4, 0, Math.PI * 2);
-    ctx.fillStyle = type === 'bus' ? '#ff6b35' : '#ffd166';
+    ctx.fillStyle = '#0a0b0c';
     ctx.fill();
-    ctx.lineWidth = 1.5; ctx.strokeStyle = '#0a0e0f'; ctx.stroke();
+    ctx.lineWidth = 1.5; ctx.strokeStyle = type === 'bus' ? '#948b76' : '#7a6368'; ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx, cy, 1.5, 0, Math.PI * 2); ctx.fillStyle = type === 'bus' ? '#948b76' : '#7a6368'; ctx.fill();
   }
 
   function drawTransitPath(route, color, isTram = false) {
     ctx.strokeStyle = color;
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 2;
     if (isTram) {
-      ctx.setLineDash([8, 6]); ctx.lineWidth = 4;
+      ctx.setLineDash([8, 6]); ctx.lineWidth = 3;
     } else {
-      ctx.setLineDash([5, 4]);
+      ctx.setLineDash([4, 4]);
     }
     
     ctx.beginPath();
@@ -1401,12 +1267,15 @@
 
   function drawGrid(phase) {
     ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = '#0a0e0f';
+    ctx.fillStyle = '#090a0b';
     ctx.fillRect(0, 0, W, H);
 
-    if (activeLayers.roads) {
-      drawRoads(phase);
-    }
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.02)';
+    ctx.lineWidth = 1;
+    for(let i=0; i<W; i+=20) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, H); ctx.stroke(); }
+    for(let i=0; i<H; i+=20) { ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(W, i); ctx.stroke(); }
+
+    if (activeLayers.roads) drawRoads(phase);
 
     for (let r = 0; r < CELLS; r++) {
       for (let c = 0; c < CELLS; c++) {
@@ -1425,44 +1294,45 @@
 
     if (phase >= 2 && activeLayers.bus) {
       const busRoute1 = [[3, 8], [3, 4], [2, 4], [2, 6], [6, 6], [6, 4], [5, 4], [5, 8], [3, 8]];
-      drawTransitPath(busRoute1, '#ff6b35');
+      drawTransitPath(busRoute1, '#948b76'); 
       for(let i=0; i<busRoute1.length-1; i++) drawStop(busRoute1[i], busRoute1[i+1], 'bus');
 
       if (phase >= 4) {
         const busRoute2 = [[1, 8], [1, 2], [4, 2], [7, 2], [7, 8], [4, 8], [1, 8]];
-        drawTransitPath(busRoute2, '#e8501e'); 
+        drawTransitPath(busRoute2, '#665c49'); 
         for(let i=0; i<busRoute2.length-1; i++) drawStop(busRoute2[i], busRoute2[i+1], 'bus');
       }
     }
 
     if (phase >= 3 && activeLayers.tram) {
+      const tramColor = '#7a6368';
       const tramRoute1 = [[0, 8], [9, 8]];
-      drawTransitPath(tramRoute1, '#ffd166', true);
+      drawTransitPath(tramRoute1, tramColor, true);
       drawStop([0,8], [9,8], 'tram'); drawStop([4,8], [9,8], 'tram');
       drawStop([9,8], [0,8], 'tram'); drawStop([5,8], [0,8], 'tram'); 
       
       const tramRoute2 = [[4, 8], [4, 1]];
-      drawTransitPath(tramRoute2, '#ffd166', true);
+      drawTransitPath(tramRoute2, tramColor, true);
       drawStop([4,8], [4,1], 'tram'); drawStop([4,4], [4,1], 'tram');
       drawStop([4,1], [4,8], 'tram'); drawStop([4,5], [4,8], 'tram');
 
       if (phase >= 4) {
         const tramRoute3 = [[0, 4], [9, 4]];
-        drawTransitPath(tramRoute3, '#ffd166', true);
+        drawTransitPath(tramRoute3, tramColor, true);
         drawStop([1,4], [8,4], 'tram'); drawStop([4,4], [8,4], 'tram');
         drawStop([8,4], [1,4], 'tram'); drawStop([5,4], [1,4], 'tram');
       }
     }
 
     if (phase >= 4 && activeLayers.metro) {
-      ctx.strokeStyle = 'rgba(0, 229, 192, 0.7)';
+      ctx.strokeStyle = 'rgba(82, 107, 107, 0.4)';
       ctx.lineWidth = 6; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
       ctx.beginPath();
       ctx.moveTo(CS * 0.5, CS * 8.5); 
       ctx.bezierCurveTo(CS * 1.5, CS * 5,  CS * 3, CS * 2,  CS * 4.5, CS * 0.5); 
       ctx.lineTo(CS * 8.5, CS * 0.5);
       ctx.stroke();
-      ctx.strokeStyle = '#0a0e0f';
+      ctx.strokeStyle = '#526b6b';
       ctx.lineWidth = 2; ctx.setLineDash([8, 12]);
       ctx.stroke(); ctx.setLineDash([]);
     }
@@ -1477,44 +1347,41 @@
     container.innerHTML = '';
 
     if (currentPhase === 1 || pop === 0) {
-      container.innerHTML = '<div class="calc-empty">Nessun mezzo di linea di massa necessario in questa fase.</div>';
+      container.innerHTML = '<div class="calc-empty">Nessun trasporto di massa necessario in questa fase.</div>';
       return;
     }
 
     let html = '';
-    
-    // Formula per il calcolo dei veicoli: (Base per N° fermate) + (Bonus Popolazione)
     const addRow = (name, color, baseVehicles, popFactor) => {
        let vehicles = baseVehicles + Math.floor(pop / popFactor);
-       html += `<div class="calc-row"><span style="color:${color}">${name}</span> <span>${vehicles} vett.</span></div>`;
+       html += `<div class="calc-row"><span style="color:${color};">${name}</span> <span>${vehicles} VETT.</span></div>`;
     };
 
     if (currentPhase >= 2 && activeLayers.bus) {
-      addRow('🚌 Bus L1 (Circolare Interna, 9 fermate)', '#ff6b35', 3, 3000);
+      addRow('BUS L1 [Circolare Interna]', '#948b76', 3, 3000);
     }
     if (currentPhase >= 4 && activeLayers.bus) {
-      addRow('🚌 Bus L2 (Circolare Esterna, 7 fermate)', '#e8501e', 3, 4000);
+      addRow('BUS L2 [Circolare Esterna]', '#665c49', 3, 4000);
     }
     if (currentPhase >= 3 && activeLayers.tram) {
-      addRow('🚊 Tram Sud (Asse Commerciale, 4 fermate)', '#ffd166', 2, 5000);
-      addRow('🚊 Tram Centro (Asse Direzionale, 4 fermate)', '#ffd166', 2, 5000);
+      addRow('TRAM [Asse Commerciale]', '#7a6368', 2, 5000);
+      addRow('TRAM [Asse Direzionale]', '#7a6368', 2, 5000);
     }
     if (currentPhase >= 4 && activeLayers.tram) {
-      addRow('🚊 Tram Nord (Asse Residenziale, 4 fermate)', '#ffd166', 2, 5000);
+      addRow('TRAM [Asse Residenziale]', '#7a6368', 2, 5000);
     }
     if (currentPhase >= 4 && activeLayers.metro) {
       let trains = Math.max(1, Math.floor(pop / 8000));
-      html += `<div class="calc-row"><span style="color:#00e5c0">🚇 Metro (Spola inter-distrettuale)</span> <span>${trains} treni</span></div>`;
+      html += `<div class="calc-row"><span style="color:#526b6b;">METRO [Inter-Distretto]</span> <span>${trains} TRENI</span></div>`;
     }
     if (currentPhase >= 5) {
       let trains = Math.max(1, Math.floor(pop / 10000));
-      html += `<div class="calc-row"><span style="color:#d44a4a">🚂 Treno Intercity (Regionale)</span> <span>${trains} treni</span></div>`;
+      html += `<div class="calc-row"><span style="color:#66554e;">TRENO REGIONALE [Esterno]</span> <span>${trains} TRENI</span></div>`;
     }
 
     if(html === '') {
-       html = '<div class="calc-empty">Nessun layer di trasporto attivo. Accendi Tram, Bus o Metro.</div>';
+       html = '<div class="calc-empty">Nessun layer di trasporto attivo.</div>';
     }
-
     container.innerHTML = html;
   };
 
@@ -1522,24 +1389,15 @@
     currentPhase = p;
     drawGrid(currentPhase);
     
-    // Aggiorna bottoni
-    const baseColors = ['','#7de87d','#4a9fd4','#ffd166','#ff6b35','#e84393'];
     [1,2,3,4,5].forEach(i => {
       const btn = document.getElementById('btn-ph'+i);
       if(i === p) {
         btn.classList.add('active');
-        btn.style.boxShadow = `0 0 6px ${baseColors[i]}88`;
-        btn.style.background = `${baseColors[i]}22`;
-        btn.style.borderColor = baseColors[i];
       } else {
         btn.classList.remove('active');
-        btn.style.boxShadow = 'none';
-        btn.style.background = 'transparent';
-        btn.style.borderColor = 'rgba(80,100,100,0.3)';
       }
     });
 
-    // Imposta popolazioni predefinite logiche quando si cambia fase
     const defaultPops = [0, 2000, 6000, 15000, 30000, 30000];
     document.getElementById('popSlider').value = defaultPops[p];
     updateTransitCalc();
@@ -1550,17 +1408,15 @@
     const btn = document.getElementById('btn-ly-' + layerName);
     if (activeLayers[layerName]) {
       btn.classList.add('active');
-      btn.style.background = `rgba(255,255,255,0.08)`;
     } else {
       btn.classList.remove('active');
-      btn.style.background = 'transparent';
     }
     drawGrid(currentPhase);
-    updateTransitCalc(); // Aggiorna la tabella se spegni/accendi un mezzo
+    updateTransitCalc();
   };
 
   setPhase(1);
 })();
 </script>
-
-<!-- 01.1 SETTORE INDUSTRIALE: GRIGLIA E MEGA-STRUTTURE -->
+</body>
+</html>
