@@ -23,6 +23,7 @@
     --zone-com: #4a9fd4;
     --zone-res: #5ab84a;
     --zone-lowrent: #c2a878;
+    --zone-park: #95a5a6;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -283,32 +284,6 @@
     flex-wrap: wrap;
   }
 
-  .curve-box {
-    background: rgba(255,255,255,0.02);
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    padding: 10px 14px;
-    font-size: 0.85rem;
-  }
-
-  .curve-box .c-title {
-    font-weight: 700;
-    color: var(--accent3);
-    margin-bottom: 6px;
-    font-size: 0.88rem;
-  }
-
-  .formula {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.8rem;
-    color: var(--accent);
-    background: rgba(0,229,192,0.06);
-    padding: 4px 8px;
-    border-radius: 2px;
-    display: inline-block;
-    margin: 3px 0;
-  }
-
   /* Control Panel Styles */
   .control-group {
     display: flex;
@@ -376,7 +351,7 @@
   </div>
   <div class="section-body">
     <div class="note" style="margin-bottom:12px">
-      <strong>Livelli e Network:</strong> Esplora i livelli della maglia urbana. Le strade non sono tutte uguali: nota le arterie a 6/4 corsie sui bordi e le stradine pedonali/alley all'interno. La metropolitana è un <em>edificio</em> (stazione) che scende nei tunnel. Le fermate di superficie (bus/tram) si posizionano fisicamente sul lato corretto della carreggiata e dopo gli incroci.
+      <strong>Livelli e Network:</strong> Usa i layer per vedere come la rete dei trasporti pubblici e dei parcheggi (P&R) si evolve con l'espandersi della città. Il trasporto pubblico deve essere <em>capillare</em> ai bordi e <em>pesante</em> al centro.
     </div>
 
     <div class="control-group" id="phase-btns">
@@ -391,9 +366,10 @@
       <span class="ctrl-label">Layer:</span>
       <button onclick="toggleLayer('zones')" id="btn-ly-zones" class="btn active" style="color:var(--zone-res);">ZONIZZAZIONE</button>
       <button onclick="toggleLayer('roads')" id="btn-ly-roads" class="btn active" style="color:var(--text);">STRADE</button>
-      <button onclick="toggleLayer('bus')" id="btn-ly-bus" class="btn active" style="color:var(--accent2);">BUS (Capillare)</button>
+      <button onclick="toggleLayer('bus')" id="btn-ly-bus" class="btn active" style="color:var(--accent2);">BUS (Capillari)</button>
       <button onclick="toggleLayer('tram')" id="btn-ly-tram" class="btn active" style="color:var(--accent3);">TRAM (Assi)</button>
-      <button onclick="toggleLayer('metro')" id="btn-ly-metro" class="btn active" style="color:var(--accent);">METRO (Tunnel & Edifici)</button>
+      <button onclick="toggleLayer('metro')" id="btn-ly-metro" class="btn active" style="color:var(--accent);">METRO (Hubs)</button>
+      <button onclick="toggleLayer('park')" id="btn-ly-park" class="btn active" style="color:var(--zone-park);">PARCHEGGI (P&R)</button>
     </div>
 
     <div style="position:relative;width:100%;max-width:600px;margin:0 auto; margin-top: 10px;">
@@ -415,12 +391,219 @@
       <div class="legend-item"><div style="width:16px;height:2px;border-top:1px dashed #5ab84a;"></div>Pedonale</div>
       <div class="legend-item"><div style="width:16px;height:2px;border-top:1px dotted #1e2528;"></div>Alley</div>
       <div style="width: 100%; height: 6px;"></div> <!-- Spacing -->
-      <div class="legend-item"><div style="width:10px;height:10px;border: 2px solid #00e5c0; background: #0f1518;"></div>Stazione Metro (Edificio)</div>
+      <div class="legend-item"><div style="width:10px;height:10px;border: 2px solid #00e5c0; background: #0f1518;"></div>Stazione Metro</div>
+      <div class="legend-item"><div style="width:12px;height:12px;border: 1px solid #fff; background: #95a5a6; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:bold; color:#fff;">P</div>Parcheggio</div>
       <div class="legend-item"><div style="width:8px;height:8px;border: 1px solid #000; background: #ff6b35; border-radius:50%;"></div>Fermata Bus (Lato strada)</div>
       <div class="legend-item"><div style="width:8px;height:8px;border: 1px solid #000; background: #ffd166; border-radius:50%;"></div>Fermata Tram (Lato strada)</div>
     </div>
   </div>
 </div>
+
+<!-- 01.2 VISTA MACRO: AUTOSTRADA E INDUSTRIA -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">01.2</span>
+    <span class="section-title">Vista Macro Regionale — Svincoli e Distanze</span>
+  </div>
+  <div class="section-body">
+    <div class="note" style="margin-bottom:12px; border-color: var(--road-art);">
+      <strong>La Regola del Buffer:</strong> Mai attaccare la griglia urbana direttamente allo svincolo. Lascia sempre un'Arteria a 6 corsie libera da incroci per almeno <strong>240-300 metri (30-38 celle)</strong> per far smaltire il traffico in entrata e creare una coda in uscita che non blocchi le rotatorie interne. L'industria va messa sottovento.
+    </div>
+
+    <div style="position:relative;width:100%;max-width:800px;margin:0 auto; overflow: hidden; border:1px solid #1e2e32; border-radius:4px;">
+      <canvas id="macroMap" width="800" height="420" style="width:100%; height:auto; background:#0a0e0f; display:block;"></canvas>
+    </div>
+
+    <!-- Legend Macro -->
+    <div style="display:flex;flex-wrap:wrap;margin-top:10px;gap: 12px;font-size:0.78rem;">
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:16px;height:6px;background:#2a7fd4; border-top:1px dashed #fff; border-bottom:1px dashed #fff;"></div>Autostrada (2+2)</div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:16px;height:6px;background:#4a5c60;"></div>Arteria (6c)</div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:16px;height:4px;background:#3e4e52;"></div>Collettore Ind. (4c)</div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;background:#e8a020;opacity:0.6;border:1px solid #e8a020;"></div>Industria</div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;background:#c4aaff;opacity:0.6;border:1px solid #c4aaff;"></div>Metropoli (Fase 4)</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const c = document.getElementById('macroMap');
+  const cx = c.getContext('2d');
+  const W = 800, H = 420;
+
+  function drawArrow(x, y, angle, color) {
+    cx.save();
+    cx.translate(x, y);
+    cx.rotate(angle);
+    cx.beginPath();
+    cx.moveTo(0, 0);
+    cx.lineTo(-6, -4);
+    cx.lineTo(-6, 4);
+    cx.closePath();
+    cx.fillStyle = color;
+    cx.fill();
+    cx.restore();
+  }
+
+  function drawDimLine(x1, y1, x2, y2, text, isVertical = false) {
+    cx.strokeStyle = '#00e5c0';
+    cx.lineWidth = 1;
+    cx.setLineDash([4, 2]);
+    cx.beginPath();
+    cx.moveTo(x1, y1);
+    cx.lineTo(x2, y2);
+    cx.stroke();
+    cx.setLineDash([]);
+    
+    // Terminal lines
+    if (isVertical) {
+      cx.beginPath(); cx.moveTo(x1-5, y1); cx.lineTo(x1+5, y1); cx.stroke();
+      cx.beginPath(); cx.moveTo(x2-5, y2); cx.lineTo(x2+5, y2); cx.stroke();
+    } else {
+      cx.beginPath(); cx.moveTo(x1, y1-5); cx.lineTo(x1, y1+5); cx.stroke();
+      cx.beginPath(); cx.moveTo(x2, y2-5); cx.lineTo(x2, y2+5); cx.stroke();
+    }
+
+    cx.fillStyle = '#00e5c0';
+    cx.font = "11px 'Share Tech Mono'";
+    cx.textAlign = 'center';
+    cx.textBaseline = 'middle';
+    
+    if (isVertical) {
+      cx.save();
+      cx.translate(x1 + 10, y1 + (y2-y1)/2);
+      cx.rotate(-Math.PI/2);
+      // Background for text
+      cx.fillStyle = '#0a0e0f';
+      let w = cx.measureText(text).width + 6;
+      cx.fillRect(-w/2, -8, w, 16);
+      cx.fillStyle = '#00e5c0';
+      cx.fillText(text, 0, 0);
+      cx.restore();
+    } else {
+      let w = cx.measureText(text).width + 6;
+      cx.fillStyle = '#0a0e0f';
+      cx.fillRect(x1 + (x2-x1)/2 - w/2, y1 - 18, w, 16);
+      cx.fillStyle = '#00e5c0';
+      cx.fillText(text, x1 + (x2-x1)/2, y1 - 10);
+    }
+  }
+
+  // Background
+  cx.fillStyle = '#0a0e0f';
+  cx.fillRect(0, 0, W, H);
+
+  // 1. Vento (Alto a destra)
+  cx.strokeStyle = '#c8d8d8';
+  cx.lineWidth = 2;
+  cx.setLineDash([5, 5]);
+  cx.beginPath(); cx.moveTo(W - 40, 30); cx.lineTo(W - 120, 30); cx.stroke();
+  cx.setLineDash([]);
+  drawArrow(W - 120, 30, Math.PI, '#c8d8d8');
+  cx.fillStyle = '#c8d8d8';
+  cx.font = "12px 'Share Tech Mono'";
+  cx.textAlign = 'right';
+  cx.fillText("DIREZIONE VENTO", W - 40, 16);
+
+  // 2. Zone Industriali (Sinistra)
+  const indX = 40, indY = 40, indW = 220, indH = 340;
+  cx.fillStyle = 'rgba(232,160,32,0.2)';
+  cx.strokeStyle = '#e8a020';
+  cx.lineWidth = 2;
+  cx.fillRect(indX, indY, indW, indH);
+  cx.strokeRect(indX, indY, indW, indH);
+  
+  // Griglia industriale interna (Collettori 4 corsie)
+  cx.beginPath(); cx.moveTo(indX, indY + indH/2); cx.lineTo(indX + indW, indY + indH/2); cx.stroke();
+  cx.beginPath(); cx.moveTo(indX + indW/2, indY); cx.lineTo(indX + indW/2, indY + indH); cx.stroke();
+
+  cx.fillStyle = '#e8a020';
+  cx.font = "bold 16px 'Barlow Condensed'";
+  cx.textAlign = 'center';
+  cx.fillText("SETTORE INDUSTRIALE", indX + indW/2, indY - 15);
+  cx.font = "11px 'Share Tech Mono'";
+  cx.fillText("(Lontano da centro, Sottovento)", indX + indW/2, indY + indH + 20);
+
+  // 3. Metropoli Fase 4 (Destra)
+  const cityX = W/2 + 130, cityY = 40, cityW = 220, cityH = 340;
+  
+  // Low Density Outer
+  cx.fillStyle = 'rgba(90,184,74,0.2)'; cx.strokeStyle = '#5ab84a';
+  cx.fillRect(cityX, cityY, cityW, cityH); cx.strokeRect(cityX, cityY, cityW, cityH);
+  
+  // Medium Density Mid
+  cx.fillStyle = 'rgba(139,111,212,0.25)'; cx.strokeStyle = '#8b6fd4';
+  cx.fillRect(cityX+30, cityY+40, cityW-60, cityH-80); cx.strokeRect(cityX+30, cityY+40, cityW-60, cityH-80);
+  
+  // High Density Core
+  cx.fillStyle = 'rgba(196,170,255,0.3)'; cx.strokeStyle = '#c4aaff';
+  cx.fillRect(cityX+60, cityY+80, cityW-120, cityH-160); cx.strokeRect(cityX+60, cityY+80, cityW-120, cityH-160);
+
+  cx.fillStyle = '#c4aaff';
+  cx.font = "bold 16px 'Barlow Condensed'";
+  cx.textAlign = 'center';
+  cx.fillText("METROPOLI (FASE 4)", cityX + cityW/2, cityY - 15);
+
+  // 4. Autostrada (Centro, Verticale)
+  const hwX = W/2;
+  // Carreggiata Ovest (Direzione Sud)
+  cx.strokeStyle = '#2a7fd4'; cx.lineWidth = 10;
+  cx.beginPath(); cx.moveTo(hwX - 10, 0); cx.lineTo(hwX - 10, H); cx.stroke();
+  // Linea tratteggiata interna
+  cx.strokeStyle = '#fff'; cx.lineWidth = 1; cx.setLineDash([8, 8]);
+  cx.beginPath(); cx.moveTo(hwX - 10, 0); cx.lineTo(hwX - 10, H); cx.stroke();
+  cx.setLineDash([]);
+  drawArrow(hwX - 10, 80, Math.PI/2, '#fff'); // Freccia giù
+  drawArrow(hwX - 10, H - 80, Math.PI/2, '#fff');
+  
+  // Carreggiata Est (Direzione Nord)
+  cx.strokeStyle = '#2a7fd4'; cx.lineWidth = 10;
+  cx.beginPath(); cx.moveTo(hwX + 10, 0); cx.lineTo(hwX + 10, H); cx.stroke();
+  cx.strokeStyle = '#fff'; cx.lineWidth = 1; cx.setLineDash([8, 8]);
+  cx.beginPath(); cx.moveTo(hwX + 10, 0); cx.lineTo(hwX + 10, H); cx.stroke();
+  cx.setLineDash([]);
+  drawArrow(hwX + 10, 80, -Math.PI/2, '#fff'); // Freccia su
+  drawArrow(hwX + 10, H - 80, -Math.PI/2, '#fff');
+
+  cx.fillStyle = '#4a9fd4';
+  cx.font = "bold 13px 'Share Tech Mono'";
+  cx.textAlign = 'left';
+  cx.fillText("AUTOSTRADA SUD (130km/h)", hwX + 25, 20);
+
+  // 5. Arteria Orizzontale a 6 Corsie
+  const artY = H/2;
+  cx.strokeStyle = '#4a5c60'; cx.lineWidth = 12;
+  // Segmento Destro (Verso Città)
+  cx.beginPath(); cx.moveTo(hwX + 15, artY); cx.lineTo(cityX + cityW/2, artY); cx.stroke();
+  // Segmento Sinistro (Verso Industria)
+  cx.beginPath(); cx.moveTo(hwX - 15, artY); cx.lineTo(indX + indW/2, artY); cx.stroke();
+
+  // 6. Svincolo a Diamante (Stilizzato)
+  cx.strokeStyle = '#2a7fd4'; cx.lineWidth = 4;
+  cx.beginPath();
+  cx.moveTo(hwX, artY - 60);    // Top
+  cx.lineTo(hwX + 60, artY);    // Right
+  cx.lineTo(hwX, artY + 60);    // Bottom
+  cx.lineTo(hwX - 60, artY);    // Left
+  cx.closePath();
+  cx.stroke();
+
+  // Rotatorie di innesto svincolo/arteria
+  cx.fillStyle = '#0a0e0f'; cx.strokeStyle = '#4a5c60'; cx.lineWidth = 3;
+  cx.beginPath(); cx.arc(hwX + 60, artY, 12, 0, Math.PI*2); cx.fill(); cx.stroke();
+  cx.beginPath(); cx.arc(hwX - 60, artY, 12, 0, Math.PI*2); cx.fill(); cx.stroke();
+  // Rotatoria ingresso Città
+  cx.beginPath(); cx.arc(cityX, artY, 10, 0, Math.PI*2); cx.fill(); cx.stroke();
+
+  // 7. Dimensioni / Quote
+  // Dal casello/svincolo (hwX + 60) al bordo della città (cityX)
+  drawDimLine(hwX + 72, artY - 30, cityX - 10, artY - 30, "Buffer senza incroci: 240-300m (30-38 celle)");
+  
+  // Dal casello/svincolo (hwX - 60) all'industria
+  drawDimLine(indX + indW + 10, artY + 30, hwX - 72, artY + 30, "Buffer Traffico Pesante: 160m (20 celle)");
+
+})();
+</script>
 
 <!-- 02. ZONIZZAZIONE E SVILUPPO ADDITIVO -->
 <div class="section">
@@ -463,7 +646,7 @@
   </div>
 </div>
 
-<!-- 03. TRASPORTI PUBBLICI - CAPILLARITÀ E LIBERTÀ -->
+<!-- 03. TRASPORTI PUBBLICI E CAPILLARITA' -->
 <div class="section">
   <div class="section-header">
     <span class="section-num">03</span>
@@ -471,7 +654,7 @@
   </div>
   <div class="section-body">
     <div class="note" style="border-color: var(--accent2); margin-bottom: 12px;">
-      <strong>L'Errore Fatale:</strong> Far camminare i pedoni per 1 km per raggiungere una fermata perimetrale. In CS2, se la fermata è troppo lontana, le IA prenderanno la propria auto privata, intasando i collettori.
+      <strong>L'Errore Fatale:</strong> Far camminare i pedoni per 1 km per raggiungere una fermata perimetrale. In CS2, se la fermata è troppo lontana o manca il parcheggio (vedi sezione successiva), le IA prenderanno la propria auto privata, intasando i collettori.
     </div>
     
     <div class="grid-zone">
@@ -488,7 +671,7 @@
         <div style="font-size: 0.8rem; color: var(--muted); margin-top: 5px;">I tram non si infilano nei viottoli. Viaggiano dritti sui viali principali commerciali e uffici per raccogliere il flusso dei bus e portarlo agli Hub Metro.</div>
       </div>
       <div class="zone-card">
-        <div class="zone-card-title" style="color:var(--accent)">🚇 Metro (Totale Libertà Sotterranea)</div>
+        <div class="zone-card-title" style="color:var(--accent)">🚇 Metro (Libertà Sotterranea)</div>
         <div class="line"><span>Ruolo</span><span>Connessione inter-distrettuale veloce</span></div>
         <div class="line"><span>Posizione Tunnel</span><span>Ovunque (Ignora la griglia di superficie)</span></div>
         <div style="font-size: 0.8rem; color: var(--muted); margin-top: 5px;">I tunnel della metropolitana si scavano a -20m. <strong>Usa le diagonali e le curve fluide!</strong> Risparmia tempo e soldi non seguendo il tracciato delle strade sovrastanti. Punta dritto da Hub a Hub.</div>
@@ -503,10 +686,53 @@
   </div>
 </div>
 
-<!-- 04. GERARCHIA STRADALE -->
+<!-- 04. GESTIONE PARCHEGGI (PARK & RIDE) -->
 <div class="section">
   <div class="section-header">
     <span class="section-num">04</span>
+    <span class="section-title">Gestione Parcheggi (Park & Ride)</span>
+  </div>
+  <div class="section-body">
+    <div class="note" style="margin-bottom:12px">
+      <strong>La Logica Occulta di CS2:</strong> Nel motore di pathfinding del gioco, un cittadino calcola il tragitto in auto <em>solo se sa che troverà parcheggio</em>. Se mancano parcheggi al lavoro o ai negozi, comincerà a guidare a vuoto creando traffico infinito, oppure rinuncerà ad uscire di casa.
+    </div>
+
+    <div class="hierarchy">
+      <div class="h-row">
+        <span class="tag tag-res" style="background:#0f1518; border-color:var(--zone-park); color:var(--zone-park);">SUBURBI (Low Density)</span>
+        <span class="h-name">Zero parcheggi pubblici</span>
+        <span class="h-vals">Ogni casa ha il suo vialetto privato</span>
+      </div>
+      <div class="h-arrow" style="padding-left:20px">Inutile sprecare soldi e spazio per parcheggi qui.</div>
+      
+      <div class="h-row">
+        <span class="tag tag-art" style="background:#0f1518; border-color:var(--zone-park); color:var(--zone-park);">HUB METRO / TRAM</span>
+        <span class="h-name">Grandi parcheggi (Park & Ride)</span>
+        <span class="h-vals">Sotterranei o Multipiano adiacenti alla stazione</span>
+      </div>
+      <div class="h-arrow" style="padding-left:20px">Intercetta chi arriva dalla periferia in auto, facendolo scendere e prendere il treno per il centro.</div>
+
+      <div class="h-row">
+        <span class="tag tag-col" style="background:#0f1518; border-color:var(--zone-park); color:var(--zone-park);">CENTRO CITTÀ (High Density)</span>
+        <span class="h-name">Pochi e costosi</span>
+        <span class="h-vals">Tariffa al massimo (50$)</span>
+      </div>
+      <div class="h-arrow" style="padding-left:20px">Disincentiva fisicamente l'utilizzo dell'auto privata per i pendolari, forzando l'uso del trasporto pubblico.</div>
+
+      <div class="h-row">
+        <span class="tag tag-com" style="background:#0f1518; border-color:var(--zone-park); color:var(--zone-park);">ARTERIE COMMERCIALI</span>
+        <span class="h-name">Rimuovi la sosta in strada</span>
+        <span class="h-vals">Aggiungi alberi/erba ai lati della carreggiata</span>
+      </div>
+      <div class="h-arrow" style="padding-left:20px">Costruisci un parcheggio dedicato a 1-2 isolati di distanza. Le auto che si fermano a bordo strada paralizzano i collettori.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 05. GERARCHIA STRADALE -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">05</span>
     <span class="section-title">Gerarchia Stradale e Regole Base</span>
   </div>
   <div class="section-body">
@@ -544,10 +770,10 @@
   </div>
 </div>
 
-<!-- 05. SOTTERRANEO -->
+<!-- 06. SOTTERRANEO E PENDENZE -->
 <div class="section">
   <div class="section-header">
-    <span class="section-num">05</span>
+    <span class="section-num">06</span>
     <span class="section-title">Sotterraneo — Quote e Slope Too Steep</span>
   </div>
   <div class="section-body">
@@ -605,7 +831,7 @@
   const COLORS = {
     'COM': '#4a9fd4', 'OFF': '#2a7fd4', 'LOW': '#5ab84a',
     'LOW_R': '#c2a878', 'MED': '#8b6fd4', 'HIGH': '#c4aaff',
-    'STATION': '#0f1518'
+    'STATION': '#0f1518', 'PARK': '#95a5a6'
   };
 
   // State Management
@@ -615,55 +841,52 @@
     roads: true,
     bus: true,
     tram: true,
-    metro: true
+    metro: true,
+    park: true
   };
 
   // =====================================
   // DATI STRUTTURALI DELLA MAPPA
   // =====================================
 
-  // Mappa delle Zone (9x9) - Statica (Bottom-up Additive)
   const zoneMap = [
-    ['LOW','LOW','LOW',  'MED',  'STATION',  'MED',  'LOW','LOW','LOW'], // R0: Future Periferie Nord / HUB Metro
-    ['LOW','LOW','MED',  'HIGH', 'HIGH', 'HIGH', 'MED','LOW','LOW'], // R1: Centro Fase 3
-    ['LOW','MED','LOW_R','HIGH', 'OFF',  'HIGH', 'LOW_R','MED','LOW'],// R2: Centro Fase 3
-    ['LOW','MED','OFF',  'COM',  'COM',  'COM',  'OFF',  'MED','LOW'],// R3: Cuscinetto Fase 2/3
-    ['LOW','LOW_R','MED','MED',  'COM',  'MED',  'MED',  'LOW_R','LOW'],// R4: Fascia Fase 2
-    ['LOW','LOW', 'LOW_R','MED', 'COM',  'MED',  'LOW_R','LOW','LOW'],// R5: Fascia Fase 2
-    ['LOW','LOW', 'LOW', 'LOW',  'COM',  'LOW',  'LOW',  'LOW','LOW'],// R6: Fase 1 Originale
-    ['LOW','LOW', 'LOW', 'LOW',  'COM',  'LOW',  'LOW',  'LOW','LOW'],// R7: Fase 1 Originale
-    ['COM','COM', 'COM', 'COM',  'COM',  'COM',  'COM',  'COM','COM'] // R8: Arteria Commerciale di base
+    ['LOW','LOW','LOW',  'MED',  'STATION',  'MED',  'LOW','LOW','LOW'], 
+    ['LOW','LOW','MED',  'HIGH', 'HIGH', 'HIGH', 'MED','LOW','LOW'], 
+    ['LOW','MED','LOW_R','HIGH', 'OFF',  'HIGH', 'LOW_R','MED','LOW'],
+    ['LOW','MED','OFF',  'COM',  'COM',  'COM',  'OFF',  'MED','LOW'],
+    ['LOW','LOW_R','MED','MED',  'COM',  'MED',  'MED',  'LOW_R','LOW'],
+    ['LOW','LOW', 'LOW_R','MED', 'COM',  'MED',  'LOW_R','LOW','LOW'],
+    ['LOW','LOW', 'LOW', 'LOW',  'COM',  'LOW',  'LOW',  'LOW','LOW'],
+    ['LOW','LOW', 'LOW', 'LOW',  'COM',  'LOW',  'LOW',  'LOW','LOW'],
+    ['COM','COM', 'COM', 'COM',  'COM',  'COM',  'COM',  'COM','COM'] 
   ];
 
-  // Età di costruzione dei lotti
   const phaseMap = [
-    [4, 4, 4, 4, 4, 4, 4, 4, 4], // R0
-    [4, 4, 3, 3, 3, 3, 3, 4, 4], // R1
-    [4, 3, 3, 3, 3, 3, 3, 3, 4], // R2
-    [4, 3, 3, 3, 3, 3, 3, 3, 4], // R3
-    [4, 2, 2, 2, 2, 2, 2, 2, 4], // R4
-    [4, 2, 2, 2, 2, 2, 2, 2, 4], // R5
-    [4, 4, 1, 1, 1, 1, 1, 4, 4], // R6
-    [4, 4, 1, 1, 1, 1, 1, 4, 4], // R7
-    [1, 1, 1, 1, 1, 1, 1, 1, 1]  // R8
+    [4, 4, 4, 4, 4, 4, 4, 4, 4], 
+    [4, 4, 3, 3, 3, 3, 3, 4, 4], 
+    [4, 3, 3, 3, 3, 3, 3, 3, 4], 
+    [4, 3, 3, 3, 3, 3, 3, 3, 4], 
+    [4, 2, 2, 2, 2, 2, 2, 2, 4], 
+    [4, 2, 2, 2, 2, 2, 2, 2, 4], 
+    [4, 4, 1, 1, 1, 1, 1, 4, 4], 
+    [4, 4, 1, 1, 1, 1, 1, 4, 4], 
+    [1, 1, 1, 1, 1, 1, 1, 1, 1]  
   ];
 
-  // Helper per ottenere il tipo di strada dato un segmento
-  // (r, c) indicano i nodi. Le strade corrono SUI bordi delle celle.
   function getHorizontalRoadType(r) {
-    if (r === 9) return '6lane'; // Bordo Sud (Arteria Esterna)
-    if (r === 4) return '4lane'; // Asse Est-Ovest intermedio
-    if (r === 8) return '4lane'; // Collettore Primario Commerciale
-    if (r === 2) return 'alley'; // Vialetti residenziali Nord
-    return '2lane';              // Strade locali standard
+    if (r === 9) return '6lane'; 
+    if (r === 4) return '4lane'; 
+    if (r === 8) return '4lane'; 
+    if (r === 2) return 'alley'; 
+    return '2lane';              
   }
 
   function getVerticalRoadType(c, r) {
     if (c === 4 || c === 5) {
-      if (r >= 0 && r <= 2) return 'ped'; // Pedonale intorno alla Metro e High Density
-      return '4lane';                     // Viali centrali Nord-Sud
+      if (r >= 0 && r <= 2) return 'ped'; 
+      return '4lane';                     
     }
-    if (c === 2 || c === 7) return 'alley'; // Vicoli perimetrali
+    if (c === 2 || c === 7) return 'alley'; 
     return '2lane';
   }
 
@@ -675,7 +898,6 @@
     if (phase < phaseMap[r][c]) return; 
     let type = zoneMap[r][c];
 
-    // La stazione Metro è un Edificio Ploppable, ha stile a sé
     if (type === 'STATION' && activeLayers.metro) {
       ctx.fillStyle = COLORS.STATION;
       ctx.fillRect(c * CS + 2, r * CS + 2, CS - 4, CS - 4);
@@ -683,7 +905,6 @@
       ctx.lineWidth = 2;
       ctx.strokeRect(c * CS + 2, r * CS + 2, CS - 4, CS - 4);
       
-      // Icona M
       ctx.fillStyle = '#00e5c0';
       ctx.font = "bold 20px 'Share Tech Mono', monospace";
       ctx.textAlign = 'center';
@@ -691,10 +912,10 @@
       ctx.fillText("M", c * CS + CS/2, r * CS + CS/2);
       return;
     } else if (type === 'STATION') {
-      return; // Se il layer metro è spento, non disegnare l'edificio
+      return; 
     }
 
-    if (!activeLayers.zones) return; // Disegna solo se il layer è attivo
+    if (!activeLayers.zones) return; 
 
     ctx.fillStyle = COLORS[type];
     ctx.globalAlpha = 0.35;
@@ -713,17 +934,37 @@
     ctx.fillText(label, c * CS + CS/2, r * CS + CS/2);
   }
 
+  function drawParking(c, r, type) {
+    if (!activeLayers.park) return;
+    
+    ctx.fillStyle = COLORS.PARK;
+    ctx.globalAlpha = 0.8;
+    // Disegna un blocco leggermente più piccolo della cella
+    ctx.fillRect(c * CS + 6, r * CS + 6, CS - 12, CS - 12);
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(c * CS + 6, r * CS + 6, CS - 12, CS - 12);
+
+    ctx.fillStyle = '#fff';
+    ctx.font = "bold 16px 'Share Tech Mono'";
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText("P", c * CS + CS/2, r * CS + CS/2 - 4);
+
+    ctx.font = "9px 'Barlow Condensed'";
+    let label = type === 'underground' ? 'SOTT.' : (type === 'multistory' ? 'MULTIP.' : 'SUP.');
+    ctx.fillText(label, c * CS + CS/2, r * CS + CS/2 + 10);
+  }
+
   function drawRoadSegment(x1, y1, x2, y2, type) {
     ctx.beginPath();
     ctx.moveTo(x1, y1);
     ctx.lineTo(x2, y2);
     
-    // Stili specifici per larghezza e importanza
     if (type === '6lane') {
       ctx.lineWidth = 8;
       ctx.strokeStyle = '#4a5c60';
       ctx.stroke();
-      // Doppia striscia gialla in mezzo
       ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
       ctx.lineWidth = 1; ctx.strokeStyle = '#ffd166'; ctx.stroke();
     } else if (type === '4lane') {
@@ -750,18 +991,15 @@
   }
 
   function drawRoads(phase) {
-    // Calcoliamo i limiti di espansione della griglia in base alla fase
     let minY = 0;
     if (phase === 1) minY = 6;
     if (phase === 2) minY = 4;
     if (phase === 3) minY = 1;
 
-    // Linee Orizzontali
     for (let r = minY; r <= 9; r++) {
       let type = getHorizontalRoadType(r);
       drawRoadSegment(0, r * CS, W, r * CS, type);
     }
-    // Linee Verticali
     for (let c = 0; c <= 9; c++) {
       for (let r = minY; r < 9; r++) {
         let type = getVerticalRoadType(c, r);
@@ -770,37 +1008,24 @@
     }
   }
 
-  // Algoritmo Geometrico per posizionare le fermate sul lato DX (senso di marcia) dopo l'incrocio
   function drawStop(p1, p2, type) {
     const x1 = p1[0] * CS; const y1 = p1[1] * CS;
     const x2 = p2[0] * CS; const y2 = p2[1] * CS;
 
-    // Vettore direzione
-    const dx = x2 - x1;
-    const dy = y2 - y1;
+    const dx = x2 - x1; const dy = y2 - y1;
     const len = Math.hypot(dx, dy);
     if (len === 0) return;
-    const ux = dx / len;
-    const uy = dy / len;
+    const ux = dx / len; const uy = dy / len;
+    const nx = -uy; const ny = ux;
 
-    // Vettore Normale (Perpendicolare verso Destra)
-    const nx = -uy;
-    const ny = ux;
-
-    // Posizione lungo il segmento: "Dopo l'incrocio" = ~20px dal punto di partenza
     const distFromIntersection = 25; 
     let cx = x1 + ux * distFromIntersection;
     let cy = y1 + uy * distFromIntersection;
 
-    // Offset laterale in base al tipo di strada su cui ci troviamo per finire sul marciapiede
-    // Supponiamo che il bus passi su strade 2L (offset minore) o 4L (offset maggiore)
-    // Per semplificare, usiamo un offset standard visivo che lo metta fuori dalla linea centrale
-    let offsetRoad = type === 'bus' ? 4 : 5; // Tram su 4lane ha strada più larga
-
+    let offsetRoad = type === 'bus' ? 4 : 5; 
     cx += nx * offsetRoad;
     cy += ny * offsetRoad;
 
-    // Disegna il pallino
     ctx.beginPath();
     ctx.arc(cx, cy, 4, 0, Math.PI * 2);
     ctx.fillStyle = type === 'bus' ? '#ff6b35' : '#ffd166';
@@ -835,57 +1060,55 @@
     ctx.fillRect(0, 0, W, H);
 
     // 1. STRADE
-    if (activeLayers.roads) {
-      drawRoads(phase);
-    }
+    if (activeLayers.roads) drawRoads(phase);
 
-    // 2. ZONIZZAZIONE (Include l'edificio Metro che sovrascrive se attiva)
+    // 2. ZONIZZAZIONE
     for (let r = 0; r < CELLS; r++) {
       for (let c = 0; c < CELLS; c++) {
         drawBlock(c, r, phase);
       }
     }
 
-    // 3. BUS (Fase 2+) - Percorso circolare capillare orario
-    if (phase >= 2 && activeLayers.bus) {
-      // Linea 1 (Fase 2): Circolare Interna (Copre le zone Medium/Low Rent)
-      const busRoute1 = [
-        [3, 8], [3, 4], [2, 4], [2, 6], [6, 6], [6, 4], [5, 4], [5, 8], [3, 8]
-      ];
-      drawTransitPath(busRoute1, '#ff6b35');
-      // Disegna fermate (Lato destro dopo l'incrocio)
-      for(let i=0; i<busRoute1.length-1; i++) {
-        drawStop(busRoute1[i], busRoute1[i+1], 'bus');
-      }
+    // 3. PARCHEGGI STRATEGICI (Nuova meccanica)
+    if (phase >= 2) {
+      // Parcheggio di superficie a supporto del commercio Fase 2
+      drawParking(5, 7, 'surface'); 
+    }
+    if (phase >= 3) {
+      // Parcheggio Multipiano tra Uffici e Alta Densità
+      drawParking(6, 4, 'multistory');
+    }
+    if (phase >= 4) {
+      // Grandi Park & Ride Sotterranei a fianco della Stazione Metro
+      drawParking(3, 0, 'underground');
+      drawParking(5, 0, 'underground');
+    }
 
-      // Linea 2 (Fase 4): Circolare Esterna (Copre capillarmente Ovest, Nord, Est)
+    // 4. BUS 
+    if (phase >= 2 && activeLayers.bus) {
+      const busRoute1 = [[3, 8], [3, 4], [2, 4], [2, 6], [6, 6], [6, 4], [5, 4], [5, 8], [3, 8]];
+      drawTransitPath(busRoute1, '#ff6b35');
+      for(let i=0; i<busRoute1.length-1; i++) drawStop(busRoute1[i], busRoute1[i+1], 'bus');
+
       if (phase >= 4) {
-        const busRoute2 = [
-          [1, 8], [1, 2], [4, 2], [7, 2], [7, 8], [4, 8], [1, 8]
-        ];
-        drawTransitPath(busRoute2, '#e8501e'); // Tonalità leggermente diversa per distinguerle
-        for(let i=0; i<busRoute2.length-1; i++) {
-          drawStop(busRoute2[i], busRoute2[i+1], 'bus');
-        }
+        const busRoute2 = [[1, 8], [1, 2], [4, 2], [7, 2], [7, 8], [4, 8], [1, 8]];
+        drawTransitPath(busRoute2, '#e8501e'); 
+        for(let i=0; i<busRoute2.length-1; i++) drawStop(busRoute2[i], busRoute2[i+1], 'bus');
       }
     }
 
-    // 4. TRAM (Fase 3+) - Assi di forza dritti
+    // 5. TRAM 
     if (phase >= 3 && activeLayers.tram) {
-      // Linea orizzontale commerciale R8
       const tramRoute1 = [[0, 8], [9, 8]];
       drawTransitPath(tramRoute1, '#ffd166', true);
-      // Fermate
       drawStop([0,8], [9,8], 'tram'); drawStop([4,8], [9,8], 'tram');
-      drawStop([9,8], [0,8], 'tram'); drawStop([5,8], [0,8], 'tram'); // Direzione opposta
+      drawStop([9,8], [0,8], 'tram'); drawStop([5,8], [0,8], 'tram'); 
       
-      // Linea verticale Asse Nord-Sud (Colonna 4)
       const tramRoute2 = [[4, 8], [4, 1]];
       drawTransitPath(tramRoute2, '#ffd166', true);
       drawStop([4,8], [4,1], 'tram'); drawStop([4,4], [4,1], 'tram');
       drawStop([4,1], [4,8], 'tram'); drawStop([4,5], [4,8], 'tram');
 
-      // Linea orizzontale mediana (Fase 4) - Taglia a metà l'insediamento per servire gli uffici
       if (phase >= 4) {
         const tramRoute3 = [[0, 4], [9, 4]];
         drawTransitPath(tramRoute3, '#ffd166', true);
@@ -894,22 +1117,16 @@
       }
     }
 
-    // 5. METRO SOTTERRANEA (Fase 4+)
+    // 6. METRO SOTTERRANEA
     if (phase >= 4 && activeLayers.metro) {
       ctx.strokeStyle = 'rgba(0, 229, 192, 0.7)';
       ctx.lineWidth = 6;
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
-      
       ctx.beginPath();
-      // Il tunnel arriva da fuori mappa in basso a sinistra (0,9)
       ctx.moveTo(CS * 0.5, CS * 8.5); 
-      // Ignora la griglia stradale: scava una grande curva diretta verso la stazione
       ctx.bezierCurveTo(CS * 1.5, CS * 5,  CS * 3, CS * 2,  CS * 4.5, CS * 0.5); 
-      // Dalla stazione prosegue dritta verso est per uscire dal distretto
       ctx.lineTo(CS * 8.5, CS * 0.5);
-      
-      // Stile tunnel (Tubo scuro con interno colorato)
       ctx.stroke();
       ctx.strokeStyle = '#0a0e0f';
       ctx.lineWidth = 2;
@@ -923,8 +1140,6 @@
   window.setPhase = function(p) {
     currentPhase = p;
     drawGrid(currentPhase);
-    
-    // Aggiorna pulsanti UI Fase
     const baseColors = ['','#7de87d','#4a9fd4','#ffd166','#ff6b35'];
     [1,2,3,4].forEach(i => {
       const btn = document.getElementById('btn-ph'+i);
@@ -945,7 +1160,6 @@
   window.toggleLayer = function(layerName) {
     activeLayers[layerName] = !activeLayers[layerName];
     const btn = document.getElementById('btn-ly-' + layerName);
-    
     if (activeLayers[layerName]) {
       btn.classList.add('active');
       btn.style.background = `rgba(255,255,255,0.08)`;
@@ -953,7 +1167,6 @@
       btn.classList.remove('active');
       btn.style.background = 'transparent';
     }
-    
     drawGrid(currentPhase);
   };
 
