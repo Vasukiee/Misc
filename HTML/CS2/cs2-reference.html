@@ -22,6 +22,7 @@
     --zone-ind: #e8a020;
     --zone-com: #4a9fd4;
     --zone-res: #5ab84a;
+    --zone-lowrent: #c2a878;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -308,40 +309,55 @@
     margin: 3px 0;
   }
 
-  .pt-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+  /* Control Panel Styles */
+  .control-group {
+    display: flex;
     gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+    align-items: center;
   }
 
-  .pt-card {
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    padding: 9px 11px;
-    background: rgba(255,255,255,0.02);
-    font-size: 0.83rem;
-  }
-
-  .pt-card .pt-title {
-    font-weight: 700;
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    margin-bottom: 5px;
-    color: #fff;
-  }
-
-  .pt-card .pt-line {
-    color: var(--muted);
-    padding: 1px 0;
-  }
-
-  .pt-card .pt-line span {
+  .ctrl-label {
     font-family: 'Share Tech Mono', monospace;
-    color: var(--accent3);
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    width: 60px;
+  }
+
+  .btn {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    padding: 6px 14px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: transparent;
+    border: 1px solid rgba(80,100,100,0.3);
+    color: #5a7070;
+  }
+
+  .btn:hover {
+    background: rgba(255,255,255,0.05);
+  }
+
+  .btn.active {
+    opacity: 1;
+    box-shadow: 0 0 8px currentColor;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    margin-right: 8px;
+    margin-bottom: 4px;
   }
 
   @media (max-width: 600px) {
-    .grid-zone, .pt-grid { grid-template-columns: 1fr; }
+    .grid-zone { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -352,11 +368,146 @@
   <p>1 CELLA = 8m &nbsp;|&nbsp; AGGIORNATO APR 2026</p>
 </div>
 
-<!-- 1. GERARCHIA STRADALE -->
+<!-- 01. MAPPA DISTRETTO INTERATTIVA -->
 <div class="section">
   <div class="section-header">
     <span class="section-num">01</span>
-    <span class="section-title">Gerarchia Stradale</span>
+    <span class="section-title">Visualizzatore Espansione & Network Strati</span>
+  </div>
+  <div class="section-body">
+    <div class="note" style="margin-bottom:12px">
+      <strong>Livelli e Network:</strong> Esplora i livelli della maglia urbana. Le strade non sono tutte uguali: nota le arterie a 6/4 corsie sui bordi e le stradine pedonali/alley all'interno. La metropolitana è un <em>edificio</em> (stazione) che scende nei tunnel. Le fermate di superficie (bus/tram) si posizionano fisicamente sul lato corretto della carreggiata e dopo gli incroci.
+    </div>
+
+    <div class="control-group" id="phase-btns">
+      <span class="ctrl-label">Fase:</span>
+      <button onclick="setPhase(1)" id="btn-ph1" class="btn" style="color:#7de87d;">1. BORGO INIZIALE</button>
+      <button onclick="setPhase(2)" id="btn-ph2" class="btn" style="color:#4a9fd4;">2. ESPANSIONE</button>
+      <button onclick="setPhase(3)" id="btn-ph3" class="btn" style="color:#ffd166;">3. CENTRO CITTÀ</button>
+      <button onclick="setPhase(4)" id="btn-ph4" class="btn" style="color:#ff6b35;">4. METROPOLI</button>
+    </div>
+
+    <div class="control-group" id="layer-btns">
+      <span class="ctrl-label">Layer:</span>
+      <button onclick="toggleLayer('zones')" id="btn-ly-zones" class="btn active" style="color:var(--zone-res);">ZONIZZAZIONE</button>
+      <button onclick="toggleLayer('roads')" id="btn-ly-roads" class="btn active" style="color:var(--text);">STRADE</button>
+      <button onclick="toggleLayer('bus')" id="btn-ly-bus" class="btn active" style="color:var(--accent2);">BUS (Capillare)</button>
+      <button onclick="toggleLayer('tram')" id="btn-ly-tram" class="btn active" style="color:var(--accent3);">TRAM (Assi)</button>
+      <button onclick="toggleLayer('metro')" id="btn-ly-metro" class="btn active" style="color:var(--accent);">METRO (Tunnel & Edifici)</button>
+    </div>
+
+    <div style="position:relative;width:100%;max-width:600px;margin:0 auto; margin-top: 10px;">
+      <canvas id="districtMap" width="600" height="600" style="width:100%;border:1px solid #1e2e32;border-radius:4px;background:#0a0e0f;display:block;"></canvas>
+    </div>
+    
+    <!-- Legend -->
+    <div style="display:flex;flex-wrap:wrap;margin-top:10px;font-size:0.78rem;">
+      <div class="legend-item"><div style="width:12px;height:12px;background:#4a9fd4;border-radius:2px;"></div>Commercio</div>
+      <div class="legend-item"><div style="width:12px;height:12px;background:#2a7fd4;border-radius:2px;"></div>Uffici</div>
+      <div class="legend-item"><div style="width:12px;height:12px;background:#5ab84a;border-radius:2px;"></div>Low Density</div>
+      <div class="legend-item"><div style="width:12px;height:12px;background:#c2a878;border-radius:2px;"></div>Low Rent</div>
+      <div class="legend-item"><div style="width:12px;height:12px;background:#8b6fd4;border-radius:2px;"></div>Medium Density</div>
+      <div class="legend-item"><div style="width:12px;height:12px;background:#c4aaff;border-radius:2px;"></div>High Density</div>
+      <div style="width: 100%; height: 6px;"></div> <!-- Spacing -->
+      <div class="legend-item"><div style="width:16px;height:6px;background:#4a5c60;"></div>Arteria (6c)</div>
+      <div class="legend-item"><div style="width:16px;height:4px;background:#3e4e52;"></div>Collettore (4c)</div>
+      <div class="legend-item"><div style="width:16px;height:2px;background:#2a3538;"></div>Locale (2c)</div>
+      <div class="legend-item"><div style="width:16px;height:2px;border-top:1px dashed #5ab84a;"></div>Pedonale</div>
+      <div class="legend-item"><div style="width:16px;height:2px;border-top:1px dotted #1e2528;"></div>Alley</div>
+      <div style="width: 100%; height: 6px;"></div> <!-- Spacing -->
+      <div class="legend-item"><div style="width:10px;height:10px;border: 2px solid #00e5c0; background: #0f1518;"></div>Stazione Metro (Edificio)</div>
+      <div class="legend-item"><div style="width:8px;height:8px;border: 1px solid #000; background: #ff6b35; border-radius:50%;"></div>Fermata Bus (Lato strada)</div>
+      <div class="legend-item"><div style="width:8px;height:8px;border: 1px solid #000; background: #ffd166; border-radius:50%;"></div>Fermata Tram (Lato strada)</div>
+    </div>
+  </div>
+</div>
+
+<!-- 02. ZONIZZAZIONE E SVILUPPO ADDITIVO -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <span class="section-title">Zonizzazione — Sviluppo Additivo (Zero Demolizioni)</span>
+  </div>
+  <div class="section-body">
+    <div class="note" style="margin-bottom:4px">
+      <strong>La meccanica dei Livelli (XP):</strong> Ogni volta che demolisci una zona residenziale o commerciale per aumentare la densità, resetti il livello degli edifici da 5 a 1. I cittadini perdono ricchezza, istruzione vicina e le aziende perdono efficienza. <span class="ok">Sviluppa in modo ADDITIVO espandendo la città, preservando i vecchi quartieri.</span>
+    </div>
+
+    <table>
+      <tr>
+        <th>Fase</th>
+        <th>Dimensioni Mappa</th>
+        <th>Dinamica di Zonizzazione</th>
+      </tr>
+      <tr>
+        <td><span class="tag tag-zon">1. Borgo</span></td>
+        <td class="val">Base Sud</td>
+        <td>Fondi la città vicino allo svincolo autostradale (Sud). Crea l'arteria commerciale. Il resto è puro <strong>Low Density</strong>. Lascia che livellino a 5 stelle in pace.</td>
+      </tr>
+      <tr>
+        <td><span class="tag tag-com">2. Espansione</span></td>
+        <td class="val">Fascia Media</td>
+        <td>Quando sblocchi la densità media, NON demolire la Fase 1. Estendi la maglia stradale a Nord. Costruisci i nuovi lotti come <strong>Medium Density e Low Rent</strong>.</td>
+      </tr>
+      <tr>
+        <td><span class="tag tag-warn">3. Centro Direz.</span></td>
+        <td class="val">Nuovo Cuore Nord</td>
+        <td>La domanda di uffici e High Density esplode. Costruisci un nuovo "Centro Città" ancora più a Nord. Usa <strong>Uffici</strong> per separare le case dalle future arterie rumorose.</td>
+      </tr>
+      <tr>
+        <td><span class="tag" style="background:rgba(255,107,53,0.15);color:var(--accent2);border:1px solid rgba(255,107,53,0.3);">4. Metropoli</span></td>
+        <td class="val">Periferie</td>
+        <td>Il Land Value al centro è altissimo. Congela l'espansione ad alta densità qui, e ricomincia a costruire nuovi sobborghi Low Density ai bordi estremi, connessi via Metro.</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<!-- 03. TRASPORTI PUBBLICI - CAPILLARITÀ E LIBERTÀ -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <span class="section-title">Trasporti Pubblici — Capillarità e Libertà Architettonica</span>
+  </div>
+  <div class="section-body">
+    <div class="note" style="border-color: var(--accent2); margin-bottom: 12px;">
+      <strong>L'Errore Fatale:</strong> Far camminare i pedoni per 1 km per raggiungere una fermata perimetrale. In CS2, se la fermata è troppo lontana, le IA prenderanno la propria auto privata, intasando i collettori.
+    </div>
+    
+    <div class="grid-zone">
+      <div class="zone-card">
+        <div class="zone-card-title" style="color:var(--accent2)">🚌 Rete Bus (Capillare)</div>
+        <div class="line"><span>Ruolo</span><span>Penetrazione nel quartiere</span></div>
+        <div class="line"><span>Distanza casa-fermata</span><span>Max 400m (50 celle)</span></div>
+        <div style="font-size: 0.8rem; color: var(--muted); margin-top: 5px;">Le linee bus <strong>devono intrecciarsi</strong>. Crea una linea "Interna" per i primi servizi, ed espandi con linee "Periferiche" che raggiungano i bordi (Est, Ovest, Nord), portando i pendolari ai Tram o alla Metro senza far usare loro l'auto.</div>
+      </div>
+      <div class="zone-card">
+        <div class="zone-card-title" style="color:var(--accent3)">🚊 Tram (Asse di Forza)</div>
+        <div class="line"><span>Ruolo</span><span>Spostamento di massa in superficie</span></div>
+        <div class="line"><span>Posizione</span><span>Arterie larghe (4 corsie) / Assi Commerciali</span></div>
+        <div style="font-size: 0.8rem; color: var(--muted); margin-top: 5px;">I tram non si infilano nei viottoli. Viaggiano dritti sui viali principali commerciali e uffici per raccogliere il flusso dei bus e portarlo agli Hub Metro.</div>
+      </div>
+      <div class="zone-card">
+        <div class="zone-card-title" style="color:var(--accent)">🚇 Metro (Totale Libertà Sotterranea)</div>
+        <div class="line"><span>Ruolo</span><span>Connessione inter-distrettuale veloce</span></div>
+        <div class="line"><span>Posizione Tunnel</span><span>Ovunque (Ignora la griglia di superficie)</span></div>
+        <div style="font-size: 0.8rem; color: var(--muted); margin-top: 5px;">I tunnel della metropolitana si scavano a -20m. <strong>Usa le diagonali e le curve fluide!</strong> Risparmia tempo e soldi non seguendo il tracciato delle strade sovrastanti. Punta dritto da Hub a Hub.</div>
+      </div>
+      <div class="zone-card">
+        <div class="zone-card-title" style="color:#d44a4a">🚂 Treno (Intercity)</div>
+        <div class="line"><span>Ruolo</span><span>Turismo / Lavoratori Esterni</span></div>
+        <div class="line"><span>Impatto Acustico</span><span>Estremo</span></div>
+        <div style="font-size: 0.8rem; color: var(--muted); margin-top: 5px;">Posizionalo fuori città, magari vicino al comparto industriale, ed estendi una linea Metro dedicata per portare i turisti in centro senza che usino l'auto.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 04. GERARCHIA STRADALE -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <span class="section-title">Gerarchia Stradale e Regole Base</span>
   </div>
   <div class="section-body">
     <div class="hierarchy">
@@ -368,224 +519,43 @@
       <div class="h-arrow" style="padding-left:20px">↓ svincolo ogni 1500–2000m (188–250 celle)</div>
       <div class="h-row">
         <span class="tag tag-art">ARTERIA</span>
+        <span class="h-name">6 corsie (Grande Viabilità)</span>
+        <span class="h-vals">60 km/h &nbsp;|&nbsp; confini di distretto, scorrimento</span>
+      </div>
+      <div class="h-arrow" style="padding-left:20px">↓ innesto ogni 300–400m</div>
+      <div class="h-row">
+        <span class="tag tag-col">COLLETTORE PRIMARIO</span>
         <span class="h-name">4 corsie</span>
-        <span class="h-vals">50 km/h &nbsp;|&nbsp; solo rotatorie, no accessi diretti</span>
+        <span class="h-vals">50 km/h &nbsp;|&nbsp; ospita le linee di Tram</span>
       </div>
-      <div class="h-arrow" style="padding-left:20px">↓ innesto ogni 240–300m (30–38 celle)</div>
+      <div class="h-arrow" style="padding-left:20px">↓ innesto ogni 100–150m</div>
       <div class="h-row">
-        <span class="tag tag-col">COLLETTORE</span>
-        <span class="h-name">2 corsie largo</span>
-        <span class="h-vals">40 km/h &nbsp;|&nbsp; max 1 innesto ogni 80m (10 celle)</span>
+        <span class="tag tag-col">COLLETTORE SECONDARIO</span>
+        <span class="h-name">2 corsie</span>
+        <span class="h-vals">40 km/h &nbsp;|&nbsp; arteria interna del quartiere, ospita i Bus</span>
       </div>
-      <div class="h-arrow" style="padding-left:20px">↓ innesto ogni 80–120m (10–15 celle)</div>
+      <div class="h-arrow" style="padding-left:20px">↓ innesto capillare</div>
       <div class="h-row">
-        <span class="tag tag-res">LOCALE</span>
-        <span class="h-name">2 corsie stretto</span>
-        <span class="h-vals">30 km/h &nbsp;|&nbsp; accessi edifici, griglia interna</span>
+        <span class="tag tag-res">LOCALE / ALLEY</span>
+        <span class="h-name">2 corsie strette / 1 corsia</span>
+        <span class="h-vals">30 km/h &nbsp;|&nbsp; traffico residenziale lento</span>
       </div>
-    </div>
-    <div class="note">
-      <strong>Regola chiave:</strong> ogni livello serve SOLO il livello adiacente. Le strade locali non sboccano mai sull'arteria. I collettori non sboccano mai sull'autostrada.
     </div>
   </div>
 </div>
 
-<!-- 2. INTERSEZIONI E DISTANZE -->
-<div class="section">
-  <div class="section-header">
-    <span class="section-num">02</span>
-    <span class="section-title">Intersezioni e Distanze</span>
-  </div>
-  <div class="section-body">
-    <table>
-      <tr>
-        <th>Tipo strada</th>
-        <th>Distanza tra intersezioni</th>
-        <th>Celle</th>
-        <th>Note</th>
-      </tr>
-      <tr>
-        <td><span class="tag tag-art">ARTERIA</span></td>
-        <td class="val">240–300m</td>
-        <td class="val">30–38</td>
-        <td>Solo rotatorie, mai a T</td>
-      </tr>
-      <tr>
-        <td><span class="tag tag-col">COLLETTORE esterno</span> (suburbano)</td>
-        <td class="val">120–160m</td>
-        <td class="val">15–20</td>
-        <td>Incrocio o rotatoria piccola</td>
-      </tr>
-      <tr>
-        <td><span class="tag tag-col">COLLETTORE interno</span> (urbano)</td>
-        <td class="val">80–100m</td>
-        <td class="val">10–13</td>
-        <td>Incrocio semaforizzato ok</td>
-      </tr>
-      <tr>
-        <td><span class="tag tag-res">LOCALE residenziale</span></td>
-        <td class="val">64–80m</td>
-        <td class="val">8–10</td>
-        <td>Griglia interna blocco</td>
-      </tr>
-      <tr>
-        <td><span class="tag tag-ind">LOCALE industriale</span></td>
-        <td class="val">80–100m</td>
-        <td class="val">10–13</td>
-        <td>Collettori, non strade strette</td>
-      </tr>
-    </table>
-  </div>
-</div>
-
-<!-- 3. ROTATORIE -->
-<div class="section">
-  <div class="section-header">
-    <span class="section-num">03</span>
-    <span class="section-title">Rotatorie</span>
-  </div>
-  <div class="section-body">
-    <table>
-      <tr>
-        <th>Posizione</th>
-        <th>Diametro interno</th>
-        <th>Celle</th>
-        <th>Priorità upgrade</th>
-      </tr>
-      <tr>
-        <td>Svincolo autostradale</td>
-        <td class="val">64m</td>
-        <td class="val">8</td>
-        <td><span class="tag tag-warn">1° da upgradare</span></td>
-      </tr>
-      <tr>
-        <td>Nodo centrale (arteria×arteria)</td>
-        <td class="val">48–64m</td>
-        <td class="val">6–8</td>
-        <td><span class="tag tag-warn">2° da upgradare</span></td>
-      </tr>
-      <tr>
-        <td>Arteria → collettore</td>
-        <td class="val">32–40m</td>
-        <td class="val">4–5</td>
-        <td><span class="tag tag-ok">3°</span></td>
-      </tr>
-      <tr>
-        <td>Collettore → locale</td>
-        <td class="val">24m</td>
-        <td class="val">3</td>
-        <td>Bassa priorità, o3 regge a lungo</td>
-      </tr>
-    </table>
-    <div class="note">
-      <strong>Mai</strong> rotatoria direttamente sull'uscita autostradale — lascia sempre <span class="ok">6–8 celle di decelerazione</span> prima. <strong>Mai</strong> due rotatorie a meno di 15 celle una dall'altra sulla stessa arteria.
-    </div>
-  </div>
-</div>
-
-<!-- 4. ZONIZZAZIONE -->
-<div class="section">
-  <div class="section-header">
-    <span class="section-num">04</span>
-    <span class="section-title">Zonizzazione — Primo Quartiere Misto</span>
-  </div>
-  <div class="section-body">
-    <div class="grid-zone">
-      <div class="zone-card">
-        <div class="zone-card-title" style="color:var(--zone-ind)">Industriale</div>
-        <div class="line"><span>Dimensione blocco</span><span>50×50 celle (400m)</span></div>
-        <div class="line"><span>Accessi arteria</span><span>min 2, dist 20 celle</span></div>
-        <div class="line"><span>Strade interne</span><span>collettori 10×10</span></div>
-        <div class="line"><span>Distanza dall'arteria</span><span>max 10 celle</span></div>
-        <div class="line"><span>% sulla mappa</span><span>15–20%</span></div>
-      </div>
-      <div class="zone-card">
-        <div class="zone-card-title" style="color:var(--zone-com)">Commercio + Uffici</div>
-        <div class="line"><span>Dimensione blocco</span><span>30×30 celle (240m)</span></div>
-        <div class="line"><span>Profondità dal collettore</span><span>max 15 celle</span></div>
-        <div class="line"><span>Fronte strada</span><span>collettore, non arteria</span></div>
-        <div class="line"><span>Buffer con residenziale</span><span>min 5 celle</span></div>
-        <div class="line"><span>% sulla mappa</span><span>15–20%</span></div>
-      </div>
-      <div class="zone-card">
-        <div class="zone-card-title" style="color:var(--zone-res)">Residenziale Low Density</div>
-        <div class="line"><span>Dimensione blocco</span><span>40×40 celle (320m)</span></div>
-        <div class="line"><span>Strade interne</span><span>ogni 8–10 celle</span></div>
-        <div class="line"><span>Distanza dall'arteria</span><span>min 3 celle buffer</span></div>
-        <div class="line"><span>% del residenziale</span><span>40%</span></div>
-      </div>
-      <div class="zone-card">
-        <div class="zone-card-title" style="color:#8bc4a0">Residenziale Medium + Low Rent</div>
-        <div class="line"><span>Dimensione blocco</span><span>30×30 celle (240m)</span></div>
-        <div class="line"><span>Posizione</span><span>vicino servizi/metro</span></div>
-        <div class="line"><span>% del residenziale</span><span>40% med / 20% low rent</span></div>
-        <div class="line"><span>Low rent</span><span>vicino industria, bordo zona</span></div>
-      </div>
-    </div>
-    <div class="rule-block">
-      <div class="rule-title">Ordine di posizionamento nel quartiere (da autostrada verso interno)</div>
-      Industria → buffer 5 celle → Commercio/Uffici → buffer 3 celle → Low Rent → Medium Density → Low Density (più lontano dall'autostrada, più quieto)
-    </div>
-  </div>
-</div>
-
-<!-- 5. MEZZI PUBBLICI GENERALI -->
+<!-- 05. SOTTERRANEO -->
 <div class="section">
   <div class="section-header">
     <span class="section-num">05</span>
-    <span class="section-title">Trasporti Pubblici - Principi Generali</span>
-  </div>
-  <div class="section-body">
-    <div class="pt-grid">
-      <div class="pt-card">
-        <div class="pt-title">🚇 Subway / Metro</div>
-        <div class="pt-line">Distanza tra fermate: <span>400–600m (50–75 celle)</span></div>
-        <div class="pt-line">Posizione: <span>nodi collettore, non arteria</span></div>
-        <div class="pt-line">Logica: <span>connetti distretti, non coprire tutto</span></div>
-        <div class="pt-line">Frequenza target: <span>ogni 2–3 min</span></div>
-      </div>
-      <div class="pt-card">
-        <div class="pt-title">🚌 Bus</div>
-        <div class="pt-line">Distanza tra fermate: <span>200–300m (25–38 celle)</span></div>
-        <div class="pt-line">Posizione: <span>collettori, mai arteria</span></div>
-        <div class="pt-line">Logica: <span>alimenta la metro, non la duplica</span></div>
-        <div class="pt-line">Frequenza target: <span>ogni 4–6 min</span></div>
-      </div>
-      <div class="pt-card">
-        <div class="pt-title">🚊 Tram</div>
-        <div class="pt-line">Distanza tra fermate: <span>300–400m (38–50 celle)</span></div>
-        <div class="pt-line">Posizione: <span>arteria secondaria dedicata</span></div>
-        <div class="pt-line">Logica: <span>asse ad alta densità, sostituisce bus</span></div>
-      </div>
-      <div class="pt-card">
-        <div class="pt-title">🚂 Treno intercity</div>
-        <div class="pt-line">Posizione stazione: <span>bordo zona, non centro</span></div>
-        <div class="pt-line">Connessione: <span>metro o bus dedicato alla stazione</span></div>
-        <div class="pt-line">Logica: <span>import/export lavoratori, non mobilità interna</span></div>
-      </div>
-    </div>
-    <table>
-      <tr><th>Errore comune</th><th>Correzione</th></tr>
-      <tr><td>Metro parallela all'autostrada</td><td>Metro deve attraversare i distretti perpendicolarmente</td></tr>
-      <tr><td>Fermata bus sull'arteria</td><td>Fermata sul collettore, a 1–2 celle dall'incrocio</td></tr>
-      <tr><td>Troppi bus sulla stessa linea</td><td>Frequenza alta su poche linee &gt; tante linee sparse</td></tr>
-    </table>
-  </div>
-</div>
-
-<!-- 6. SOTTERRANEO -->
-<div class="section">
-  <div class="section-header">
-    <span class="section-num">06</span>
-    <span class="section-title">Sotterraneo — Quote e Separazione</span>
+    <span class="section-title">Sotterraneo — Quote e Slope Too Steep</span>
   </div>
   <div class="section-body">
     <div class="underground-grid">
       <div class="u-layer">
         <div class="u-depth">0 → -8m</div>
         <div class="u-content">
-          <span class="tag tag-col">PIPES acqua</span>
-          <span class="tag tag-col">PIPES fognatura</span>
+          <span class="tag tag-col">PIPES acqua/fognatura</span>
           <span style="color:var(--muted);font-size:0.8rem">Cavi elettrici (auto-interrati)</span>
         </div>
       </div>
@@ -593,7 +563,7 @@
         <div class="u-depth">-10 → -20m</div>
         <div class="u-content">
           <span class="tag tag-art">METRO superficiale</span>
-          <span style="color:var(--muted);font-size:0.8rem">Stazioni con accesso da 0m</span>
+          <span style="color:var(--muted);font-size:0.8rem">Tunnel diretti verso stazioni vicine</span>
         </div>
       </div>
       <div class="u-layer">
@@ -601,219 +571,24 @@
         <div class="u-content">
           <span class="tag tag-art">METRO profonda</span>
           <span class="tag tag-res">TUNNEL auto</span>
-          <span style="color:var(--muted);font-size:0.8rem">Incroci sotterranei</span>
+          <span style="color:var(--muted);font-size:0.8rem">Incroci sotterranei e diagonali libere</span>
         </div>
       </div>
       <div class="u-layer">
         <div class="u-depth">-35 → -50m</div>
         <div class="u-content">
-          <span class="tag tag-ind">TRENO merci</span>
-          <span class="tag tag-ind">TRENO intercity</span>
-          <span style="color:var(--muted);font-size:0.8rem">Passaggi lunghi, curve ampie</span>
+          <span class="tag tag-ind">TRENO merci/intercity</span>
+          <span style="color:var(--muted);font-size:0.8rem">Passaggi lunghi, curve molto ampie</span>
         </div>
       </div>
     </div>
 
-    <div class="rule-block">
+    <div class="rule-block" style="margin-top: 12px;">
       <div class="rule-title">Slope Too Steep — Calcolo pendenza</div>
-      CS2 limite pendenza: <span class="formula">max 10% = 1m ogni 10m orizzontali</span><br><br>
+      CS2 limite pendenza: <span class="formula">max 10% = 1m di discesa ogni 10m orizzontali</span><br><br>
       Per scendere di <strong>10m</strong> di profondità servono almeno <span class="formula">100m orizzontali = 13 celle</span><br>
-      Per scendere di <strong>20m</strong> servono almeno <span class="formula">200m = 25 celle</span><br>
-      Per scendere di <strong>35m</strong> (metro profonda) servono almeno <span class="formula">350m = 44 celle</span><br><br>
-      <span style="color:var(--muted);font-size:0.82rem">Usa sempre il 120–130% di queste distanze per sicurezza: il gioco calcola la pendenza sul segmento, non sulla media.</span>
-    </div>
-  </div>
-</div>
-
-<!-- 7. CURVE -->
-<div class="section">
-  <div class="section-header">
-    <span class="section-num">07</span>
-    <span class="section-title">Curve — Raggi Minimi</span>
-  </div>
-  <div class="section-body">
-    <table>
-      <tr>
-        <th>Tipo veicolo / linea</th>
-        <th>Raggio minimo</th>
-        <th>Celle</th>
-        <th>Raggio consigliato</th>
-      </tr>
-      <tr>
-        <td>Auto, bus urbano</td>
-        <td class="val">20m</td>
-        <td class="val">3</td>
-        <td class="val">40–60m (5–8 celle)</td>
-      </tr>
-      <tr>
-        <td>Camion, autoarticolato</td>
-        <td class="val">40m</td>
-        <td class="val">5</td>
-        <td class="val">80m (10 celle)</td>
-      </tr>
-      <tr>
-        <td>Metro / Tram</td>
-        <td class="val">40m</td>
-        <td class="val">5</td>
-        <td class="val">80–100m (10–13 celle)</td>
-      </tr>
-      <tr>
-        <td>Treno passeggeri</td>
-        <td class="val">80m</td>
-        <td class="val">10</td>
-        <td class="val">160m (20 celle)</td>
-      </tr>
-      <tr>
-        <td>Treno merci</td>
-        <td class="val">120m</td>
-        <td class="val">15</td>
-        <td class="val">200m+ (25+ celle)</td>
-      </tr>
-    </table>
-    <div class="note">
-      <strong>Curva + discesa combinata:</strong> quando una curva è anche in pendenza, usa il raggio <span class="ok">1.5× il minimo</span>. Una curva a raggio 5 celle in piano diventa 8 celle se è anche in discesa. Questo vale specialmente per metro e treni.
-    </div>
-    <div class="curve-box">
-      <div class="c-title">Come costruire una curva precisa</div>
-      Usa lo strumento curva in CS2: primo click = inizio, secondo click = punto di controllo (determina il raggio), terzo click = fine. Per ottenere un raggio preciso, il punto di controllo deve essere a circa <span class="formula">0.7 × raggio_desiderato</span> dal centro della curva ideale. Per curve a 90°: se vuoi raggio 80m, metti il punto di controllo a 56m dal vertice dell'angolo.
-    </div>
-  </div>
-</div>
-
-<!-- 8. ENERGIA EOLICA -->
-<div class="section">
-  <div class="section-header">
-    <span class="section-num">08</span>
-    <span class="section-title">Energia Eolica — Posizionamento</span>
-  </div>
-  <div class="section-body">
-    <table>
-      <tr><th>Parametro</th><th>Valore</th></tr>
-      <tr><td>Distanza minima tra turbine</td><td class="val">10 celle (80m)</td></tr>
-      <tr><td>Orientamento fila (vento NE→SW)</td><td class="val">perpendicolare al vento = fila NW–SE</td></tr>
-      <tr><td>Distanza minima da zone abitate</td><td class="val">15 celle (120m)</td></tr>
-      <tr><td>Distanza minima da edifici industriali</td><td class="val">8 celle (64m)</td></tr>
-      <tr><td>Altitudine ottimale</td><td class="val">più alta possibile, evita valli</td></tr>
-    </table>
-    <div class="note">Le turbine si "rubano" vento solo lungo l'asse del vento, non lateralmente. Puoi metterle vicine lateralmente (5 celle) senza perdita se sono in fila perpendicolare al vento.</div>
-  </div>
-</div>
-
-<!-- 9. DISTRETTO RES/COM — CRESCITA A CORONE -->
-<div class="section">
-  <div class="section-header">
-    <span class="section-num">09</span>
-    <span class="section-title">Distretto Res/Com — Espansione a Corone (Moduli 12x12)</span>
-  </div>
-  <div class="section-body">
-    <div class="note" style="margin-bottom:4px">
-      <strong>Regola d'oro:</strong> Non si demolisce mai. Usa moduli standard di <span class="ok">12×12 celle</span> delimitati da strade locali (2 corsie). L'espansione avviene aggiungendo anelli (corone) intorno al nucleo centrale. L'ingresso principale è sempre un <strong>Collettore a 4 corsie</strong> a sud.
-    </div>
-
-    <table>
-      <tr>
-        <th>Fase</th>
-        <th>Dimensioni (Moduli)</th>
-        <th>Zonizzazione Nuovi Blocchi</th>
-        <th>Focus Trasporti</th>
-      </tr>
-      <tr>
-        <td><span class="tag tag-zon">1. Nucleo</span></td>
-        <td class="val">3×3 (36×36 celle)</td>
-        <td>Fila Sud: Commercio. Resto: Residenziale Low Density.</td>
-        <td>Bus fermata esterna su arteria. Nessun mezzo interno.</td>
-      </tr>
-      <tr>
-        <td><span class="tag tag-com">2. Corona 1</span></td>
-        <td class="val">5×5 (60×60 celle)</td>
-        <td>Uffici (cuscinetto al centro) + Medium Density a Nord.</td>
-        <td>1 Linea Bus ad anello sul perimetro del nucleo.</td>
-      </tr>
-      <tr>
-        <td><span class="tag tag-warn">3. Corona 2</span></td>
-        <td class="val">7×7 (84×84 celle)</td>
-        <td>Riconversione Low->Medium. Nuovo Commercio a Sud.</td>
-        <td>Arriva la Metro (Stazione centrale). 2° Anello Bus.</td>
-      </tr>
-      <tr>
-        <td><span class="tag" style="background:rgba(255,107,53,0.15);color:var(--accent2);border:1px solid rgba(255,107,53,0.3);">4. Metropoli</span></td>
-        <td class="val">9×9 (108×108 celle)</td>
-        <td>High Density solo ai bordi (Est/Ovest/Nord).</td>
-        <td>Linea Tram a Nord. Rete Bus di adduzione alla Metro.</td>
-      </tr>
-    </table>
-    
-    <div class="rule-block" style="border-color: rgba(255,107,53,0.3); background: rgba(255,107,53,0.05);">
-      <div class="rule-title" style="color: var(--accent2)">Soglia Critica: 30.000 Abitanti</div>
-      Raggiunta la Fase 4, <strong>non espandere ulteriormente</strong> il distretto. Il traffico collasserebbe. Fonda un nuovo distretto identico e collegalo a questo tramite la linea Metro.
-    </div>
-  </div>
-</div>
-
-<!-- 10. MEZZI PUBBLICI — REGOLE FISICHE -->
-<div class="section">
-  <div class="section-header">
-    <span class="section-num">10</span>
-    <span class="section-title">Trasporti Pubblici — Posizionamento Reale</span>
-  </div>
-  <div class="section-body">
-    <div class="grid-zone">
-      <div class="zone-card">
-        <div class="zone-card-title" style="color:var(--accent2)">🚌 Bus (Adduzione)</div>
-        <div class="line"><span>Posizione Fermata</span><span>Sempre DOPO l'incrocio (2-3 celle)</span></div>
-        <div class="line"><span>Strade consentite</span><span>Solo Collettori</span></div>
-        <div class="line"><span>Distanza</span><span>25–38 celle</span></div>
-        <div style="font-size: 0.8rem; color: var(--muted); margin-top: 5px;">Se metti la fermata prima dell'incrocio, il bus bloccherà la corsia di svolta paralizzando il traffico.</div>
-      </div>
-      <div class="zone-card">
-        <div class="zone-card-title" style="color:var(--accent)">🚇 Metro (Connessione)</div>
-        <div class="line"><span>Posizione Stazione</span><span>Incroci centrali (Uffici/Medium)</span></div>
-        <div class="line"><span>Affaccio</span><span>Su Collettore (spazio per pedoni)</span></div>
-        <div class="line"><span>Distanza</span><span>50–75 celle</span></div>
-        <div style="font-size: 0.8rem; color: var(--muted); margin-top: 5px;">Le stazioni occupano spazio in superficie. Sacrifica un pezzo di zonizzazione per creare una piazza pedonale d'accesso.</div>
-      </div>
-      <div class="zone-card">
-        <div class="zone-card-title" style="color:var(--accent3)">🚊 Tram (Alta Capacità)</div>
-        <div class="line"><span>Corsie minime</span><span>Strada a 4 corsie (2 auto + 2 tram)</span></div>
-        <div class="line"><span>Tracciato</span><span>Asse rettilineo commerciale / Alta densità</span></div>
-        <div style="font-size: 0.8rem; color: var(--muted); margin-top: 5px;">Mai su strade a 2 corsie condivise con le auto. Il pathfinding delle IA impazzisce e si creano ingorghi.</div>
-      </div>
-      <div class="zone-card">
-        <div class="zone-card-title" style="color:#d44a4a">🚂 Treno (Intercity)</div>
-        <div class="line"><span>Posizione Stazione</span><span>Bordi esterni estremi della città</span></div>
-        <div class="line"><span>Logica</span><span>Import/Export, non mobilità interna</span></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- 11. MAPPA DISTRETTO INTERATTIVA -->
-<div class="section">
-  <div class="section-header">
-    <span class="section-num">11</span>
-    <span class="section-title">Mappa Distretto — Crescita Reale (interattiva)</span>
-  </div>
-  <div class="section-body">
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;" id="phase-btns">
-      <button onclick="setPhase(1)" id="btn1" style="font-family:'Share Tech Mono',monospace;font-size:0.75rem;padding:6px 14px;border-radius:3px;cursor:pointer;border:1px solid rgba(90,184,74,0.4);background:rgba(90,184,74,0.15);color:#7de87d;transition:all 0.2s;">1. NUCLEO</button>
-      <button onclick="setPhase(2)" id="btn2" style="font-family:'Share Tech Mono',monospace;font-size:0.75rem;padding:6px 14px;border-radius:3px;cursor:pointer;border:1px solid rgba(74,159,212,0.3);background:rgba(74,159,212,0.08);color:#5a7070;transition:all 0.2s;">2. CORONA 1</button>
-      <button onclick="setPhase(3)" id="btn3" style="font-family:'Share Tech Mono',monospace;font-size:0.75rem;padding:6px 14px;border-radius:3px;cursor:pointer;border:1px solid rgba(255,209,102,0.3);background:rgba(255,209,102,0.05);color:#5a7070;transition:all 0.2s;">3. CORONA 2</button>
-      <button onclick="setPhase(4)" id="btn4" style="font-family:'Share Tech Mono',monospace;font-size:0.75rem;padding:6px 14px;border-radius:3px;cursor:pointer;border:1px solid rgba(255,107,53,0.3);background:rgba(255,107,53,0.05);color:#5a7070;transition:all 0.2s;">4. METROPOLI</button>
-    </div>
-
-    <div style="position:relative;width:100%;max-width:600px;margin:0 auto;">
-      <canvas id="districtMap" width="600" height="600" style="width:100%;border:1px solid #1e2e32;border-radius:4px;background:#0a0e0f;display:block;"></canvas>
-    </div>
-    
-    <!-- Legend -->
-    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;font-size:0.78rem;">
-      <div style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;background:#4a9fd4;border-radius:2px;"></div>Commercio</div>
-      <div style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;background:#2a7fd4;border-radius:2px;"></div>Uffici</div>
-      <div style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;background:#5ab84a;border-radius:2px;"></div>Low Density</div>
-      <div style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;background:#8b6fd4;border-radius:2px;"></div>Medium Density</div>
-      <div style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;background:#c4aaff;border-radius:2px;"></div>High Density</div>
-      <div style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;background:#00e5c0;border-radius:2px;"></div>Hub Metro</div>
-      <div style="display:flex;align-items:center;gap:5px;"><div style="width:3px;height:12px;background:#ffd166; margin-left:10px;"></div>Linea Tram (Fase 4)</div>
+      Per scendere a <strong>-35m</strong> (metro profonda) servono almeno <span class="formula">350m = 44 celle</span><br><br>
+      <span style="color:var(--muted);font-size:0.82rem">Usa sempre il 120–130% di queste distanze per sicurezza. Una curva in discesa aggrava l'errore: raddoppia il raggio minimo se curvi scendendo.</span>
     </div>
   </div>
 </div>
@@ -823,146 +598,366 @@
   const canvas = document.getElementById('districtMap');
   const ctx = canvas.getContext('2d');
   
-  // Impostiamo la scala interna del Canvas per essere nitida anche rimpicciolita
   const W = 600, H = 600;
-  const CELLS = 9; // Griglia massima 9x9 per le 4 fasi
-  const CS = W / CELLS; // Dimensione in pixel di un blocco/modulo
+  const CELLS = 9; 
+  const CS = W / CELLS; // CS = 66.6px circa
 
   const COLORS = {
     'COM': '#4a9fd4', 'OFF': '#2a7fd4', 'LOW': '#5ab84a',
-    'MED': '#8b6fd4', 'HIGH': '#c4aaff', 'HUB': '#00e5c0'
+    'LOW_R': '#c2a878', 'MED': '#8b6fd4', 'HIGH': '#c4aaff',
+    'STATION': '#0f1518'
   };
 
-  // Funzione helper per disegnare il singolo blocco sulla griglia
-  function drawBlock(c, r, type, phaseRequired, currentPhase) {
-    if (currentPhase < phaseRequired) return; // Non disegnarlo se non siamo alla fase giusta
-    
-    // Logica di riconversione urbana: i Low Density si densificano a Medium dalla fase 3
-    if (type === 'LOW' && currentPhase >= 3) type = 'MED';
+  // State Management
+  let currentPhase = 1;
+  let activeLayers = {
+    zones: true,
+    roads: true,
+    bus: true,
+    tram: true,
+    metro: true
+  };
 
-    // Sfondo del blocco (semi trasparente)
+  // =====================================
+  // DATI STRUTTURALI DELLA MAPPA
+  // =====================================
+
+  // Mappa delle Zone (9x9) - Statica (Bottom-up Additive)
+  const zoneMap = [
+    ['LOW','LOW','LOW',  'MED',  'STATION',  'MED',  'LOW','LOW','LOW'], // R0: Future Periferie Nord / HUB Metro
+    ['LOW','LOW','MED',  'HIGH', 'HIGH', 'HIGH', 'MED','LOW','LOW'], // R1: Centro Fase 3
+    ['LOW','MED','LOW_R','HIGH', 'OFF',  'HIGH', 'LOW_R','MED','LOW'],// R2: Centro Fase 3
+    ['LOW','MED','OFF',  'COM',  'COM',  'COM',  'OFF',  'MED','LOW'],// R3: Cuscinetto Fase 2/3
+    ['LOW','LOW_R','MED','MED',  'COM',  'MED',  'MED',  'LOW_R','LOW'],// R4: Fascia Fase 2
+    ['LOW','LOW', 'LOW_R','MED', 'COM',  'MED',  'LOW_R','LOW','LOW'],// R5: Fascia Fase 2
+    ['LOW','LOW', 'LOW', 'LOW',  'COM',  'LOW',  'LOW',  'LOW','LOW'],// R6: Fase 1 Originale
+    ['LOW','LOW', 'LOW', 'LOW',  'COM',  'LOW',  'LOW',  'LOW','LOW'],// R7: Fase 1 Originale
+    ['COM','COM', 'COM', 'COM',  'COM',  'COM',  'COM',  'COM','COM'] // R8: Arteria Commerciale di base
+  ];
+
+  // Età di costruzione dei lotti
+  const phaseMap = [
+    [4, 4, 4, 4, 4, 4, 4, 4, 4], // R0
+    [4, 4, 3, 3, 3, 3, 3, 4, 4], // R1
+    [4, 3, 3, 3, 3, 3, 3, 3, 4], // R2
+    [4, 3, 3, 3, 3, 3, 3, 3, 4], // R3
+    [4, 2, 2, 2, 2, 2, 2, 2, 4], // R4
+    [4, 2, 2, 2, 2, 2, 2, 2, 4], // R5
+    [4, 4, 1, 1, 1, 1, 1, 4, 4], // R6
+    [4, 4, 1, 1, 1, 1, 1, 4, 4], // R7
+    [1, 1, 1, 1, 1, 1, 1, 1, 1]  // R8
+  ];
+
+  // Helper per ottenere il tipo di strada dato un segmento
+  // (r, c) indicano i nodi. Le strade corrono SUI bordi delle celle.
+  function getHorizontalRoadType(r) {
+    if (r === 9) return '6lane'; // Bordo Sud (Arteria Esterna)
+    if (r === 4) return '4lane'; // Asse Est-Ovest intermedio
+    if (r === 8) return '4lane'; // Collettore Primario Commerciale
+    if (r === 2) return 'alley'; // Vialetti residenziali Nord
+    return '2lane';              // Strade locali standard
+  }
+
+  function getVerticalRoadType(c, r) {
+    if (c === 4 || c === 5) {
+      if (r >= 0 && r <= 2) return 'ped'; // Pedonale intorno alla Metro e High Density
+      return '4lane';                     // Viali centrali Nord-Sud
+    }
+    if (c === 2 || c === 7) return 'alley'; // Vicoli perimetrali
+    return '2lane';
+  }
+
+  // =====================================
+  // FUNZIONI DI DISEGNO
+  // =====================================
+
+  function drawBlock(c, r, phase) {
+    if (phase < phaseMap[r][c]) return; 
+    let type = zoneMap[r][c];
+
+    // La stazione Metro è un Edificio Ploppable, ha stile a sé
+    if (type === 'STATION' && activeLayers.metro) {
+      ctx.fillStyle = COLORS.STATION;
+      ctx.fillRect(c * CS + 2, r * CS + 2, CS - 4, CS - 4);
+      ctx.strokeStyle = '#00e5c0';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(c * CS + 2, r * CS + 2, CS - 4, CS - 4);
+      
+      // Icona M
+      ctx.fillStyle = '#00e5c0';
+      ctx.font = "bold 20px 'Share Tech Mono', monospace";
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText("M", c * CS + CS/2, r * CS + CS/2);
+      return;
+    } else if (type === 'STATION') {
+      return; // Se il layer metro è spento, non disegnare l'edificio
+    }
+
+    if (!activeLayers.zones) return; // Disegna solo se il layer è attivo
+
     ctx.fillStyle = COLORS[type];
     ctx.globalAlpha = 0.35;
     ctx.fillRect(c * CS + 2, r * CS + 2, CS - 4, CS - 4);
     
-    // Bordo del blocco (solido)
     ctx.strokeStyle = COLORS[type];
     ctx.globalAlpha = 1.0;
     ctx.lineWidth = 1.5;
     ctx.strokeRect(c * CS + 2, r * CS + 2, CS - 4, CS - 4);
     
-    // Testo / Etichetta
     ctx.fillStyle = '#fff';
     ctx.font = "bold 13px 'Share Tech Mono', monospace";
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(type, c * CS + CS/2, r * CS + CS/2);
+    let label = type === 'LOW_R' ? 'LOW RENT' : type;
+    ctx.fillText(label, c * CS + CS/2, r * CS + CS/2);
+  }
+
+  function drawRoadSegment(x1, y1, x2, y2, type) {
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    
+    // Stili specifici per larghezza e importanza
+    if (type === '6lane') {
+      ctx.lineWidth = 8;
+      ctx.strokeStyle = '#4a5c60';
+      ctx.stroke();
+      // Doppia striscia gialla in mezzo
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
+      ctx.lineWidth = 1; ctx.strokeStyle = '#ffd166'; ctx.stroke();
+    } else if (type === '4lane') {
+      ctx.lineWidth = 5;
+      ctx.strokeStyle = '#3e4e52';
+      ctx.stroke();
+    } else if (type === '2lane') {
+      ctx.lineWidth = 2.5;
+      ctx.strokeStyle = '#2a3538';
+      ctx.stroke();
+    } else if (type === 'alley') {
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = '#1e2528';
+      ctx.setLineDash([4, 4]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    } else if (type === 'ped') {
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = '#5ab84a';
+      ctx.setLineDash([2, 3]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  }
+
+  function drawRoads(phase) {
+    // Calcoliamo i limiti di espansione della griglia in base alla fase
+    let minY = 0;
+    if (phase === 1) minY = 6;
+    if (phase === 2) minY = 4;
+    if (phase === 3) minY = 1;
+
+    // Linee Orizzontali
+    for (let r = minY; r <= 9; r++) {
+      let type = getHorizontalRoadType(r);
+      drawRoadSegment(0, r * CS, W, r * CS, type);
+    }
+    // Linee Verticali
+    for (let c = 0; c <= 9; c++) {
+      for (let r = minY; r < 9; r++) {
+        let type = getVerticalRoadType(c, r);
+        drawRoadSegment(c * CS, r * CS, c * CS, (r+1) * CS, type);
+      }
+    }
+  }
+
+  // Algoritmo Geometrico per posizionare le fermate sul lato DX (senso di marcia) dopo l'incrocio
+  function drawStop(p1, p2, type) {
+    const x1 = p1[0] * CS; const y1 = p1[1] * CS;
+    const x2 = p2[0] * CS; const y2 = p2[1] * CS;
+
+    // Vettore direzione
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const len = Math.hypot(dx, dy);
+    if (len === 0) return;
+    const ux = dx / len;
+    const uy = dy / len;
+
+    // Vettore Normale (Perpendicolare verso Destra)
+    const nx = -uy;
+    const ny = ux;
+
+    // Posizione lungo il segmento: "Dopo l'incrocio" = ~20px dal punto di partenza
+    const distFromIntersection = 25; 
+    let cx = x1 + ux * distFromIntersection;
+    let cy = y1 + uy * distFromIntersection;
+
+    // Offset laterale in base al tipo di strada su cui ci troviamo per finire sul marciapiede
+    // Supponiamo che il bus passi su strade 2L (offset minore) o 4L (offset maggiore)
+    // Per semplificare, usiamo un offset standard visivo che lo metta fuori dalla linea centrale
+    let offsetRoad = type === 'bus' ? 4 : 5; // Tram su 4lane ha strada più larga
+
+    cx += nx * offsetRoad;
+    cy += ny * offsetRoad;
+
+    // Disegna il pallino
+    ctx.beginPath();
+    ctx.arc(cx, cy, 4, 0, Math.PI * 2);
+    ctx.fillStyle = type === 'bus' ? '#ff6b35' : '#ffd166';
+    ctx.fill();
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = '#0a0e0f';
+    ctx.stroke();
+  }
+
+  function drawTransitPath(route, color, isTram = false) {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 3;
+    if (isTram) {
+      ctx.setLineDash([8, 6]);
+      ctx.lineWidth = 4;
+    } else {
+      ctx.setLineDash([5, 4]);
+    }
+    
+    ctx.beginPath();
+    ctx.moveTo(route[0][0] * CS, route[0][1] * CS);
+    for(let i = 1; i < route.length; i++) {
+      ctx.lineTo(route[i][0] * CS, route[i][1] * CS);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
   }
 
   function drawGrid(phase) {
     ctx.clearRect(0, 0, W, H);
-    
-    // Background principale
     ctx.fillStyle = '#0a0e0f';
     ctx.fillRect(0, 0, W, H);
 
-    // Disegna la rete stradale (le linee della griglia fungono da strade locali/collettori)
-    ctx.strokeStyle = 'rgba(30,46,50,0.6)';
-    ctx.lineWidth = 1;
-    for(let i = 0; i <= CELLS; i++) {
-      ctx.beginPath(); ctx.moveTo(i * CS, 0); ctx.lineTo(i * CS, H); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(0, i * CS); ctx.lineTo(W, i * CS); ctx.stroke();
+    // 1. STRADE
+    if (activeLayers.roads) {
+      drawRoads(phase);
     }
 
-    // Strade principali e ingressi evidenziati
-    // Collettore principale di ingresso (proveniente da Sud verso il nucleo)
-    ctx.strokeStyle = 'rgba(42,127,212,0.8)'; // Blu Arteria/Collettore principale
-    ctx.lineWidth = 6;
-    ctx.beginPath(); 
-    ctx.moveTo(W/2, H); 
-    // Sale verso l'interno a seconda della fase
-    if(phase === 1) ctx.lineTo(W/2, H - (CS * 3));
-    if(phase === 2) ctx.lineTo(W/2, H - (CS * 4));
-    if(phase >= 3) ctx.lineTo(W/2, 0); // Attraversa tutto
-    ctx.stroke();
+    // 2. ZONIZZAZIONE (Include l'edificio Metro che sovrascrive se attiva)
+    for (let r = 0; r < CELLS; r++) {
+      for (let c = 0; c < CELLS; c++) {
+        drawBlock(c, r, phase);
+      }
+    }
 
-    // ==========================================
-    // CRESCITA DISTRETTO - LOGICA A CORONE
-    // Coordinate della griglia: col(x), row(y) - Origine 0,0 è in alto a sx.
-    // Il Sud (ingresso) è in basso (y elevate).
-    // ==========================================
+    // 3. BUS (Fase 2+) - Percorso circolare capillare orario
+    if (phase >= 2 && activeLayers.bus) {
+      // Linea 1 (Fase 2): Circolare Interna (Copre le zone Medium/Low Rent)
+      const busRoute1 = [
+        [3, 8], [3, 4], [2, 4], [2, 6], [6, 6], [6, 4], [5, 4], [5, 8], [3, 8]
+      ];
+      drawTransitPath(busRoute1, '#ff6b35');
+      // Disegna fermate (Lato destro dopo l'incrocio)
+      for(let i=0; i<busRoute1.length-1; i++) {
+        drawStop(busRoute1[i], busRoute1[i+1], 'bus');
+      }
 
-    // -- FASE 1: NUCLEO 3x3 (Centro mappa, spostato leggermente a sud)
-    // Colonne 3, 4, 5. Righe 5, 4, 3 (il sud è riga 5)
-    drawBlock(3, 5, 'COM', 1, phase); drawBlock(4, 5, 'COM', 1, phase); drawBlock(5, 5, 'COM', 1, phase);
-    drawBlock(3, 4, 'LOW', 1, phase); drawBlock(4, 4, 'LOW', 1, phase); drawBlock(5, 4, 'LOW', 1, phase);
-    drawBlock(3, 3, 'LOW', 1, phase); drawBlock(4, 3, 'LOW', 1, phase); drawBlock(5, 3, 'LOW', 1, phase);
+      // Linea 2 (Fase 4): Circolare Esterna (Copre capillarmente Ovest, Nord, Est)
+      if (phase >= 4) {
+        const busRoute2 = [
+          [1, 8], [1, 2], [4, 2], [7, 2], [7, 8], [4, 8], [1, 8]
+        ];
+        drawTransitPath(busRoute2, '#e8501e'); // Tonalità leggermente diversa per distinguerle
+        for(let i=0; i<busRoute2.length-1; i++) {
+          drawStop(busRoute2[i], busRoute2[i+1], 'bus');
+        }
+      }
+    }
 
-    // -- FASE 2: CORONA 1 (5x5) --
-    // Avvolge il nucleo. Colonne 2-6, Righe 2-6.
-    for(let c=2; c<=6; c++) { drawBlock(c, 2, 'MED', 2, phase); drawBlock(c, 6, 'COM', 2, phase); }
-    drawBlock(2, 3, 'MED', 2, phase); drawBlock(6, 3, 'MED', 2, phase);
-    drawBlock(2, 4, 'OFF', 2, phase); drawBlock(6, 4, 'OFF', 2, phase);
-    drawBlock(2, 5, 'OFF', 2, phase); drawBlock(6, 5, 'OFF', 2, phase);
+    // 4. TRAM (Fase 3+) - Assi di forza dritti
+    if (phase >= 3 && activeLayers.tram) {
+      // Linea orizzontale commerciale R8
+      const tramRoute1 = [[0, 8], [9, 8]];
+      drawTransitPath(tramRoute1, '#ffd166', true);
+      // Fermate
+      drawStop([0,8], [9,8], 'tram'); drawStop([4,8], [9,8], 'tram');
+      drawStop([9,8], [0,8], 'tram'); drawStop([5,8], [0,8], 'tram'); // Direzione opposta
+      
+      // Linea verticale Asse Nord-Sud (Colonna 4)
+      const tramRoute2 = [[4, 8], [4, 1]];
+      drawTransitPath(tramRoute2, '#ffd166', true);
+      drawStop([4,8], [4,1], 'tram'); drawStop([4,4], [4,1], 'tram');
+      drawStop([4,1], [4,8], 'tram'); drawStop([4,5], [4,8], 'tram');
 
-    // -- FASE 3: CORONA 2 (7x7) --
-    // Avvolge la corona 1. Colonne 1-7, Righe 1-7.
-    for(let c=1; c<=7; c++) { drawBlock(c, 1, 'MED', 3, phase); drawBlock(c, 7, 'COM', 3, phase); }
-    for(let r=2; r<=6; r++) { drawBlock(1, r, 'MED', 3, phase); drawBlock(7, r, 'MED', 3, phase); }
-    // HUB Metro al centro perfetto (riga 4, colonna 4). In fase 3 sacrifica un vecchio blocco residenziale.
-    drawBlock(4, 4, 'HUB', 3, phase);
+      // Linea orizzontale mediana (Fase 4) - Taglia a metà l'insediamento per servire gli uffici
+      if (phase >= 4) {
+        const tramRoute3 = [[0, 4], [9, 4]];
+        drawTransitPath(tramRoute3, '#ffd166', true);
+        drawStop([1,4], [8,4], 'tram'); drawStop([4,4], [8,4], 'tram');
+        drawStop([8,4], [1,4], 'tram'); drawStop([5,4], [1,4], 'tram');
+      }
+    }
 
-    // -- FASE 4: METROPOLI (9x9) --
-    // L'ultimo anello, bordi esterni mappa. Colonne 0-8, Righe 0-8.
-    for(let c=0; c<=8; c++) { drawBlock(c, 0, 'HIGH', 4, phase); drawBlock(c, 8, 'COM', 4, phase); }
-    for(let r=1; r<=7; r++) { drawBlock(0, r, 'HIGH', 4, phase); drawBlock(8, r, 'HIGH', 4, phase); }
-
-    // Disegna Infrastruttura di Trasporto Pesante (Linea Tram in Fase 4)
-    if (phase >= 4) {
-      ctx.strokeStyle = '#ffd166'; // Giallo Tram
-      ctx.lineWidth = 4;
-      ctx.setLineDash([12, 6]);
+    // 5. METRO SOTTERRANEA (Fase 4+)
+    if (phase >= 4 && activeLayers.metro) {
+      ctx.strokeStyle = 'rgba(0, 229, 192, 0.7)';
+      ctx.lineWidth = 6;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      
       ctx.beginPath();
-      // Il tram attraversa il collettore nord ad alta densità (sulla riga y=1 separando la riga 0 e 1)
-      ctx.moveTo(0, CS * 1); 
-      ctx.lineTo(W, CS * 1);
+      // Il tunnel arriva da fuori mappa in basso a sinistra (0,9)
+      ctx.moveTo(CS * 0.5, CS * 8.5); 
+      // Ignora la griglia stradale: scava una grande curva diretta verso la stazione
+      ctx.bezierCurveTo(CS * 1.5, CS * 5,  CS * 3, CS * 2,  CS * 4.5, CS * 0.5); 
+      // Dalla stazione prosegue dritta verso est per uscire dal distretto
+      ctx.lineTo(CS * 8.5, CS * 0.5);
+      
+      // Stile tunnel (Tubo scuro con interno colorato)
+      ctx.stroke();
+      ctx.strokeStyle = '#0a0e0f';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([8, 12]);
       ctx.stroke();
       ctx.setLineDash([]);
-      
-      // Etichetta tram
-      ctx.fillStyle = '#ffd166';
-      ctx.font = "12px 'Share Tech Mono', monospace";
-      ctx.textAlign = 'left';
-      ctx.fillText("Linea Tram ->", 10, CS * 1 - 10);
     }
   }
 
-  // Gestione bottoni UI
+  // API Pubbliche per l'interfaccia UI
   window.setPhase = function(p) {
-    drawGrid(p);
+    currentPhase = p;
+    drawGrid(currentPhase);
+    
+    // Aggiorna pulsanti UI Fase
+    const baseColors = ['','#7de87d','#4a9fd4','#ffd166','#ff6b35'];
     [1,2,3,4].forEach(i => {
-      const btn = document.getElementById('btn'+i);
-      const bcolors = ['','rgba(90,184,74,0.4)','rgba(74,159,212,0.3)','rgba(255,209,102,0.3)','rgba(255,107,53,0.3)'];
-      const bgcolors = ['','rgba(90,184,74,0.15)','rgba(74,159,212,0.08)','rgba(255,209,102,0.05)','rgba(255,107,53,0.05)'];
-      const tcolors = ['','#7de87d','#4a9fd4','#ffd166','#ff6b35'];
-      
+      const btn = document.getElementById('btn-ph'+i);
       if(i === p) {
-        btn.style.opacity = '1';
-        btn.style.color = tcolors[i];
-        btn.style.background = bgcolors[i];
-        btn.style.borderColor = bcolors[i];
-        btn.style.boxShadow = `0 0 8px ${bcolors[i]}`;
+        btn.classList.add('active');
+        btn.style.boxShadow = `0 0 6px ${baseColors[i]}88`;
+        btn.style.background = `${baseColors[i]}22`;
+        btn.style.borderColor = baseColors[i];
       } else {
-        btn.style.opacity = '0.45';
-        btn.style.color = '#5a7070';
-        btn.style.background = 'transparent';
+        btn.classList.remove('active');
         btn.style.boxShadow = 'none';
+        btn.style.background = 'transparent';
         btn.style.borderColor = 'rgba(80,100,100,0.3)';
       }
     });
   };
 
-  // Inizializzazione della vista al caricamento
+  window.toggleLayer = function(layerName) {
+    activeLayers[layerName] = !activeLayers[layerName];
+    const btn = document.getElementById('btn-ly-' + layerName);
+    
+    if (activeLayers[layerName]) {
+      btn.classList.add('active');
+      btn.style.background = `rgba(255,255,255,0.08)`;
+    } else {
+      btn.classList.remove('active');
+      btn.style.background = 'transparent';
+    }
+    
+    drawGrid(currentPhase);
+  };
+
+  // Setup Iniziale
   setPhase(1);
 })();
 </script>
