@@ -24,6 +24,12 @@
     --zone-res: #5ab84a;
     --zone-lowrent: #c2a878;
     --zone-park: #95a5a6;
+    --srv-edu: #2ecc71;
+    --srv-fire: #e74c3c;
+    --srv-pol: #3498db;
+    --srv-med: #ff9ff3;
+    --srv-post: #f1c40f;
+    --srv-death: #9b59b6;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -331,6 +337,84 @@
     margin-bottom: 4px;
   }
 
+  /* Calculator Styles */
+  .calc-panel {
+    background: rgba(0, 229, 192, 0.03);
+    border: 1px solid rgba(0, 229, 192, 0.15);
+    border-radius: 4px;
+    padding: 12px 16px;
+    margin-top: 14px;
+  }
+
+  .calc-header {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--accent);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .slider-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .slider-container input[type=range] {
+    flex: 1;
+    -webkit-appearance: none;
+    background: transparent;
+  }
+
+  .slider-container input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    margin-top: -6px;
+  }
+
+  .slider-container input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 4px;
+    cursor: pointer;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+  }
+
+  #popDisplay {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--accent3);
+    font-weight: bold;
+    min-width: 95px;
+    text-align: right;
+  }
+
+  .calc-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 0.85rem;
+  }
+
+  .calc-row:last-child {
+    border-bottom: none;
+  }
+
+  .calc-row span:last-child {
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  .calc-empty {
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-style: italic;
+  }
+
   @media (max-width: 600px) {
     .grid-zone { grid-template-columns: 1fr; }
   }
@@ -347,11 +431,11 @@
 <div class="section">
   <div class="section-header">
     <span class="section-num">01</span>
-    <span class="section-title">Visualizzatore Espansione & Network Strati</span>
+    <span class="section-title">Visualizzatore Espansione, Network & Servizi</span>
   </div>
   <div class="section-body">
     <div class="note" style="margin-bottom:12px">
-      <strong>Livelli e Network:</strong> Usa i layer per vedere come la rete dei trasporti pubblici e dei parcheggi (P&R) si evolve con l'espandersi della città. Il trasporto pubblico deve essere <em>capillare</em> ai bordi e <em>pesante</em> al centro.
+      <strong>Algoritmo di Posizionamento:</strong> Usa i layer per studiare la viabilità. L'algoritmo impone: <strong>Mezzi d'emergenza veloci</strong> (Polizia/Ospedali) sui collettori a 4 corsie per poter sorpassare. <strong>Scuole Superiori</strong> sugli assi Tramviari per il TPL. <strong>Poste e Rifiuti (Camion Lenti)</strong> sulle grandi arterie ai bordi estremi. <strong>Scuole Elementari</strong> nei quartieri 2-corsie, accessibili a piedi e lontane dal traffico pesante.
     </div>
 
     <div class="control-group" id="phase-btns">
@@ -360,16 +444,31 @@
       <button onclick="setPhase(2)" id="btn-ph2" class="btn" style="color:#4a9fd4;">2. ESPANSIONE</button>
       <button onclick="setPhase(3)" id="btn-ph3" class="btn" style="color:#ffd166;">3. CENTRO CITTÀ</button>
       <button onclick="setPhase(4)" id="btn-ph4" class="btn" style="color:#ff6b35;">4. METROPOLI</button>
+      <button onclick="setPhase(5)" id="btn-ph5" class="btn" style="color:#e84393;">5. HUB GLOBALE</button>
     </div>
 
     <div class="control-group" id="layer-btns">
       <span class="ctrl-label">Layer:</span>
       <button onclick="toggleLayer('zones')" id="btn-ly-zones" class="btn active" style="color:var(--zone-res);">ZONIZZAZIONE</button>
       <button onclick="toggleLayer('roads')" id="btn-ly-roads" class="btn active" style="color:var(--text);">STRADE</button>
+      <button onclick="toggleLayer('services')" id="btn-ly-services" class="btn active" style="color:var(--srv-edu); border-color:var(--srv-edu);">SERVIZI (Logica)</button>
       <button onclick="toggleLayer('bus')" id="btn-ly-bus" class="btn active" style="color:var(--accent2);">BUS (Capillari)</button>
       <button onclick="toggleLayer('tram')" id="btn-ly-tram" class="btn active" style="color:var(--accent3);">TRAM (Assi)</button>
       <button onclick="toggleLayer('metro')" id="btn-ly-metro" class="btn active" style="color:var(--accent);">METRO (Hubs)</button>
-      <button onclick="toggleLayer('park')" id="btn-ly-park" class="btn active" style="color:var(--zone-park);">PARCHEGGI (P&R)</button>
+      <button onclick="toggleLayer('park')" id="btn-ly-park" class="btn active" style="color:var(--zone-park);">PARCHEGGI</button>
+    </div>
+
+    <!-- TPL Calculator Panel -->
+    <div class="calc-panel">
+      <div class="calc-header">📊 Calcolatore Veicoli TPL (Adattivo per Linea)</div>
+      <div class="slider-container">
+        <span style="font-size:0.8rem; color:var(--muted);">ABITANTI:</span>
+        <input type="range" id="popSlider" min="0" max="30000" step="500" value="2000" oninput="updateTransitCalc()">
+        <span id="popDisplay">2.000 Ab.</span>
+      </div>
+      <div id="transitResults">
+        <!-- Generato dinamicamente -->
+      </div>
     </div>
 
     <div style="position:relative;width:100%;max-width:600px;margin:0 auto; margin-top: 10px;">
@@ -392,22 +491,168 @@
       <div class="legend-item"><div style="width:16px;height:2px;border-top:1px dotted #1e2528;"></div>Alley</div>
       <div style="width: 100%; height: 6px;"></div> <!-- Spacing -->
       <div class="legend-item"><div style="width:10px;height:10px;border: 2px solid #00e5c0; background: #0f1518;"></div>Stazione Metro</div>
-      <div class="legend-item"><div style="width:12px;height:12px;border: 1px solid #fff; background: #95a5a6; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:bold; color:#fff;">P</div>Parcheggio</div>
-      <div class="legend-item"><div style="width:8px;height:8px;border: 1px solid #000; background: #ff6b35; border-radius:50%;"></div>Fermata Bus (Lato strada)</div>
-      <div class="legend-item"><div style="width:8px;height:8px;border: 1px solid #000; background: #ffd166; border-radius:50%;"></div>Fermata Tram (Lato strada)</div>
+      <div class="legend-item"><div style="width:12px;height:12px;border: 1px solid #fff; background: #95a5a6; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:bold; color:#fff;">P</div>Parcheggio (P&R)</div>
+      <div class="legend-item"><div style="width:12px;height:12px;background:#d44a4a;"></div>Treno Esterno</div>
+      <div class="legend-item"><div style="width:12px;height:12px;background:var(--srv-edu);"></div>Educazione</div>
+      <div class="legend-item"><div style="width:12px;height:12px;background:var(--srv-fire);"></div>Fuoco</div>
+      <div class="legend-item"><div style="width:12px;height:12px;background:var(--srv-pol);"></div>Polizia</div>
+      <div class="legend-item"><div style="width:12px;height:12px;background:var(--srv-med);"></div>Sanità</div>
+      <div class="legend-item"><div style="width:12px;height:12px;background:var(--srv-post);"></div>Poste/Logistica</div>
+      <div class="legend-item"><div style="width:12px;height:12px;background:var(--srv-death);"></div>Cimitero</div>
     </div>
   </div>
 </div>
 
-<!-- 01.2 VISTA MACRO: AUTOSTRADA E INDUSTRIA -->
+<!-- 01.1 SETTORE INDUSTRIALE: GRIGLIA E MEGA-STRUTTURE -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">01.1</span>
+    <span class="section-title">Settore Industriale — Griglia Fabbriche vs Mega-Strutture (Yards)</span>
+  </div>
+  <div class="section-body">
+    <div class="grid-zone" style="margin-bottom: 16px;">
+      <div class="zone-card">
+        <div class="zone-card-title" style="color:var(--zone-ind)">Fabbriche (Zonizzazione Gialla)</div>
+        <div class="line"><span>Strade necessarie</span><span>Locali (2 corsie) o Vicoli (1 corsia)</span></div>
+        <div class="line"><span>Dimensioni isolato ottimali</span><span>12×12 o 12×24 celle</span></div>
+        <div class="line"><span>Logica</span><span>Griglia a scacchiera compatta interna. Nessun buco in mezzo. Le strade assorbono traffico diffuso ma leggero.</span></div>
+      </div>
+      <div class="zone-card">
+        <div class="zone-card-title" style="color:#e74c3c">Mega-Strutture (Yards e Scali)</div>
+        <div class="line"><span>Strade necessarie</span><span>Collettori (4c) o Arterie (6c)</span></div>
+        <div class="line"><span>Esempi</span><span>Depositi TPL (Treni/Metro), Scalo Merci</span></div>
+        <div class="line"><span>Logica</span><span>Vanno sul <strong>perimetro esterno</strong> industriale. I depositi (Yards) creano inquinamento acustico estremo: tienili qui e collegali alla città con binari di servizio.</span></div>
+      </div>
+    </div>
+
+    <div style="position:relative;width:100%;max-width:600px;margin:0 auto; overflow: hidden; border:1px solid #1e2e32; border-radius:4px;">
+      <canvas id="industryMap" width="600" height="400" style="width:100%; height:auto; background:#0a0e0f; display:block;"></canvas>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;margin-top:10px;gap: 12px;font-size:0.78rem;">
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:16px;height:6px;background:#4a5c60;"></div>Arteria Principale (6c)</div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:16px;height:4px;background:#3e4e52;"></div>Anello Collettore (4c)</div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:16px;height:2px;background:#2a3538;"></div>Griglia Locale (2c/1c)</div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;background:rgba(232,160,32,0.35);border:1px solid #e8a020;"></div>Fabbriche Dense (12x24)</div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;background:#2c3e50;border:1px solid #e74c3c;"></div>Mega-Strutture (Yards)</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const c = document.getElementById('industryMap');
+  const ctx = c.getContext('2d');
+  const W = 600, H = 400;
+
+  ctx.fillStyle = '#0a0e0f';
+  ctx.fillRect(0, 0, W, H);
+
+  // Arteria
+  ctx.strokeStyle = '#4a5c60'; ctx.lineWidth = 14;
+  ctx.beginPath(); ctx.moveTo(0, H - 30); ctx.lineTo(W, H - 30); ctx.stroke();
+  ctx.strokeStyle = '#ffd166'; ctx.lineWidth = 1.5; ctx.setLineDash([10, 10]);
+  ctx.beginPath(); ctx.moveTo(0, H - 30); ctx.lineTo(W, H - 30); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Anello Collettore Perimetrale
+  ctx.strokeStyle = '#3e4e52'; ctx.lineWidth = 8;
+  ctx.strokeRect(100, 40, 380, 290); 
+  ctx.beginPath(); ctx.moveTo(150, 330); ctx.lineTo(150, H - 30); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(430, 330); ctx.lineTo(430, H - 30); ctx.stroke();
+
+  // Griglia Locale Interna
+  ctx.strokeStyle = '#2a3538'; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(226, 40); ctx.lineTo(226, 330); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(353, 40); ctx.lineTo(353, 330); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(100, 185); ctx.lineTo(480, 185); ctx.stroke();
+
+  // Blocchi di Zonizzazione Gialla
+  const drawGrowableBlock = (x, y, w, h) => {
+    ctx.fillStyle = 'rgba(232, 160, 32, 0.35)';
+    ctx.strokeStyle = '#e8a020';
+    ctx.lineWidth = 1.5;
+    ctx.fillRect(x + 3, y + 3, w - 6, h - 6);
+    ctx.strokeRect(x + 3, y + 3, w - 6, h - 6);
+    
+    ctx.strokeStyle = 'rgba(232, 160, 32, 0.15)';
+    ctx.lineWidth = 1;
+    for(let i = y + 10; i < y + h - 5; i += 8) {
+      ctx.beginPath(); ctx.moveTo(x + 4, i); ctx.lineTo(x + w - 4, i); ctx.stroke();
+    }
+
+    ctx.fillStyle = '#fff';
+    ctx.font = "bold 12px 'Barlow Condensed'";
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText("100% ZONING", x + w/2, y + h/2);
+  };
+
+  drawGrowableBlock(100, 40, 126, 145);
+  drawGrowableBlock(226, 40, 127, 145);
+  drawGrowableBlock(353, 40, 127, 145);
+  drawGrowableBlock(100, 185, 126, 145);
+  drawGrowableBlock(226, 185, 127, 145);
+  drawGrowableBlock(353, 185, 127, 145);
+
+  // Mega-Strutture (Ploppables e YARDS)
+  const drawPloppable = (x, y, w, h, title, subtitle) => {
+    ctx.fillStyle = '#2c3e50';
+    ctx.fillRect(x, y, w, h);
+    ctx.strokeStyle = '#e74c3c';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(x, y, w, h);
+    
+    ctx.fillStyle = '#fff';
+    ctx.font = "bold 14px 'Share Tech Mono'";
+    ctx.textAlign = 'center';
+    ctx.fillText(title, x + w/2, y + h/2 - 6);
+    ctx.fillStyle = '#e74c3c';
+    ctx.font = "10px 'Barlow Condensed'";
+    ctx.fillText(subtitle, x + w/2, y + h/2 + 10);
+  };
+
+  drawPloppable(10, 150, 75, 120, "CENTRALE", "(Sull'Arteria)");
+  ctx.strokeStyle = '#3e4e52'; ctx.lineWidth = 6;
+  ctx.beginPath(); ctx.moveTo(47, 270); ctx.lineTo(47, H - 30); ctx.stroke();
+
+  drawPloppable(150, 10, 280, 50, "YARDS (TPL) E SCALO MERCI", "(Sul Collettore Esterno)");
+
+  const drawTrafficArrow = (x, y, dir, color) => {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    if(dir === 'up') { ctx.moveTo(x,y); ctx.lineTo(x-5,y+8); ctx.lineTo(x+5,y+8); }
+    if(dir === 'down') { ctx.moveTo(x,y); ctx.lineTo(x-5,y-8); ctx.lineTo(x+5,y-8); }
+    if(dir === 'right') { ctx.moveTo(x,y); ctx.lineTo(x-8,y-5); ctx.lineTo(x-8,y+5); }
+    if(dir === 'left') { ctx.moveTo(x,y); ctx.lineTo(x+8,y-5); ctx.lineTo(x+8,y+5); }
+    ctx.fill();
+  };
+
+  drawTrafficArrow(150, 305, 'down', '#e74c3c');
+  drawTrafficArrow(430, 305, 'down', '#e74c3c');
+  drawTrafficArrow(100, 75, 'left', '#e74c3c');
+  drawTrafficArrow(480, 75, 'right', '#e74c3c');
+
+  ctx.strokeStyle = '#00e5c0'; ctx.lineWidth = 1; ctx.setLineDash([2, 2]);
+  ctx.beginPath(); ctx.moveTo(226, 20); ctx.lineTo(353, 20); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(226, 15); ctx.lineTo(226, 25); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(353, 15); ctx.lineTo(353, 25); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#00e5c0';
+  ctx.font = "12px 'Barlow Condensed'";
+  ctx.fillText("Max 12 celle (Nessun vuoto al centro)", 289, 12);
+
+})();
+</script>
+
+<!-- 01.2 VISTA MACRO: AUTOSTRADA E HUB GLOBALE -->
 <div class="section">
   <div class="section-header">
     <span class="section-num">01.2</span>
-    <span class="section-title">Vista Macro Regionale — Svincoli e Distanze</span>
+    <span class="section-title">Vista Macro Regionale — Svincoli, Distanze e Hub Globale (Fase 5)</span>
   </div>
   <div class="section-body">
     <div class="note" style="margin-bottom:12px; border-color: var(--road-art);">
-      <strong>La Regola del Buffer:</strong> Mai attaccare la griglia urbana direttamente allo svincolo. Lascia sempre un'Arteria a 6 corsie libera da incroci per almeno <strong>240-300 metri (30-38 celle)</strong> per far smaltire il traffico in entrata e creare una coda in uscita che non blocchi le rotatorie interne. L'industria va messa sottovento.
+      <strong>La Regola del Buffer e dei Treni:</strong> Mai attaccare la griglia urbana direttamente allo svincolo. Lascia un'Arteria a 6 corsie libera per almeno <strong>240-300 metri</strong>. In <em>Fase 5</em>, la linea Ferroviaria deve costeggiare il lato <strong>Nord</strong> della metropoli (creando un confine pulito) senza scavalcare la maglia urbana o i buffer di traffico, mentre la Metro si prolunga verso l'Aeroporto.
     </div>
 
     <div style="position:relative;width:100%;max-width:800px;margin:0 auto; overflow: hidden; border:1px solid #1e2e32; border-radius:4px;">
@@ -418,9 +663,10 @@
     <div style="display:flex;flex-wrap:wrap;margin-top:10px;gap: 12px;font-size:0.78rem;">
       <div style="display:flex;align-items:center;gap:6px;"><div style="width:16px;height:6px;background:#2a7fd4; border-top:1px dashed #fff; border-bottom:1px dashed #fff;"></div>Autostrada (2+2)</div>
       <div style="display:flex;align-items:center;gap:6px;"><div style="width:16px;height:6px;background:#4a5c60;"></div>Arteria (6c)</div>
-      <div style="display:flex;align-items:center;gap:6px;"><div style="width:16px;height:4px;background:#3e4e52;"></div>Collettore Ind. (4c)</div>
       <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;background:#e8a020;opacity:0.6;border:1px solid #e8a020;"></div>Industria</div>
-      <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;background:#c4aaff;opacity:0.6;border:1px solid #c4aaff;"></div>Metropoli (Fase 4)</div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;background:#c4aaff;opacity:0.6;border:1px solid #c4aaff;"></div>Metropoli (Fase 5)</div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;background:#2c3e50;border:1px solid #d44a4a;"></div>Yards / Stazioni</div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:16px;height:4px;border-top:2px dashed #00e5c0;"></div>Metro vs Aeroporto</div>
     </div>
   </div>
 </div>
@@ -455,7 +701,6 @@
     cx.stroke();
     cx.setLineDash([]);
     
-    // Terminal lines
     if (isVertical) {
       cx.beginPath(); cx.moveTo(x1-5, y1); cx.lineTo(x1+5, y1); cx.stroke();
       cx.beginPath(); cx.moveTo(x2-5, y2); cx.lineTo(x2+5, y2); cx.stroke();
@@ -473,7 +718,6 @@
       cx.save();
       cx.translate(x1 + 10, y1 + (y2-y1)/2);
       cx.rotate(-Math.PI/2);
-      // Background for text
       cx.fillStyle = '#0a0e0f';
       let w = cx.measureText(text).width + 6;
       cx.fillRect(-w/2, -8, w, 16);
@@ -493,27 +737,27 @@
   cx.fillStyle = '#0a0e0f';
   cx.fillRect(0, 0, W, H);
 
-  // 1. Vento (Alto a destra)
+  // 1. Vento (Spostato per non incrociare i treni a Nord)
+  const windY = 45;
   cx.strokeStyle = '#c8d8d8';
   cx.lineWidth = 2;
   cx.setLineDash([5, 5]);
-  cx.beginPath(); cx.moveTo(W - 40, 30); cx.lineTo(W - 120, 30); cx.stroke();
+  cx.beginPath(); cx.moveTo(W - 40, windY); cx.lineTo(W - 120, windY); cx.stroke();
   cx.setLineDash([]);
-  drawArrow(W - 120, 30, Math.PI, '#c8d8d8');
+  drawArrow(W - 120, windY, Math.PI, '#c8d8d8');
   cx.fillStyle = '#c8d8d8';
   cx.font = "12px 'Share Tech Mono'";
   cx.textAlign = 'right';
-  cx.fillText("DIREZIONE VENTO", W - 40, 16);
+  cx.fillText("DIREZIONE VENTO", W - 40, windY - 14);
 
   // 2. Zone Industriali (Sinistra)
-  const indX = 40, indY = 40, indW = 220, indH = 340;
+  const indX = 40, indY = 60, indW = 220, indH = 320;
   cx.fillStyle = 'rgba(232,160,32,0.2)';
   cx.strokeStyle = '#e8a020';
   cx.lineWidth = 2;
   cx.fillRect(indX, indY, indW, indH);
   cx.strokeRect(indX, indY, indW, indH);
   
-  // Griglia industriale interna (Collettori 4 corsie)
   cx.beginPath(); cx.moveTo(indX, indY + indH/2); cx.lineTo(indX + indW, indY + indH/2); cx.stroke();
   cx.beginPath(); cx.moveTo(indX + indW/2, indY); cx.lineTo(indX + indW/2, indY + indH); cx.stroke();
 
@@ -521,86 +765,122 @@
   cx.font = "bold 16px 'Barlow Condensed'";
   cx.textAlign = 'center';
   cx.fillText("SETTORE INDUSTRIALE", indX + indW/2, indY - 15);
-  cx.font = "11px 'Share Tech Mono'";
-  cx.fillText("(Lontano da centro, Sottovento)", indX + indW/2, indY + indH + 20);
 
-  // 3. Metropoli Fase 4 (Destra)
-  const cityX = W/2 + 130, cityY = 40, cityW = 220, cityH = 340;
+  // 3. Metropoli Fase 5 (Destra)
+  const cityX = W/2 + 130, cityY = 60, cityW = 220, cityH = 320;
   
-  // Low Density Outer
   cx.fillStyle = 'rgba(90,184,74,0.2)'; cx.strokeStyle = '#5ab84a';
   cx.fillRect(cityX, cityY, cityW, cityH); cx.strokeRect(cityX, cityY, cityW, cityH);
   
-  // Medium Density Mid
   cx.fillStyle = 'rgba(139,111,212,0.25)'; cx.strokeStyle = '#8b6fd4';
   cx.fillRect(cityX+30, cityY+40, cityW-60, cityH-80); cx.strokeRect(cityX+30, cityY+40, cityW-60, cityH-80);
   
-  // High Density Core
   cx.fillStyle = 'rgba(196,170,255,0.3)'; cx.strokeStyle = '#c4aaff';
   cx.fillRect(cityX+60, cityY+80, cityW-120, cityH-160); cx.strokeRect(cityX+60, cityY+80, cityW-120, cityH-160);
 
   cx.fillStyle = '#c4aaff';
   cx.font = "bold 16px 'Barlow Condensed'";
   cx.textAlign = 'center';
-  cx.fillText("METROPOLI (FASE 4)", cityX + cityW/2, cityY - 15);
+  cx.fillText("HUB GLOBALE (FASE 5)", cityX + cityW/2, cityY - 15);
 
   // 4. Autostrada (Centro, Verticale)
   const hwX = W/2;
-  // Carreggiata Ovest (Direzione Sud)
   cx.strokeStyle = '#2a7fd4'; cx.lineWidth = 10;
   cx.beginPath(); cx.moveTo(hwX - 10, 0); cx.lineTo(hwX - 10, H); cx.stroke();
-  // Linea tratteggiata interna
   cx.strokeStyle = '#fff'; cx.lineWidth = 1; cx.setLineDash([8, 8]);
   cx.beginPath(); cx.moveTo(hwX - 10, 0); cx.lineTo(hwX - 10, H); cx.stroke();
   cx.setLineDash([]);
-  drawArrow(hwX - 10, 80, Math.PI/2, '#fff'); // Freccia giù
+  drawArrow(hwX - 10, 100, Math.PI/2, '#fff');
   drawArrow(hwX - 10, H - 80, Math.PI/2, '#fff');
   
-  // Carreggiata Est (Direzione Nord)
   cx.strokeStyle = '#2a7fd4'; cx.lineWidth = 10;
   cx.beginPath(); cx.moveTo(hwX + 10, 0); cx.lineTo(hwX + 10, H); cx.stroke();
   cx.strokeStyle = '#fff'; cx.lineWidth = 1; cx.setLineDash([8, 8]);
   cx.beginPath(); cx.moveTo(hwX + 10, 0); cx.lineTo(hwX + 10, H); cx.stroke();
   cx.setLineDash([]);
-  drawArrow(hwX + 10, 80, -Math.PI/2, '#fff'); // Freccia su
+  drawArrow(hwX + 10, 100, -Math.PI/2, '#fff');
   drawArrow(hwX + 10, H - 80, -Math.PI/2, '#fff');
 
   cx.fillStyle = '#4a9fd4';
   cx.font = "bold 13px 'Share Tech Mono'";
   cx.textAlign = 'left';
-  cx.fillText("AUTOSTRADA SUD (130km/h)", hwX + 25, 20);
+  cx.fillText("AUTOSTRADA ESTERNA (130km/h)", hwX + 25, 65);
+  cx.fillText("↓ VERSO PORTO E SCALI 🚢", hwX + 25, H - 20);
 
   // 5. Arteria Orizzontale a 6 Corsie
-  const artY = H/2;
+  const artY = H/2 + 20;
   cx.strokeStyle = '#4a5c60'; cx.lineWidth = 12;
-  // Segmento Destro (Verso Città)
   cx.beginPath(); cx.moveTo(hwX + 15, artY); cx.lineTo(cityX + cityW/2, artY); cx.stroke();
-  // Segmento Sinistro (Verso Industria)
   cx.beginPath(); cx.moveTo(hwX - 15, artY); cx.lineTo(indX + indW/2, artY); cx.stroke();
 
   // 6. Svincolo a Diamante (Stilizzato)
   cx.strokeStyle = '#2a7fd4'; cx.lineWidth = 4;
   cx.beginPath();
-  cx.moveTo(hwX, artY - 60);    // Top
-  cx.lineTo(hwX + 60, artY);    // Right
-  cx.lineTo(hwX, artY + 60);    // Bottom
-  cx.lineTo(hwX - 60, artY);    // Left
+  cx.moveTo(hwX, artY - 60);
+  cx.lineTo(hwX + 60, artY);
+  cx.lineTo(hwX, artY + 60);
+  cx.lineTo(hwX - 60, artY);
   cx.closePath();
   cx.stroke();
 
-  // Rotatorie di innesto svincolo/arteria
   cx.fillStyle = '#0a0e0f'; cx.strokeStyle = '#4a5c60'; cx.lineWidth = 3;
   cx.beginPath(); cx.arc(hwX + 60, artY, 12, 0, Math.PI*2); cx.fill(); cx.stroke();
   cx.beginPath(); cx.arc(hwX - 60, artY, 12, 0, Math.PI*2); cx.fill(); cx.stroke();
-  // Rotatoria ingresso Città
   cx.beginPath(); cx.arc(cityX, artY, 10, 0, Math.PI*2); cx.fill(); cx.stroke();
 
-  // 7. Dimensioni / Quote
-  // Dal casello/svincolo (hwX + 60) al bordo della città (cityX)
-  drawDimLine(hwX + 72, artY - 30, cityX - 10, artY - 30, "Buffer senza incroci: 240-300m (30-38 celle)");
+  // 7. FASE 5: Rete Ferroviaria a Nord
+  const trainY = 18;
   
-  // Dal casello/svincolo (hwX - 60) all'industria
-  drawDimLine(indX + indW + 10, artY + 30, hwX - 72, artY + 30, "Buffer Traffico Pesante: 160m (20 celle)");
+  // Linea Ferroviaria Principale (Orizzontale, taglia il Nord) - Fatta a viadotto sull'autostrada
+  cx.strokeStyle = '#3e4e52'; cx.lineWidth = 6;
+  cx.beginPath(); cx.moveTo(0, trainY); cx.lineTo(W, trainY); cx.stroke();
+  cx.strokeStyle = '#95a5a6'; cx.lineWidth = 2; cx.setLineDash([4, 6]);
+  cx.beginPath(); cx.moveTo(0, trainY); cx.lineTo(W, trainY); cx.stroke();
+  cx.setLineDash([]);
+  
+  // Stazione Passeggeri (Sopra la Metropoli)
+  const stationW = 120, stationH = 24;
+  const stationX = cityX + cityW/2 - stationW/2;
+  cx.fillStyle = '#2c3e50'; cx.fillRect(stationX, trainY - stationH/2, stationW, stationH);
+  cx.strokeStyle = '#d44a4a'; cx.lineWidth = 2; cx.strokeRect(stationX, trainY - stationH/2, stationW, stationH);
+  cx.fillStyle = '#fff'; cx.font = "14px 'Segoe UI Emoji', sans-serif"; cx.textAlign = 'center'; cx.textBaseline = 'middle';
+  cx.fillText("🚂 STAZIONE", stationX + stationW/2, trainY);
+  
+  // Binario di Servizio verso i YARDS (Zona Industriale)
+  const branchX = indX + indW/2; 
+  cx.strokeStyle = '#3e4e52'; cx.lineWidth = 4;
+  cx.beginPath(); cx.moveTo(branchX + 40, trainY); 
+  cx.quadraticCurveTo(branchX, trainY, branchX, trainY + 40);
+  cx.lineTo(branchX, indY + 20); cx.stroke();
+  
+  cx.strokeStyle = '#95a5a6'; cx.lineWidth = 1.5; cx.setLineDash([3, 5]);
+  cx.beginPath(); cx.moveTo(branchX + 40, trainY); 
+  cx.quadraticCurveTo(branchX, trainY, branchX, trainY + 40);
+  cx.lineTo(branchX, indY + 20); cx.stroke();
+  cx.setLineDash([]);
+
+  // YARDS TPL (Deposito dentro l'Industria)
+  const yardW = 100, yardH = 40;
+  cx.fillStyle = '#2c3e50'; cx.fillRect(branchX - yardW/2, indY + 20, yardW, yardH);
+  cx.strokeStyle = '#d44a4a'; cx.lineWidth = 2; cx.strokeRect(branchX - yardW/2, indY + 20, yardW, yardH);
+  cx.fillStyle = '#fff'; cx.font = "bold 11px 'Share Tech Mono'"; cx.textAlign = 'center'; cx.textBaseline = 'middle';
+  cx.fillText("YARDS TPL", branchX, indY + 40);
+
+  // Prolungamento Metro verso Aeroporto
+  cx.strokeStyle = 'rgba(0, 229, 192, 0.8)'; cx.lineWidth = 4;
+  cx.setLineDash([8, 8]);
+  cx.beginPath(); 
+  cx.moveTo(cityX + cityW/2, cityY + cityH/2); 
+  cx.lineTo(cityX + cityW - 10, H - 40); 
+  cx.lineTo(W, H - 40); 
+  cx.stroke(); cx.setLineDash([]);
+  
+  cx.fillStyle = '#00e5c0'; cx.font = "bold 11px 'Share Tech Mono'"; cx.textAlign = 'right';
+  cx.fillText("METRO -> AEROPORTO ✈️", W - 10, H - 50);
+
+  // 8. Dimensioni / Quote
+  drawDimLine(hwX + 72, artY - 30, cityX - 5, artY - 30, "Buffer Traffico: 240m");
+  drawDimLine(indX + indW + 5, artY + 30, hwX - 72, artY + 30, "Buffer Pesante: 160m");
 
 })();
 </script>
@@ -641,6 +921,11 @@
         <td><span class="tag" style="background:rgba(255,107,53,0.15);color:var(--accent2);border:1px solid rgba(255,107,53,0.3);">4. Metropoli</span></td>
         <td class="val">Periferie</td>
         <td>Il Land Value al centro è altissimo. Congela l'espansione ad alta densità qui, e ricomincia a costruire nuovi sobborghi Low Density ai bordi estremi, connessi via Metro.</td>
+      </tr>
+      <tr>
+        <td><span class="tag" style="background:rgba(232,67,147,0.15);color:#e84393;border:1px solid rgba(232,67,147,0.3);">5. Hub Globale</span></td>
+        <td class="val">Connessioni Esterne</td>
+        <td>Il distretto è maturo. Si costruisce la Stazione Ferroviaria ai margini (per non tagliare la città coi binari) e si prolungano Arterie e Metro verso Porto e Aeroporto fuori mappa.</td>
       </tr>
     </table>
   </div>
@@ -686,7 +971,7 @@
   </div>
 </div>
 
-<!-- 04. GESTIONE PARCHEGGI (PARK & RIDE) -->
+<!-- 04. GESTIONE PARCHEGGI E LOGICA DI PATHFINDING -->
 <div class="section">
   <div class="section-header">
     <span class="section-num">04</span>
@@ -729,10 +1014,56 @@
   </div>
 </div>
 
-<!-- 05. GERARCHIA STRADALE -->
+<!-- 05. SERVIZI CITTADINI (PLOPPABLES) -->
 <div class="section">
   <div class="section-header">
     <span class="section-num">05</span>
+    <span class="section-title">Servizi Cittadini (Ploppables) — Posizionamento e Upgrade</span>
+  </div>
+  <div class="section-body">
+    <div class="note" style="margin-bottom:12px; border-color: #3498db;">
+      <strong>Regola dell'Espansione Modulare:</strong> In CS2, i servizi (scuole, ospedali, caserme) ricevono <em>upgrade fisici</em>. Lascia sempre <strong>almeno 4-6 celle vuote</strong> ai lati o sul retro dell'edificio per le future espansioni, oppure usa quello spazio per parcheggi di superficie che potrai demolire senza perdere cittadini.
+    </div>
+    
+    <div class="note" style="margin-bottom:12px; background:rgba(255,255,255,0.02); border-left:2px solid var(--border);">
+      <strong>Doppio Funzionamento:</strong> 
+      1. <em>Passivo (AoE):</em> Colora le strade di verde, alza il Land Value e la felicità locale.<br>
+      2. <em>Attivo (Mezzi):</em> Le auto fisiche (volanti, ambulanze, camion) devono navigare nel traffico. Se piazzi una caserma su una stradina locale, i mezzi di soccorso rimarranno imbottigliati nel traffico residenziale.
+    </div>
+
+    <div class="grid-zone">
+      <div class="zone-card">
+        <div class="zone-card-title" style="color:var(--srv-med)">🏥 Sanità e Morte (Fase 1)</div>
+        <div class="line"><span>Posizione Clinica</span><span>Cuore del borgo iniziale</span></div>
+        <div class="line"><span>Posizione Cimitero</span><span>Bordi silenziosi residenziali</span></div>
+        <div style="font-size: 0.8rem; color: var(--muted); margin-top: 5px;">I cittadini si ammalano e muoiono subito. La clinica va al centro della Fase 1 per la massima copertura. Il cimitero va ai bordi: i carri rallentano il traffico, ma l'edificio funge da parco aumentando enormemente il Land Value.</div>
+      </div>
+      <div class="zone-card">
+        <div class="zone-card-title" style="color:var(--srv-fire)">🚒 Fuoco e Polizia (Fase 2/3)</div>
+        <div class="line"><span>Posizione ideale</span><span>Collettori centrali (4c)</span></div>
+        <div class="line"><span>Da evitare</span><span>Vicoli, Strade Locali</span></div>
+        <div style="font-size: 0.8rem; color: var(--muted); margin-top: 5px;">Possono aspettare le prime espansioni. Devono poter raggiungere ogni punto velocemente. Su una strada a 4 corsie i mezzi di soccorso a sirene spiegate possono sorpassare il traffico civile in coda.</div>
+      </div>
+      <div class="zone-card">
+        <div class="zone-card-title" style="color:var(--srv-edu)">📚 Educazione (Scuole, College)</div>
+        <div class="line"><span>Elem. (Fase 2/3)</span><span>Cuore dei quartieri pedonali</span></div>
+        <div class="line"><span>Sup/Uni (Fase 3/4)</span><span>Nodi TPL (Tram/Metro)</span></div>
+        <div style="font-size: 0.8rem; color: var(--muted); margin-top: 5px;">Le Scuole Elementari non attirano auto da lontano: mettile tra le case. High School e College muovono migliaia di studenti da tutto il distretto: mettile SULLE fermate di tram/bus per impedire che tutti vengano in auto.</div>
+      </div>
+      <div class="zone-card">
+        <div class="zone-card-title" style="color:var(--srv-post)">🗑️ Poste e Rifiuti (Fase 3)</div>
+        <div class="line"><span>Posizione ideale</span><span>Estremi bordi sull'Arteria (6c)</span></div>
+        <div class="line"><span>Impatto Traffico</span><span>Camion continui e lenti</span></div>
+        <div style="font-size: 0.8rem; color: var(--muted); margin-top: 5px;">I mezzi logistici fermano e ripartono in continuazione. Poni i depositi alle uscite della città, così i furgoni si riversano sull'arteria veloce e defluiscono prima di intasare le zone dense. Usa le buchette manuali nei quartieri.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 06. GERARCHIA STRADALE -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">06</span>
     <span class="section-title">Gerarchia Stradale e Regole Base</span>
   </div>
   <div class="section-body">
@@ -770,10 +1101,10 @@
   </div>
 </div>
 
-<!-- 06. SOTTERRANEO E PENDENZE -->
+<!-- 07. SOTTERRANEO E PENDENZE -->
 <div class="section">
   <div class="section-header">
-    <span class="section-num">06</span>
+    <span class="section-num">07</span>
     <span class="section-title">Sotterraneo — Quote e Slope Too Steep</span>
   </div>
   <div class="section-body">
@@ -826,7 +1157,7 @@
   
   const W = 600, H = 600;
   const CELLS = 9; 
-  const CS = W / CELLS; // CS = 66.6px circa
+  const CS = W / CELLS; 
 
   const COLORS = {
     'COM': '#4a9fd4', 'OFF': '#2a7fd4', 'LOW': '#5ab84a',
@@ -834,7 +1165,6 @@
     'STATION': '#0f1518', 'PARK': '#95a5a6'
   };
 
-  // State Management
   let currentPhase = 1;
   let activeLayers = {
     zones: true,
@@ -842,7 +1172,8 @@
     bus: true,
     tram: true,
     metro: true,
-    park: true
+    park: true,
+    services: true
   };
 
   // =====================================
@@ -873,6 +1204,26 @@
     [1, 1, 1, 1, 1, 1, 1, 1, 1]  
   ];
 
+  // Configurazione dei Servizi (Ploppables) Algoritmica
+  const servicesData = [
+    // Sanità e Morte (Necessità assolute in Fase 1)
+    {c: 4, r: 6, minPhase: 1, color: 'var(--srv-med)', icon: '🏥', label: 'CLINICA'}, 
+    {c: 6, r: 6, minPhase: 1, color: 'var(--srv-death)', icon: '⚰️', label: 'CIMITERO'}, 
+
+    // Emergenze e Sicurezza (Possono aspettare Fase 2 e 3)
+    {c: 2, r: 5, minPhase: 2, color: 'var(--srv-fire)', icon: '🚒', label: 'FUOCO'},  
+    {c: 5, r: 3, minPhase: 3, color: 'var(--srv-pol)', icon: '🚓', label: 'POLIZIA'}, 
+    
+    // Educazione (Cresce con le fasi)
+    {c: 2, r: 2, minPhase: 3, color: 'var(--srv-edu)', icon: '📚', label: 'ELEM.'},
+    {c: 6, r: 2, minPhase: 3, color: 'var(--srv-edu)', icon: '📚', label: 'ELEM.'},
+    {c: 2, r: 4, minPhase: 3, color: 'var(--srv-edu)', icon: '🎓', label: 'HIGH S.'},
+    {c: 6, r: 4, minPhase: 4, color: 'var(--srv-edu)', icon: '🏛️', label: 'COLLEGE'},
+    
+    // Logistica Lenta 
+    {c: 1, r: 8, minPhase: 3, color: 'var(--srv-post)', icon: '📦', label: 'POSTE'}
+  ];
+
   function getHorizontalRoadType(r) {
     if (r === 9) return '6lane'; 
     if (r === 4) return '4lane'; 
@@ -890,10 +1241,6 @@
     return '2lane';
   }
 
-  // =====================================
-  // FUNZIONI DI DISEGNO
-  // =====================================
-
   function drawBlock(c, r, phase) {
     if (phase < phaseMap[r][c]) return; 
     let type = zoneMap[r][c];
@@ -904,16 +1251,12 @@
       ctx.strokeStyle = '#00e5c0';
       ctx.lineWidth = 2;
       ctx.strokeRect(c * CS + 2, r * CS + 2, CS - 4, CS - 4);
-      
       ctx.fillStyle = '#00e5c0';
-      ctx.font = "bold 20px 'Share Tech Mono', monospace";
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
+      ctx.font = "bold 20px 'Share Tech Mono'";
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillText("M", c * CS + CS/2, r * CS + CS/2);
       return;
-    } else if (type === 'STATION') {
-      return; 
-    }
+    } else if (type === 'STATION') { return; }
 
     if (!activeLayers.zones) return; 
 
@@ -928,10 +1271,32 @@
     
     ctx.fillStyle = '#fff';
     ctx.font = "bold 13px 'Share Tech Mono', monospace";
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     let label = type === 'LOW_R' ? 'LOW RENT' : type;
     ctx.fillText(label, c * CS + CS/2, r * CS + CS/2);
+  }
+
+  function drawService(s, phase) {
+    if (!activeLayers.services || phase < s.minPhase) return;
+
+    ctx.fillStyle = s.color;
+    ctx.globalAlpha = 0.9;
+    ctx.fillRect(s.c * CS + 5, s.r * CS + 5, CS - 10, CS - 10);
+    
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(s.c * CS + 5, s.r * CS + 5, CS - 10, CS - 10);
+
+    ctx.globalAlpha = 1.0;
+    ctx.fillStyle = '#fff';
+    ctx.font = "18px 'Segoe UI Emoji', sans-serif";
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(s.icon, s.c * CS + CS/2, s.r * CS + CS/2 - 6);
+
+    ctx.font = "bold 9px 'Barlow Condensed'";
+    ctx.fillStyle = '#fff';
+    ctx.fillText(s.label, s.c * CS + CS/2, s.r * CS + CS/2 + 12);
   }
 
   function drawParking(c, r, type) {
@@ -939,7 +1304,6 @@
     
     ctx.fillStyle = COLORS.PARK;
     ctx.globalAlpha = 0.8;
-    // Disegna un blocco leggermente più piccolo della cella
     ctx.fillRect(c * CS + 6, r * CS + 6, CS - 12, CS - 12);
     ctx.strokeStyle = '#fff';
     ctx.lineWidth = 1.5;
@@ -947,8 +1311,7 @@
 
     ctx.fillStyle = '#fff';
     ctx.font = "bold 16px 'Share Tech Mono'";
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText("P", c * CS + CS/2, r * CS + CS/2 - 4);
 
     ctx.font = "9px 'Barlow Condensed'";
@@ -962,31 +1325,19 @@
     ctx.lineTo(x2, y2);
     
     if (type === '6lane') {
-      ctx.lineWidth = 8;
-      ctx.strokeStyle = '#4a5c60';
-      ctx.stroke();
+      ctx.lineWidth = 8; ctx.strokeStyle = '#4a5c60'; ctx.stroke();
       ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
       ctx.lineWidth = 1; ctx.strokeStyle = '#ffd166'; ctx.stroke();
     } else if (type === '4lane') {
-      ctx.lineWidth = 5;
-      ctx.strokeStyle = '#3e4e52';
-      ctx.stroke();
+      ctx.lineWidth = 5; ctx.strokeStyle = '#3e4e52'; ctx.stroke();
     } else if (type === '2lane') {
-      ctx.lineWidth = 2.5;
-      ctx.strokeStyle = '#2a3538';
-      ctx.stroke();
+      ctx.lineWidth = 2.5; ctx.strokeStyle = '#2a3538'; ctx.stroke();
     } else if (type === 'alley') {
-      ctx.lineWidth = 1.5;
-      ctx.strokeStyle = '#1e2528';
-      ctx.setLineDash([4, 4]);
-      ctx.stroke();
-      ctx.setLineDash([]);
+      ctx.lineWidth = 1.5; ctx.strokeStyle = '#1e2528';
+      ctx.setLineDash([4, 4]); ctx.stroke(); ctx.setLineDash([]);
     } else if (type === 'ped') {
-      ctx.lineWidth = 3;
-      ctx.strokeStyle = '#5ab84a';
-      ctx.setLineDash([2, 3]);
-      ctx.stroke();
-      ctx.setLineDash([]);
+      ctx.lineWidth = 3; ctx.strokeStyle = '#5ab84a';
+      ctx.setLineDash([2, 3]); ctx.stroke(); ctx.setLineDash([]);
     }
   }
 
@@ -997,13 +1348,11 @@
     if (phase === 3) minY = 1;
 
     for (let r = minY; r <= 9; r++) {
-      let type = getHorizontalRoadType(r);
-      drawRoadSegment(0, r * CS, W, r * CS, type);
+      drawRoadSegment(0, r * CS, W, r * CS, getHorizontalRoadType(r));
     }
     for (let c = 0; c <= 9; c++) {
       for (let r = minY; r < 9; r++) {
-        let type = getVerticalRoadType(c, r);
-        drawRoadSegment(c * CS, r * CS, c * CS, (r+1) * CS, type);
+        drawRoadSegment(c * CS, r * CS, c * CS, (r+1) * CS, getVerticalRoadType(c, r));
       }
     }
   }
@@ -1030,17 +1379,14 @@
     ctx.arc(cx, cy, 4, 0, Math.PI * 2);
     ctx.fillStyle = type === 'bus' ? '#ff6b35' : '#ffd166';
     ctx.fill();
-    ctx.lineWidth = 1.5;
-    ctx.strokeStyle = '#0a0e0f';
-    ctx.stroke();
+    ctx.lineWidth = 1.5; ctx.strokeStyle = '#0a0e0f'; ctx.stroke();
   }
 
   function drawTransitPath(route, color, isTram = false) {
     ctx.strokeStyle = color;
     ctx.lineWidth = 3;
     if (isTram) {
-      ctx.setLineDash([8, 6]);
-      ctx.lineWidth = 4;
+      ctx.setLineDash([8, 6]); ctx.lineWidth = 4;
     } else {
       ctx.setLineDash([5, 4]);
     }
@@ -1050,8 +1396,7 @@
     for(let i = 1; i < route.length; i++) {
       ctx.lineTo(route[i][0] * CS, route[i][1] * CS);
     }
-    ctx.stroke();
-    ctx.setLineDash([]);
+    ctx.stroke(); ctx.setLineDash([]);
   }
 
   function drawGrid(phase) {
@@ -1059,32 +1404,25 @@
     ctx.fillStyle = '#0a0e0f';
     ctx.fillRect(0, 0, W, H);
 
-    // 1. STRADE
-    if (activeLayers.roads) drawRoads(phase);
+    if (activeLayers.roads) {
+      drawRoads(phase);
+    }
 
-    // 2. ZONIZZAZIONE
     for (let r = 0; r < CELLS; r++) {
       for (let c = 0; c < CELLS; c++) {
         drawBlock(c, r, phase);
       }
     }
 
-    // 3. PARCHEGGI STRATEGICI (Nuova meccanica)
-    if (phase >= 2) {
-      // Parcheggio di superficie a supporto del commercio Fase 2
-      drawParking(5, 7, 'surface'); 
-    }
-    if (phase >= 3) {
-      // Parcheggio Multipiano tra Uffici e Alta Densità
-      drawParking(6, 4, 'multistory');
-    }
+    servicesData.forEach(s => drawService(s, phase));
+
+    if (phase >= 2) drawParking(5, 7, 'surface'); 
+    if (phase >= 3) drawParking(6, 4, 'multistory');
     if (phase >= 4) {
-      // Grandi Park & Ride Sotterranei a fianco della Stazione Metro
       drawParking(3, 0, 'underground');
       drawParking(5, 0, 'underground');
     }
 
-    // 4. BUS 
     if (phase >= 2 && activeLayers.bus) {
       const busRoute1 = [[3, 8], [3, 4], [2, 4], [2, 6], [6, 6], [6, 4], [5, 4], [5, 8], [3, 8]];
       drawTransitPath(busRoute1, '#ff6b35');
@@ -1097,7 +1435,6 @@
       }
     }
 
-    // 5. TRAM 
     if (phase >= 3 && activeLayers.tram) {
       const tramRoute1 = [[0, 8], [9, 8]];
       drawTransitPath(tramRoute1, '#ffd166', true);
@@ -1117,31 +1454,77 @@
       }
     }
 
-    // 6. METRO SOTTERRANEA
     if (phase >= 4 && activeLayers.metro) {
       ctx.strokeStyle = 'rgba(0, 229, 192, 0.7)';
-      ctx.lineWidth = 6;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
+      ctx.lineWidth = 6; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
       ctx.beginPath();
       ctx.moveTo(CS * 0.5, CS * 8.5); 
       ctx.bezierCurveTo(CS * 1.5, CS * 5,  CS * 3, CS * 2,  CS * 4.5, CS * 0.5); 
       ctx.lineTo(CS * 8.5, CS * 0.5);
       ctx.stroke();
       ctx.strokeStyle = '#0a0e0f';
-      ctx.lineWidth = 2;
-      ctx.setLineDash([8, 12]);
-      ctx.stroke();
-      ctx.setLineDash([]);
+      ctx.lineWidth = 2; ctx.setLineDash([8, 12]);
+      ctx.stroke(); ctx.setLineDash([]);
     }
   }
 
-  // API Pubbliche per l'interfaccia UI
+  window.updateTransitCalc = function() {
+    const pop = parseInt(document.getElementById('popSlider').value);
+    const display = pop === 0 ? "< 500 Ab." : pop.toLocaleString('it-IT') + " Ab.";
+    document.getElementById('popDisplay').innerText = display;
+
+    const container = document.getElementById('transitResults');
+    container.innerHTML = '';
+
+    if (currentPhase === 1 || pop === 0) {
+      container.innerHTML = '<div class="calc-empty">Nessun mezzo di linea di massa necessario in questa fase.</div>';
+      return;
+    }
+
+    let html = '';
+    
+    // Formula per il calcolo dei veicoli: (Base per N° fermate) + (Bonus Popolazione)
+    const addRow = (name, color, baseVehicles, popFactor) => {
+       let vehicles = baseVehicles + Math.floor(pop / popFactor);
+       html += `<div class="calc-row"><span style="color:${color}">${name}</span> <span>${vehicles} vett.</span></div>`;
+    };
+
+    if (currentPhase >= 2 && activeLayers.bus) {
+      addRow('🚌 Bus L1 (Circolare Interna, 9 fermate)', '#ff6b35', 3, 3000);
+    }
+    if (currentPhase >= 4 && activeLayers.bus) {
+      addRow('🚌 Bus L2 (Circolare Esterna, 7 fermate)', '#e8501e', 3, 4000);
+    }
+    if (currentPhase >= 3 && activeLayers.tram) {
+      addRow('🚊 Tram Sud (Asse Commerciale, 4 fermate)', '#ffd166', 2, 5000);
+      addRow('🚊 Tram Centro (Asse Direzionale, 4 fermate)', '#ffd166', 2, 5000);
+    }
+    if (currentPhase >= 4 && activeLayers.tram) {
+      addRow('🚊 Tram Nord (Asse Residenziale, 4 fermate)', '#ffd166', 2, 5000);
+    }
+    if (currentPhase >= 4 && activeLayers.metro) {
+      let trains = Math.max(1, Math.floor(pop / 8000));
+      html += `<div class="calc-row"><span style="color:#00e5c0">🚇 Metro (Spola inter-distrettuale)</span> <span>${trains} treni</span></div>`;
+    }
+    if (currentPhase >= 5) {
+      let trains = Math.max(1, Math.floor(pop / 10000));
+      html += `<div class="calc-row"><span style="color:#d44a4a">🚂 Treno Intercity (Regionale)</span> <span>${trains} treni</span></div>`;
+    }
+
+    if(html === '') {
+       html = '<div class="calc-empty">Nessun layer di trasporto attivo. Accendi Tram, Bus o Metro.</div>';
+    }
+
+    container.innerHTML = html;
+  };
+
   window.setPhase = function(p) {
     currentPhase = p;
     drawGrid(currentPhase);
-    const baseColors = ['','#7de87d','#4a9fd4','#ffd166','#ff6b35'];
-    [1,2,3,4].forEach(i => {
+    
+    // Aggiorna bottoni
+    const baseColors = ['','#7de87d','#4a9fd4','#ffd166','#ff6b35','#e84393'];
+    [1,2,3,4,5].forEach(i => {
       const btn = document.getElementById('btn-ph'+i);
       if(i === p) {
         btn.classList.add('active');
@@ -1155,6 +1538,11 @@
         btn.style.borderColor = 'rgba(80,100,100,0.3)';
       }
     });
+
+    // Imposta popolazioni predefinite logiche quando si cambia fase
+    const defaultPops = [0, 2000, 6000, 15000, 30000, 30000];
+    document.getElementById('popSlider').value = defaultPops[p];
+    updateTransitCalc();
   };
 
   window.toggleLayer = function(layerName) {
@@ -1168,12 +1556,11 @@
       btn.style.background = 'transparent';
     }
     drawGrid(currentPhase);
+    updateTransitCalc(); // Aggiorna la tabella se spegni/accendi un mezzo
   };
 
-  // Setup Iniziale
   setPhase(1);
 })();
 </script>
 
-</body>
-</html>
+<!-- 01.1 SETTORE INDUSTRIALE: GRIGLIA E MEGA-STRUTTURE -->
