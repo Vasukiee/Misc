@@ -178,6 +178,27 @@
   .calc-row span:last-child { color: var(--accent3); font-weight: bold; }
   .calc-empty { font-size: 0.8rem; color: var(--muted); font-style: italic; }
 
+  /* Custom Checkboxes */
+  .custom-chk {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px; height: 14px;
+    background: #090a0b;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    position: relative;
+    cursor: pointer;
+    margin: 0;
+    flex-shrink: 0;
+  }
+  .custom-chk:checked::after {
+    content: '✔';
+    position: absolute;
+    top: -3px; left: 1px;
+    font-size: 12px;
+    color: inherit;
+  }
+
   /* Centerline grid table */
   .ctc-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; border: 1px solid var(--border); margin-top: 10px; }
   .ctc-table th { font-family: 'Cinzel', serif; font-size: 0.8rem; letter-spacing: 0.08em; color: var(--accent2); text-align: center; padding: 8px 10px; border-bottom: 1px solid var(--border); background: #090a0b; }
@@ -207,7 +228,7 @@
   </div>
   <div class="section-body">
     <div class="note">
-      <strong>Algoritmo di Posizionamento:</strong> Usa i layer per studiare la viabilità. <strong>Mezzi d'emergenza veloci</strong> (Polizia/Ospedali) sui collettori a 4 corsie per sorpassare il traffico. <strong>Scuole Superiori</strong> sugli assi Tramviari. <strong>Poste e Rifiuti (Camion Lenti)</strong> sulle grandi arterie esterne. <strong>Scuole Elementari</strong> nei quartieri residenziali.
+      <strong>Algoritmo Hub & Spoke:</strong> Usa i layer per studiare i flussi. <strong>I TRAM (Trunk)</strong> formano grandi anelli continui (Loops) lungo le arterie 4c e 6c per non dover mai invertire la marcia. <strong>I BUS (Feeder)</strong> compiono anelli locali a 2c raccogliendo le anime e portandole ai nodi del Tram. Nessuno usa l'auto.
     </div>
 
     <div class="control-group" id="phase-btns">
@@ -224,8 +245,8 @@
       <button onclick="toggleLayer('zones')"    id="btn-ly-zones"    class="btn active">ZONIZZAZIONE</button>
       <button onclick="toggleLayer('roads')"    id="btn-ly-roads"    class="btn active">STRADE</button>
       <button onclick="toggleLayer('services')" id="btn-ly-services" class="btn active">SERVIZI (Logica)</button>
-      <button onclick="toggleLayer('bus')"      id="btn-ly-bus"      class="btn active">BUS (Capillari)</button>
-      <button onclick="toggleLayer('tram')"     id="btn-ly-tram"     class="btn active">TRAM (Assi)</button>
+      <button onclick="toggleLayer('bus')"      id="btn-ly-bus"      class="btn active">BUS (Feeder)</button>
+      <button onclick="toggleLayer('tram')"     id="btn-ly-tram"     class="btn active">TRAM (Trunk)</button>
       <button onclick="toggleLayer('metro')"    id="btn-ly-metro"    class="btn active">METRO (Hubs)</button>
       <button onclick="toggleLayer('park')"     id="btn-ly-park"     class="btn active">PARCHEGGI</button>
       <button onclick="toggleLayer('roadOverlay')" id="btn-ly-roadOverlay" class="btn overlay-btn">⬛ ROAD TYPE OVERLAY</button>
@@ -626,24 +647,24 @@
 <div class="section">
   <div class="section-header">
     <span class="section-num">VI</span>
-    <span class="section-title">Transit Network — Capillarità</span>
+    <span class="section-title">Transit Network — Algoritmo Hub & Spoke</span>
   </div>
   <div class="section-body">
     <div class="note">
-      <strong>Pathfinding Error:</strong> Camminata &gt; 1km = L'IA forza l'auto privata = Gridlock. Garantisci copertura capillare.
+      <strong>Algoritmo Hub & Spoke (Trunk & Feeder):</strong> Far viaggiare i Tram in segmenti rettilinei che finiscono nel nulla blocca la logistica. <strong>I Tram (Trunk) vanno posati a doppi binari su Circuiti ad Anello continui (Loops)</strong> attorno ai distretti, così non devono mai fare pericolose inversioni a U. <strong>I Bus (Feeder)</strong> invece penetrano le stradine formando micro-anelli locali, scaricando i passeggeri sull'anello del Tram.
     </div>
     <div class="grid-zone">
       <div class="zone-card">
-        <div class="zone-card-title" style="color:var(--accent2)">Bus (Micro-Routing)</div>
-        <div class="line"><span>Ruolo</span><span>Penetrazione blocchi</span></div>
-        <div class="line"><span>Distanza Max</span><span>400m (50 celle)</span></div>
-        <div style="font-size:0.8rem;color:var(--text);margin-top:5px;">Linee a serpentina. Raccogli pedoni da zone a bassa densità e scaricali su Tram/Metro.</div>
+        <div class="zone-card-title" style="color:var(--accent2)">Bus (Feeder / Adduzione)</div>
+        <div class="line"><span>Ruolo</span><span>Penetrazione capillare</span></div>
+        <div class="line"><span>Forma</span><span>Micro-anelli nei vicoli (2c)</span></div>
+        <div style="font-size:0.8rem;color:var(--text);margin-top:5px;">Navigano le strade lente per raccogliere i pedoni dalle zone a bassa densità, portandoli con rapidità all'interscambio.</div>
       </div>
       <div class="zone-card">
-        <div class="zone-card-title" style="color:var(--srv-med)">Tram (Asse di Forza)</div>
+        <div class="zone-card-title" style="color:var(--srv-med)">Tram (Trunk / Assi di Forza)</div>
         <div class="line"><span>Ruolo</span><span>Spostamento di massa</span></div>
-        <div class="line"><span>Posizione</span><span>Arterie 4c / Assi Com.</span></div>
-        <div style="font-size:0.8rem;color:var(--text);margin-top:5px;">I tram corrono dritti per convogliare il carico dei bus verso l'Hub Metropolitano.</div>
+        <div class="line"><span>Forma</span><span>Grandi Anelli (Loops continui)</span></div>
+        <div style="font-size:0.8rem;color:var(--text);margin-top:5px;">Circolano sulle Arterie e Collettori (4c e 6c). Ruotano costantemente in un anello senza sosta per azzerare i colli di bottiglia causati dalle inversioni di marcia.</div>
       </div>
       <div class="zone-card">
         <div class="zone-card-title" style="color:#526b6b">Metro (Deep Underground)</div>
@@ -869,6 +890,11 @@
     metro: true, park: true, services: true,
     roadOverlay: false, dims: true
   };
+  
+  let activeLines = {
+    b1: true, b2: true, b3: true, b4: true,
+    t1: true, t2: true, metro: true, train: true
+  };
 
   const zoneMap = [
     ['LOW','LOW','LOW','MED','STATION','MED','LOW','LOW','LOW'],
@@ -1011,7 +1037,13 @@
     ctx.strokeStyle=color; ctx.lineWidth=isTram?3:2;
     ctx.setLineDash(isTram?[8,6]:[4,4]);
     ctx.beginPath(); ctx.moveTo(getX(route[0][0]), getY(route[0][1]));
-    for(let i=1;i<route.length;i++) ctx.lineTo(getX(route[i][0]), getY(route[i][1]));
+    for(let i=1; i<route.length; i++) {
+        ctx.lineTo(getX(route[i][0]), getY(route[i][1]));
+    }
+    // Chiudi il path se è un vero loop
+    if (route[0][0] === route[route.length-1][0] && route[0][1] === route[route.length-1][1]) {
+        ctx.closePath();
+    }
     ctx.stroke(); ctx.setLineDash([]);
   }
 
@@ -1088,35 +1120,56 @@
     }
 
     if (phase >= 2 && activeLayers.bus) {
-      const b1 = [[3, 8], [3, 4], [2, 4], [2, 6], [6, 6], [6, 4], [5, 4], [5, 8], [3, 8]];
-      drawTransitPath(b1, '#948b76');
-      for(let i=0; i<b1.length-1; i++) drawStop(b1[i], b1[i+1], 'bus');
+      // Quadrante Sud-Ovest
+      if (activeLines.b1) {
+        const b1 = [[1, 8], [4, 8], [4, 5], [1, 5], [1, 8]];
+        drawTransitPath(b1, '#948b76');
+        for(let i=0; i<b1.length-1; i++) drawStop(b1[i], b1[i+1], 'bus');
+      }
+
+      if (phase >= 3 && activeLines.b3) {
+        // Quadrante Nord-Ovest
+        const b3 = [[1, 4], [4, 4], [4, 1], [1, 1], [1, 4]];
+        drawTransitPath(b3, '#7a7452');
+        for(let i=0; i<b3.length-1; i++) drawStop(b3[i], b3[i+1], 'bus');
+      }
 
       if (phase >= 4) {
-        const b2 = [[1, 8], [1, 2], [4, 2], [7, 2], [7, 8], [4, 8], [1, 8]];
-        drawTransitPath(b2, '#665c49');
-        for(let i=0; i<b2.length-1; i++) drawStop(b2[i], b2[i+1], 'bus');
+        // Quadrante Sud-Est
+        if (activeLines.b2) {
+          const b2 = [[8, 8], [5, 8], [5, 5], [8, 5], [8, 8]];
+          drawTransitPath(b2, '#665c49');
+          for(let i=0; i<b2.length-1; i++) drawStop(b2[i], b2[i+1], 'bus');
+        }
+        
+        // Quadrante Nord-Est
+        if (activeLines.b4) {
+          const b4 = [[8, 4], [5, 4], [5, 1], [8, 1], [8, 4]];
+          drawTransitPath(b4, '#5a4a2a');
+          for(let i=0; i<b4.length-1; i++) drawStop(b4[i], b4[i+1], 'bus');
+        }
       }
     }
 
     if (phase >= 3 && activeLayers.tram) {
-      const tc = '#7a6368';
-      drawTransitPath([[0, 8], [9, 8]], tc, true);
-      drawStop([0,8], [9,8], 'tram'); drawStop([4,8], [9,8], 'tram');
-      drawStop([9,8], [0,8], 'tram'); drawStop([5,8], [0,8], 'tram'); 
-      
-      drawTransitPath([[4, 8], [4, 1]], tc, true);
-      drawStop([4,8], [4,1], 'tram'); drawStop([4,4], [4,1], 'tram');
-      drawStop([4,1], [4,8], 'tram'); drawStop([4,5], [4,8], 'tram');
+      // Trunk Nord-Sud (Core Loop Centrale)
+      if (activeLines.t1) {
+        const t1 = [[4, 8], [5, 8], [5, 1], [4, 1], [4, 8]];
+        drawTransitPath(t1, '#7a6368', true);
+        const t1_stops = [[4,8],[5,8], [5,8],[5,4], [5,4],[5,1], [5,1],[4,1], [4,1],[4,4], [4,4],[4,8]];
+        for(let i=0; i<t1_stops.length; i+=2) drawStop(t1_stops[i], t1_stops[i+1], 'tram');
+      }
 
-      if (phase >= 4) {
-        drawTransitPath([[0, 4], [9, 4]], tc, true);
-        drawStop([1,4], [8,4], 'tram'); drawStop([4,4], [8,4], 'tram');
-        drawStop([8,4], [1,4], 'tram'); drawStop([5,4], [1,4], 'tram');
+      if (phase >= 4 && activeLines.t2) {
+        // Trunk Est-Ovest (Arterial / Collector Loop)
+        const t2 = [[1, 8], [8, 8], [8, 4], [1, 4], [1, 8]];
+        drawTransitPath(t2, '#8c5a45', true);
+        const t2_stops = [[1,8],[4,8], [4,8],[8,8], [8,8],[8,4], [8,4],[5,4], [5,4],[1,4], [1,4],[1,8]];
+        for(let i=0; i<t2_stops.length; i+=2) drawStop(t2_stops[i], t2_stops[i+1], 'tram');
       }
     }
 
-    if (phase >= 4 && activeLayers.metro) {
+    if (phase >= 4 && activeLayers.metro && activeLines.metro) {
       ctx.strokeStyle = 'rgba(82, 107, 107, 0.4)';
       ctx.lineWidth = 6; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
       ctx.beginPath();
@@ -1136,6 +1189,11 @@
     drawGridDimensions();
   }
 
+  window.toggleLine = function(lineId) {
+    activeLines[lineId] = !activeLines[lineId];
+    drawGrid(currentPhase);
+  };
+
   window.updateTransitCalc = function() {
     const pop = parseInt(document.getElementById('popSlider').value);
     document.getElementById('popDisplay').innerText = pop===0 ? '< 500 Ab.' : pop.toLocaleString('it-IT')+' Ab.';
@@ -1144,16 +1202,51 @@
       container.innerHTML='<div class="calc-empty">Nessun trasporto di massa necessario in questa fase.</div>'; return;
     }
     let html='';
-    const addRow = (name,color,base,factor) => {
-      let v=base+Math.floor(pop/factor);
-      html+=`<div class="calc-row"><span style="color:${color};">${name}</span><span>${v} VETT.</span></div>`;
+    const addRow = (id, name, color, base, factor) => {
+      let v = base + Math.floor(pop/factor);
+      let checked = activeLines[id] ? 'checked' : '';
+      html += `<div class="calc-row">
+        <label style="cursor:pointer; display:flex; align-items:center; gap:8px;">
+          <input type="checkbox" class="custom-chk" onchange="toggleLine('${id}')" ${checked} style="color:${color}; border-color:${color};">
+          <span style="color:${color};">${name}</span>
+        </label>
+        <span>${v} VETT.</span>
+      </div>`;
     };
-    if (currentPhase>=2 && activeLayers.bus)   addRow('BUS L1 [Circolare Interna]','#948b76',3,3000);
-    if (currentPhase>=4 && activeLayers.bus)   addRow('BUS L2 [Circolare Esterna]','#665c49',3,4000);
-    if (currentPhase>=3 && activeLayers.tram) { addRow('TRAM [Asse Commerciale]','#7a6368',2,5000); addRow('TRAM [Asse Direzionale]','#7a6368',2,5000); }
-    if (currentPhase>=4 && activeLayers.tram)  addRow('TRAM [Asse Residenziale]','#7a6368',2,5000);
-    if (currentPhase>=4 && activeLayers.metro) { let t=Math.max(1,Math.floor(pop/8000)); html+=`<div class="calc-row"><span style="color:#526b6b;">METRO [Inter-Distretto]</span><span>${t} TRENI</span></div>`; }
-    if (currentPhase>=5) { let t=Math.max(1,Math.floor(pop/10000)); html+=`<div class="calc-row"><span style="color:#66554e;">TRENO REGIONALE [Esterno]</span><span>${t} TRENI</span></div>`; }
+
+    if (currentPhase>=2 && activeLayers.bus)   addRow('b1', 'BUS L1 [Feeder Sud-Ovest]', '#948b76', 3, 3000);
+    if (currentPhase>=3 && activeLayers.bus)   addRow('b3', 'BUS L3 [Feeder Nord-Ovest]', '#7a7452', 3, 3000);
+    if (currentPhase>=4 && activeLayers.bus) { 
+      addRow('b2', 'BUS L2 [Feeder Sud-Est]', '#665c49', 3, 4000);
+      addRow('b4', 'BUS L4 [Feeder Nord-Est]', '#5a4a2a', 3, 4000);
+    }
+    if (currentPhase>=3 && activeLayers.tram)  addRow('t1', 'TRAM L1 [Trunk Nord-Sud]', '#7a6368', 4, 4500); 
+    if (currentPhase>=4 && activeLayers.tram)  addRow('t2', 'TRAM L2 [Trunk Est-Ovest]', '#8c5a45', 5, 4500);
+    
+    if (currentPhase>=4 && activeLayers.metro) { 
+      let t = Math.max(1, Math.floor(pop/8000)); 
+      let checked = activeLines['metro'] ? 'checked' : '';
+      html += `<div class="calc-row">
+        <label style="cursor:pointer; display:flex; align-items:center; gap:8px;">
+          <input type="checkbox" class="custom-chk" onchange="toggleLine('metro')" ${checked} style="color:#526b6b; border-color:#526b6b;">
+          <span style="color:#526b6b;">METRO [Inter-Distretto]</span>
+        </label>
+        <span>${t} TRENI</span>
+      </div>`; 
+    }
+    
+    if (currentPhase>=5) { 
+      let t = Math.max(1, Math.floor(pop/10000)); 
+      let checked = activeLines['train'] ? 'checked' : '';
+      html += `<div class="calc-row">
+        <label style="cursor:pointer; display:flex; align-items:center; gap:8px;">
+          <input type="checkbox" class="custom-chk" onchange="toggleLine('train')" ${checked} style="color:#66554e; border-color:#66554e;">
+          <span style="color:#66554e;">TRENO REGIONALE [Esterno]</span>
+        </label>
+        <span>${t} TRENI</span>
+      </div>`; 
+    }
+    
     container.innerHTML = html||'<div class="calc-empty">Nessun layer di trasporto attivo.</div>';
   };
 
