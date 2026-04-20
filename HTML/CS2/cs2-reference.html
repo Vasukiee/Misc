@@ -8,33 +8,36 @@
   @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
 
   :root {
-    /* Muted / Ash / Tetro Palette */
-    --bg: #0a0b0c;           /* Deep ash void */
-    --panel: #111214;        /* Dark iron */
-    --border: #2a2d30;       /* Cold grey border */
-    --accent: #8b8c89;       /* Silver / Ash */
-    --accent2: #948b76;      /* Tarnished brass / bone */
-    --accent3: #a3a8a8;      /* Pale stone */
-    --text: #9a9fa3;         /* Grey text */
-    --muted: #52585b;        /* Tombstone grey */
-    
-    /* Desaturated Zones */
-    --zone-com: #283747;     
-    --zone-off: #2f2538;     
-    --zone-res: #263326;     
-    --zone-lowrent: #3b3026; 
-    --zone-med: #342436;     
-    --zone-high: #3b2929;    
-    --zone-ind: #403622;     
-    --zone-park: #17181a;    
+    --bg: #0a0b0c;
+    --panel: #111214;
+    --border: #2a2d30;
+    --accent: #8b8c89;
+    --accent2: #948b76;
+    --accent3: #a3a8a8;
+    --text: #9a9fa3;
+    --muted: #52585b;
+    --zone-com: #283747;
+    --zone-off: #2f2538;
+    --zone-res: #263326;
+    --zone-lowrent: #3b3026;
+    --zone-med: #342436;
+    --zone-high: #3b2929;
+    --zone-ind: #403622;
+    --zone-park: #17181a;
+    --srv-edu: #5c6b54;
+    --srv-fire: #8c5a45;
+    --srv-pol: #455a6b;
+    --srv-med: #7a6368;
+    --srv-post: #7a7452;
+    --srv-death: #8a8f91;
 
-    /* Desaturated Services (No bright red) */
-    --srv-edu: #5c6b54;      /* Muted olive */
-    --srv-fire: #8c5a45;     /* Rust / Dried clay */
-    --srv-pol: #455a6b;      /* Slate blue */
-    --srv-med: #7a6368;      /* Faded mauve / ash rose */
-    --srv-post: #7a7452;     /* Oxidized brass */
-    --srv-death: #8a8f91;    /* Pale grey */
+    /* Road overlay colors */
+    --ov-highway:   rgba(255, 200,  40, 0.55);
+    --ov-arterial:  rgba(255,  60,  60, 0.50);
+    --ov-collector: rgba(  0, 200, 255, 0.45);
+    --ov-local:     rgba( 80, 255, 120, 0.40);
+    --ov-alley:     rgba(200,  80, 255, 0.40);
+    --ov-ped:       rgba(255, 140,   0, 0.45);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -49,369 +52,142 @@
     padding: 24px 16px;
   }
 
-  h1, h2, h3, h4, .section-title {
-    font-family: 'Cinzel', serif;
-  }
+  h1, h2, h3, h4, .section-title { font-family: 'Cinzel', serif; }
 
   .header {
     border-left: 8px solid var(--accent2);
     border-bottom: 1px solid var(--border);
     padding: 16px 20px;
     margin-bottom: 32px;
-    background: linear-gradient(90deg, rgba(148, 139, 118, 0.05) 0%, transparent 100%);
+    background: linear-gradient(90deg, rgba(148,139,118,0.05) 0%, transparent 100%);
   }
-
-  .header h1 {
-    font-size: 2.8rem;
-    font-weight: 800;
-    letter-spacing: 0.1em;
-    color: var(--accent3);
-    text-transform: uppercase;
-  }
-
-  .header p {
-    color: var(--accent);
-    font-size: 0.9rem;
-    margin-top: 8px;
-    letter-spacing: 0.05em;
-  }
-
-  .header span {
-    color: var(--accent2);
-  }
+  .header h1 { font-size: 2.8rem; font-weight: 800; letter-spacing: 0.1em; color: var(--accent3); text-transform: uppercase; }
+  .header p  { color: var(--accent); font-size: 0.9rem; margin-top: 8px; letter-spacing: 0.05em; }
+  .header span { color: var(--accent2); }
 
   .section {
     margin-bottom: 32px;
     background: var(--panel);
     border: 1px solid var(--border);
     border-top: 2px solid var(--accent);
-    box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.6);
-    position: relative;
+    box-shadow: 4px 4px 15px rgba(0,0,0,0.6);
   }
-
   .section-header {
     background: #0c0d0f;
     border-bottom: 1px solid var(--border);
     padding: 12px 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    display: flex; align-items: center; gap: 12px;
   }
-
   .section-num {
-    font-family: 'Cinzel', serif;
-    font-size: 1.1rem;
-    color: var(--bg);
-    background: var(--accent);
-    padding: 2px 8px;
-    font-weight: 800;
+    font-family: 'Cinzel', serif; font-size: 1.1rem;
+    color: var(--bg); background: var(--accent);
+    padding: 2px 8px; font-weight: 800;
   }
+  .section-title { font-size: 1.1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent3); }
+  .section-body  { padding: 16px; display: flex; flex-direction: column; gap: 16px; }
 
-  .section-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--accent3);
-  }
-
-  .section-body {
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  /* Tables */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.85rem;
-    border: 1px solid var(--border);
-  }
-
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; border: 1px solid var(--border); }
   th {
-    font-family: 'Cinzel', serif;
-    font-size: 0.9rem;
-    letter-spacing: 0.1em;
-    color: var(--accent2);
-    text-align: left;
-    padding: 10px 12px;
-    border-bottom: 1px solid var(--border);
-    background: #090a0b;
+    font-family: 'Cinzel', serif; font-size: 0.9rem; letter-spacing: 0.1em;
+    color: var(--accent2); text-align: left; padding: 10px 12px;
+    border-bottom: 1px solid var(--border); background: #090a0b;
   }
-
-  td {
-    padding: 10px 12px;
-    border-bottom: 1px dashed var(--border);
-    vertical-align: top;
-  }
-
+  td { padding: 10px 12px; border-bottom: 1px dashed var(--border); vertical-align: top; }
   tr:last-child td { border-bottom: none; }
   tr:hover td { background: rgba(255,255,255,0.02); }
 
-  .val {
-    color: var(--accent3);
-    font-weight: bold;
-  }
+  .val { color: var(--accent3); font-weight: bold; }
 
-  .tag {
-    display: inline-block;
-    font-size: 0.75rem;
-    padding: 2px 6px;
-    margin-right: 6px;
-    border: 1px solid currentColor;
-    background: #000;
-  }
-
-  .tag-art { color: var(--accent3); }
-  .tag-col { color: var(--accent2); }
-  .tag-res { color: var(--muted); }
-  .tag-ind { color: #8c8266; }
-  .tag-com { color: #667e94; }
-  .tag-zon { color: #638563; }
+  .tag { display: inline-block; font-size: 0.75rem; padding: 2px 6px; margin-right: 6px; border: 1px solid currentColor; background: #000; }
+  .tag-ok   { color: var(--accent2); }
   .tag-warn { color: var(--accent); }
-  .tag-ok { color: var(--accent2); }
 
   .note {
-    font-size: 0.85rem;
-    color: var(--text);
-    padding: 12px 16px;
-    border-left: 3px solid var(--accent2);
-    background: #0c0d0f;
+    font-size: 0.85rem; color: var(--text);
+    padding: 12px 16px; border-left: 3px solid var(--accent2); background: #0c0d0f;
   }
-
   .note strong { color: var(--accent3); font-weight: bold; }
-  .note .ok { color: var(--accent2); }
+  .note .ok    { color: var(--accent2); }
+  .note.warn   { border-left-color: #c87050; }
+  .note.warn strong { color: #c87050; }
 
-  .rule-block {
-    background: #090a0b;
-    border: 1px solid var(--border);
-    padding: 12px 16px;
-    font-size: 0.85rem;
-  }
+  .rule-block { background: #090a0b; border: 1px solid var(--border); padding: 12px 16px; font-size: 0.85rem; }
+  .rule-block .rule-title { font-family: 'Cinzel', serif; font-size: 1rem; color: var(--accent); margin-bottom: 8px; text-transform: uppercase; }
 
-  .rule-block .rule-title {
-    font-family: 'Cinzel', serif;
-    font-size: 1rem;
-    color: var(--accent);
-    margin-bottom: 8px;
-    text-transform: uppercase;
-  }
-
-  .hierarchy {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
+  .hierarchy { display: flex; flex-direction: column; gap: 8px; }
   .h-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 12px;
-    border: 1px solid var(--border);
-    background: #0c0d0f;
-    font-size: 0.85rem;
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 12px; border: 1px solid var(--border);
+    background: #0c0d0f; font-size: 0.85rem;
   }
+  .h-arrow { color: var(--accent); font-size: 0.9rem; margin: 2px 4px; align-self: center; }
+  .h-name  { flex: 1; font-weight: 700; color: var(--accent3); }
+  .h-vals  { color: var(--accent2); }
 
-  .h-arrow {
-    color: var(--accent);
-    font-size: 0.9rem;
-    margin: 2px 4px;
-    align-self: center;
-  }
+  .grid-zone { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .zone-card { border: 1px solid var(--border); padding: 14px; background: #0c0d0f; }
+  .zone-card-title { font-family: 'Cinzel', serif; font-size: 1.1rem; color: var(--accent3); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  .zone-card .line { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 4px 0; color: var(--text); }
+  .zone-card .line span:last-child { color: var(--accent2); }
 
-  .h-name { flex: 1; font-weight: 700; color: var(--accent3); }
-  .h-vals { color: var(--accent2); }
+  .underground-grid { display: flex; flex-direction: column; gap: 6px; }
+  .u-layer { display: flex; align-items: stretch; border: 1px solid var(--border); background: #0c0d0f; font-size: 0.85rem; }
+  .u-depth { background: var(--border); color: var(--accent3); padding: 10px 14px; min-width: 100px; display: flex; align-items: center; border-right: 1px solid var(--border); font-weight: bold; }
+  .u-content { flex: 1; padding: 10px 14px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 
-  .grid-zone {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-
-  .zone-card {
-    border: 1px solid var(--border);
-    padding: 14px;
-    background: #0c0d0f;
-    position: relative;
-  }
-
-  .zone-card-title {
-    font-family: 'Cinzel', serif;
-    font-size: 1.1rem;
-    color: var(--accent3);
-    margin-bottom: 10px;
-    padding-bottom: 6px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .zone-card .line {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.85rem;
-    padding: 4px 0;
-    color: var(--text);
-  }
-
-  .zone-card .line span:last-child {
-    color: var(--accent2);
-  }
-
-  .underground-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .u-layer {
-    display: flex;
-    align-items: stretch;
-    border: 1px solid var(--border);
-    background: #0c0d0f;
-    font-size: 0.85rem;
-  }
-
-  .u-depth {
-    background: var(--border);
-    color: var(--accent3);
-    padding: 10px 14px;
-    min-width: 100px;
-    display: flex;
-    align-items: center;
-    border-right: 1px solid var(--border);
-    font-weight: bold;
-  }
-
-  .u-content {
-    flex: 1;
-    padding: 10px 14px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-
-  /* Control Panel Styles */
   .control-group {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 16px;
-    align-items: center;
-    background: #090a0b;
-    padding: 10px;
+    display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;
+    align-items: center; background: #090a0b; padding: 10px;
     border: 1px solid var(--border);
   }
-
-  .ctrl-label {
-    font-size: 0.85rem;
-    color: var(--accent3);
-    width: 60px;
-    font-weight: bold;
-  }
+  .ctrl-label { font-size: 0.85rem; color: var(--accent3); width: 60px; font-weight: bold; }
 
   .btn {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.75rem;
-    padding: 6px 12px;
-    cursor: pointer;
-    background: #0d0e10;
-    border: 1px solid var(--muted);
-    color: var(--muted);
-    text-transform: uppercase;
-    font-weight: bold;
-    transition: all 0.2s;
+    font-family: 'Space Mono', monospace; font-size: 0.75rem;
+    padding: 6px 12px; cursor: pointer; background: #0d0e10;
+    border: 1px solid var(--muted); color: var(--muted);
+    text-transform: uppercase; font-weight: bold; transition: all 0.2s;
+  }
+  .btn:hover { border-color: var(--accent3); color: var(--accent3); }
+  .btn.active { background: var(--border); color: var(--accent3) !important; border-color: var(--accent); }
+
+  /* Road overlay button special styling */
+  .btn.overlay-btn { border-color: #444; }
+  .btn.overlay-btn.active {
+    background: rgba(255,60,60,0.08);
+    border-color: #ff3c3c;
+    color: #ff8080 !important;
+    box-shadow: 0 0 8px rgba(255,60,60,0.2);
   }
 
-  .btn:hover {
-    border-color: var(--accent3);
-    color: var(--accent3);
-  }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; margin-right: 14px; margin-bottom: 8px; color: #999; }
 
-  .btn.active {
-    background: var(--border);
-    color: var(--accent3) !important;
-    border-color: var(--accent);
-  }
+  /* Overlay legend chips */
+  .ov-chip { width: 16px; height: 6px; border-radius: 2px; }
 
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.8rem;
-    margin-right: 14px;
-    margin-bottom: 8px;
-    color: #999;
-  }
+  .calc-panel { background: #090a0b; border: 1px solid var(--border); padding: 16px; margin-top: 16px; }
+  .calc-header { font-family: 'Cinzel', serif; color: var(--accent3); font-size: 0.95rem; margin-bottom: 16px; border-bottom: 1px dashed var(--muted); padding-bottom: 8px; }
+  .slider-container { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+  .slider-container input[type=range] { flex: 1; -webkit-appearance: none; background: transparent; }
+  .slider-container input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 8px; background: var(--accent2); cursor: crosshair; margin-top: -7px; border: 1px solid #000; }
+  .slider-container input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: var(--muted); }
+  #popDisplay { color: var(--accent3); font-weight: bold; min-width: 110px; text-align: right; font-size: 1rem; }
 
-  /* Calculator Styles */
-  .calc-panel {
-    background: #090a0b;
-    border: 1px solid var(--border);
-    padding: 16px;
-    margin-top: 16px;
-  }
-
-  .calc-header {
-    font-family: 'Cinzel', serif;
-    color: var(--accent3);
-    font-size: 0.95rem;
-    margin-bottom: 16px;
-    border-bottom: 1px dashed var(--muted);
-    padding-bottom: 8px;
-  }
-
-  .slider-container {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 16px;
-  }
-
-  .slider-container input[type=range] {
-    flex: 1;
-    -webkit-appearance: none;
-    background: transparent;
-  }
-
-  .slider-container input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    height: 18px;
-    width: 8px;
-    background: var(--accent2);
-    cursor: crosshair;
-    margin-top: -7px;
-    border: 1px solid #000;
-  }
-
-  .slider-container input[type=range]::-webkit-slider-runnable-track {
-    width: 100%;
-    height: 4px;
-    cursor: pointer;
-    background: var(--muted);
-  }
-
-  #popDisplay {
-    color: var(--accent3);
-    font-weight: bold;
-    min-width: 110px;
-    text-align: right;
-    font-size: 1rem;
-  }
-
-  .calc-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 6px 0;
-    border-bottom: 1px dashed var(--border);
-    font-size: 0.85rem;
-  }
-
+  .calc-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed var(--border); font-size: 0.85rem; }
   .calc-row:last-child { border-bottom: none; }
   .calc-row span:last-child { color: var(--accent3); font-weight: bold; }
   .calc-empty { font-size: 0.8rem; color: var(--muted); font-style: italic; }
+
+  /* Centerline grid table */
+  .ctc-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; border: 1px solid var(--border); margin-top: 10px; }
+  .ctc-table th { font-family: 'Cinzel', serif; font-size: 0.8rem; letter-spacing: 0.08em; color: var(--accent2); text-align: center; padding: 8px 10px; border-bottom: 1px solid var(--border); background: #090a0b; }
+  .ctc-table td { padding: 8px 10px; border-bottom: 1px dashed var(--border); text-align: center; }
+  .ctc-table tr:last-child td { border-bottom: none; }
+  .ctc-table .good  { color: #6db36d; }
+  .ctc-table .warn  { color: #c8904a; }
+  .ctc-table .bad   { color: #c85050; }
+  .ctc-table td:first-child { text-align: left; color: var(--text); font-weight: bold; }
+  .ctc-table td:last-child  { text-align: right; font-family: 'Space Mono', monospace; color: var(--accent3); }
 
   @media (max-width: 600px) { .grid-zone { grid-template-columns: 1fr; } }
 </style>
@@ -420,10 +196,10 @@
 
 <div class="header">
   <h1>CS2 // <span>Reference</span></h1>
-  <p>1 CELLA = 8m &nbsp;|&nbsp; AGGIORNATO APR 2026</p>
+  <p>1 CELLA = 8m &nbsp;|&nbsp; AGGIORNATO APR 2026 &nbsp;|&nbsp; Grid logic: Non-Uniform Adattiva</p>
 </div>
 
-<!-- 01. MAPPA DISTRETTO INTERATTIVA -->
+<!-- I. VISUALIZZATORE -->
 <div class="section">
   <div class="section-header">
     <span class="section-num">I</span>
@@ -445,16 +221,31 @@
 
     <div class="control-group" id="layer-btns">
       <span class="ctrl-label">Layer:</span>
-      <button onclick="toggleLayer('zones')" id="btn-ly-zones" class="btn active">ZONIZZAZIONE</button>
-      <button onclick="toggleLayer('roads')" id="btn-ly-roads" class="btn active">STRADE</button>
+      <button onclick="toggleLayer('zones')"    id="btn-ly-zones"    class="btn active">ZONIZZAZIONE</button>
+      <button onclick="toggleLayer('roads')"    id="btn-ly-roads"    class="btn active">STRADE</button>
       <button onclick="toggleLayer('services')" id="btn-ly-services" class="btn active">SERVIZI (Logica)</button>
-      <button onclick="toggleLayer('bus')" id="btn-ly-bus" class="btn active">BUS (Capillari)</button>
-      <button onclick="toggleLayer('tram')" id="btn-ly-tram" class="btn active">TRAM (Assi)</button>
-      <button onclick="toggleLayer('metro')" id="btn-ly-metro" class="btn active">METRO (Hubs)</button>
-      <button onclick="toggleLayer('park')" id="btn-ly-park" class="btn active">PARCHEGGI</button>
+      <button onclick="toggleLayer('bus')"      id="btn-ly-bus"      class="btn active">BUS (Capillari)</button>
+      <button onclick="toggleLayer('tram')"     id="btn-ly-tram"     class="btn active">TRAM (Assi)</button>
+      <button onclick="toggleLayer('metro')"    id="btn-ly-metro"    class="btn active">METRO (Hubs)</button>
+      <button onclick="toggleLayer('park')"     id="btn-ly-park"     class="btn active">PARCHEGGI</button>
+      <button onclick="toggleLayer('roadOverlay')" id="btn-ly-roadOverlay" class="btn overlay-btn">⬛ ROAD TYPE OVERLAY</button>
+      <button onclick="toggleLayer('dims')"     id="btn-ly-dims"     class="btn active">QUOTE CtC</button>
+      <button onclick="toggleUnit()"            id="btn-ly-unit"     class="btn active" style="margin-left:auto; border-color:var(--accent2); color:var(--accent2);">UNITÀ: CELLE</button>
     </div>
 
-    <!-- TPL Calculator Panel -->
+    <!-- Overlay Legend (hidden until active) -->
+    <div id="overlay-legend" style="display:none; background:#0c0d0f; border:1px solid var(--border); padding:10px 14px;">
+      <div style="font-family:'Cinzel',serif; font-size:0.8rem; color:var(--accent); margin-bottom:8px; letter-spacing:0.08em;">OVERLAY — TIPO STRADA</div>
+      <div style="display:flex; flex-wrap:wrap; gap:12px;">
+        <div class="legend-item"><div class="ov-chip" style="background:rgba(255,200,40,0.8);"></div>Autostrada</div>
+        <div class="legend-item"><div class="ov-chip" style="background:rgba(255,60,60,0.8);"></div>Arteria 6c</div>
+        <div class="legend-item"><div class="ov-chip" style="background:rgba(0,200,255,0.8);"></div>Collettore 4c</div>
+        <div class="legend-item"><div class="ov-chip" style="background:rgba(80,255,120,0.8);"></div>Locale 2c</div>
+        <div class="legend-item"><div class="ov-chip" style="background:rgba(200,80,255,0.8);"></div>Alley 1c</div>
+        <div class="legend-item"><div class="ov-chip" style="background:rgba(255,140,0,0.8);"></div>Pedonale</div>
+      </div>
+    </div>
+
     <div class="calc-panel">
       <div class="calc-header">Calcolatore Veicoli TPL (Adattivo per Linea)</div>
       <div class="slider-container">
@@ -465,11 +256,10 @@
       <div id="transitResults"></div>
     </div>
 
-    <div style="position:relative;width:100%;max-width:600px;margin:0 auto; margin-top: 16px; border: 1px solid var(--border); box-shadow: 4px 4px 0px rgba(0,0,0,0.5);">
+    <div style="position:relative;width:100%;max-width:600px;margin:0 auto; margin-top:16px; border:1px solid var(--border); box-shadow:4px 4px 0px rgba(0,0,0,0.5);">
       <canvas id="districtMap" width="600" height="600" style="width:100%;background:#090a0b;display:block;"></canvas>
     </div>
-    
-    <!-- Legend -->
+
     <div style="display:flex;flex-wrap:wrap;margin-top:16px;font-size:0.75rem; background:#0c0d0f; padding:12px; border:1px solid var(--border);">
       <div class="legend-item"><div style="width:12px;height:12px;background:var(--zone-com);"></div>Commercio</div>
       <div class="legend-item"><div style="width:12px;height:12px;background:var(--zone-off);"></div>Uffici</div>
@@ -477,15 +267,15 @@
       <div class="legend-item"><div style="width:12px;height:12px;background:var(--zone-lowrent);"></div>Low Rent</div>
       <div class="legend-item"><div style="width:12px;height:12px;background:var(--zone-med);"></div>Medium Density</div>
       <div class="legend-item"><div style="width:12px;height:12px;background:var(--zone-high);"></div>High Density</div>
-      <div style="width: 100%; height: 4px;"></div>
+      <div style="width:100%;height:4px;"></div>
       <div class="legend-item"><div style="width:16px;height:6px;background:#2f3336;"></div>Arteria (6c)</div>
       <div class="legend-item"><div style="width:16px;height:4px;background:#232629;"></div>Collettore (4c)</div>
       <div class="legend-item"><div style="width:16px;height:2px;background:#1a1c1e;"></div>Locale (2c)</div>
       <div class="legend-item"><div style="width:16px;height:2px;border-top:1px dashed #414d45;"></div>Pedonale</div>
       <div class="legend-item"><div style="width:16px;height:2px;border-top:1px dotted #3a3f42;"></div>Alley</div>
-      <div style="width: 100%; height: 4px;"></div>
-      <div class="legend-item"><div style="width:10px;height:10px;border: 2px solid var(--muted); background: #1a1c1e;"></div>Staz. Metro</div>
-      <div class="legend-item"><div style="width:12px;height:12px;border: 1px solid var(--muted); background: #202326; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:bold; color:var(--muted);">P</div>Parcheggio</div>
+      <div style="width:100%;height:4px;"></div>
+      <div class="legend-item"><div style="width:10px;height:10px;border:2px solid var(--muted);background:#1a1c1e;"></div>Staz. Metro</div>
+      <div class="legend-item"><div style="width:12px;height:12px;border:1px solid var(--muted);background:#202326;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:bold;color:var(--muted);">P</div>Parcheggio</div>
       <div class="legend-item"><div style="width:12px;height:12px;background:#66554e;border:1px solid #444;"></div>Treno Esterno</div>
       <div class="legend-item"><div style="width:12px;height:12px;background:var(--srv-edu);"></div>Educazione</div>
       <div class="legend-item"><div style="width:12px;height:12px;background:var(--srv-fire);"></div>Fuoco</div>
@@ -497,37 +287,100 @@
   </div>
 </div>
 
-<!-- 01.1 SETTORE INDUSTRIALE: GRIGLIA E MEGA-STRUTTURE -->
+<!-- II. GRIGLIA ADATTIVA — NUOVO -->
 <div class="section">
   <div class="section-header">
     <span class="section-num">II</span>
+    <span class="section-title">Maglia Asimmetrica — Distanze Centerline-to-Centerline (CtC)</span>
+  </div>
+  <div class="section-body">
+
+    <div class="note warn">
+      <strong>⚠ Errore comune:</strong> Dichiarare blocchi "12×12" come se la griglia fosse geometricamente uniforme. La spaziatura delle strade (centerline) dipende dalla gerarchia e dalla larghezza fisica di ognuna di esse. Se non la rispetti, distruggi il blocco edificabile o impedisci l'upgrade futuro. <span class="ok">La mappa nel visualizzatore soprastante usa questi calcoli matematici esatti.</span>
+    </div>
+
+    <div class="rule-block">
+      <div class="rule-title">Formula Centerline-to-Centerline</div>
+      <code style="color:var(--accent3); font-size:0.9rem;">
+        CtC = BLOCCO_UTILE + (corsie_strada_A / 2) + (corsie_strada_B / 2)
+      </code>
+      <br><br>
+      <span style="color:var(--muted); font-size:0.85rem;">
+        Ogni corsia = 1 cella (8m). Una 4-corsia occupa 2 celle per lato dal centerline.
+        Il blocco edificabile utile (frontage) rimane ancorato a 12 celle — cambia solo il passo della griglia.
+      </span>
+    </div>
+
+    <div style="margin-top: 8px;">
+      <h4 style="color:var(--accent3); margin-bottom:10px;">Profilo Orizzontale (Innesti sull'Arteria Sud, Riga 9)</h4>
+      <div style="font-size:0.85rem; color:var(--text); margin-bottom:8px;">
+        Per mantenere i blocchi a 12 celle (96m) costanti, ecco le distanze esatte da Ovest (C0) a Est (C9) tra i nodi stradali che si innestano sull'arteria principale:
+      </div>
+      <table class="ctc-table">
+        <tr>
+          <th>Incrocio</th>
+          <th>Tipo Strada Verticale</th>
+          <th>Distanza al prossimo nodo</th>
+          <th>Misura (Celle)</th>
+        </tr>
+        <tr><td>C0</td><td>Locale (2c)</td><td class="good">112m</td><td>14c</td></tr>
+        <tr><td>C1</td><td>Locale (2c)</td><td class="warn">108m</td><td>13.5c</td></tr>
+        <tr><td>C2</td><td>Alley (1c)</td><td class="warn">108m</td><td>13.5c</td></tr>
+        <tr><td>C3</td><td>Locale (2c)</td><td class="good">120m</td><td>15c</td></tr>
+        <tr><td>C4</td><td>Collettore Principale (4c)</td><td class="bad">128m</td><td>16c</td></tr>
+        <tr><td>C5</td><td>Collettore Principale (4c)</td><td class="good">120m</td><td>15c</td></tr>
+        <tr><td>C6</td><td>Locale (2c)</td><td class="warn">108m</td><td>13.5c</td></tr>
+        <tr><td>C7</td><td>Alley (1c)</td><td class="warn">108m</td><td>13.5c</td></tr>
+        <tr><td>C8</td><td>Locale (2c)</td><td class="good">112m</td><td>14c</td></tr>
+        <tr><td>C9</td><td>Locale (2c)</td><td>—</td><td>—</td></tr>
+      </table>
+      <div style="margin-top:8px; color:var(--muted); font-size:0.8rem; text-align:right;">
+        <strong>TOTALE FRONTE: 1.024 metri (128 celle).</strong>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- III. INDUSTRIALE -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">III</span>
     <span class="section-title">Settore Industriale — Griglia Fabbriche vs Mega-Strutture (Yards)</span>
   </div>
   <div class="section-body">
-    <div class="grid-zone" style="margin-bottom: 16px;">
+    <div class="grid-zone" style="margin-bottom:16px;">
       <div class="zone-card">
         <div class="zone-card-title" style="color:#8c8266">Fabbriche (Zoning)</div>
         <div class="line"><span>Strade</span><span>Locali (2c) / Alley (1c)</span></div>
-        <div class="line"><span>Dimensioni Ottimali</span><span>12×12 o 12×24 celle</span></div>
-        <div class="line"><span>Logica</span><span>Griglia a scacchiera compatta. Le strade assorbono traffico diffuso.</span></div>
+        <div class="line"><span>Blocco utile</span><span>12c × 24c (curb-to-curb)</span></div>
+        <div class="line"><span>CtC griglia</span><span>14c × 26c (con 2c su tutti i lati)</span></div>
+        <div style="font-size:0.8rem; color:var(--text); margin-top:8px;">
+          Griglia a scacchiera compatta. CtC uniforme = incroci regolari.<br>
+          <span style="color:#c8904a;">Se mescoli locale+collettore, il passo CtC N≠S: blocchi deformi.</span>
+        </div>
       </div>
       <div class="zone-card">
         <div class="zone-card-title" style="color:var(--accent3)">Mega-Strutture (Yards)</div>
         <div class="line"><span>Strade</span><span>Collettori (4c) / Arterie (6c)</span></div>
-        <div class="line"><span>Esempi</span><span>Depositi TPL, Scalo Merci</span></div>
-        <div class="line"><span>Logica</span><span>Anello perimetrale esterno. Connettili con binari di servizio isolati.</span></div>
+        <div class="line"><span>Blocco utile</span><span>Variabile (ploppable)</span></div>
+        <div class="line"><span>CtC griglia</span><span>16–18c (dipende dai bordi)</span></div>
+        <div style="font-size:0.8rem; color:var(--text); margin-top:8px;">
+          Anello perimetrale esterno. Connetti con binari di servizio isolati.<br>
+          <span style="color:#6db36d;">Lo Yard è un ploppable: non ha frontage = il CtC non vincola lo zoning.</span>
+        </div>
       </div>
     </div>
 
-    <div style="position:relative;width:100%;max-width:600px;margin:0 auto; overflow: hidden; border:1px solid var(--border); box-shadow: 4px 4px 0px rgba(0,0,0,0.5);">
-      <canvas id="industryMap" width="600" height="400" style="width:100%; height:auto; background:#090a0b; display:block;"></canvas>
+    <div style="position:relative;width:100%;max-width:600px;margin:0 auto;overflow:hidden;border:1px solid var(--border);box-shadow:4px 4px 0px rgba(0,0,0,0.5);">
+      <canvas id="industryMap" width="600" height="400" style="width:100%;height:auto;background:#090a0b;display:block;"></canvas>
     </div>
 
-    <div style="display:flex;flex-wrap:wrap;margin-top:16px;gap: 12px;font-size:0.75rem; color:var(--text);">
+    <div style="display:flex;flex-wrap:wrap;margin-top:16px;gap:12px;font-size:0.75rem;color:var(--text);">
       <div style="display:flex;align-items:center;gap:6px;"><div style="width:16px;height:6px;background:#2f3336;"></div>Arteria (6c)</div>
       <div style="display:flex;align-items:center;gap:6px;"><div style="width:16px;height:4px;background:#232629;"></div>Anello Collettore (4c)</div>
       <div style="display:flex;align-items:center;gap:6px;"><div style="width:16px;height:2px;background:#1a1c1e;"></div>Griglia Locale (2c)</div>
-      <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;background:rgba(64, 54, 34, 0.5);"></div>Fabbriche Dense</div>
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;background:rgba(64,54,34,0.5);"></div>Fabbriche Dense</div>
       <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;background:#1a1c1e;border:1px solid var(--border);"></div>Yards / Impianti</div>
     </div>
   </div>
@@ -538,47 +391,51 @@
   const c = document.getElementById('industryMap');
   const ctx = c.getContext('2d');
   const W = 600, H = 400;
-
-  ctx.fillStyle = '#090a0b';
-  ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = '#090a0b'; ctx.fillRect(0,0,W,H);
 
   // Arteria
   ctx.strokeStyle = '#2f3336'; ctx.lineWidth = 14;
-  ctx.beginPath(); ctx.moveTo(0, H - 30); ctx.lineTo(W, H - 30); ctx.stroke();
-  ctx.strokeStyle = '#545c58'; ctx.lineWidth = 1; ctx.setLineDash([10, 10]);
-  ctx.beginPath(); ctx.moveTo(0, H - 30); ctx.lineTo(W, H - 30); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, H-30); ctx.lineTo(W, H-30); ctx.stroke();
+  ctx.strokeStyle = '#545c58'; ctx.lineWidth = 1; ctx.setLineDash([10,10]);
+  ctx.beginPath(); ctx.moveTo(0, H-30); ctx.lineTo(W, H-30); ctx.stroke();
   ctx.setLineDash([]);
 
   // Anello Collettore
   ctx.strokeStyle = '#232629'; ctx.lineWidth = 8;
-  ctx.strokeRect(100, 40, 380, 290); 
-  ctx.beginPath(); ctx.moveTo(150, 330); ctx.lineTo(150, H - 30); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(430, 330); ctx.lineTo(430, H - 30); ctx.stroke();
+  ctx.strokeRect(100, 40, 380, 290);
+  ctx.beginPath(); ctx.moveTo(150, 330); ctx.lineTo(150, H-30); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(430, 330); ctx.lineTo(430, H-30); ctx.stroke();
 
-  // Griglia Locale
+  // Griglia Locale (passo 14c dalla formula corretta con locali su tutti i lati)
   ctx.strokeStyle = '#1a1c1e'; ctx.lineWidth = 3;
   ctx.beginPath(); ctx.moveTo(226, 40); ctx.lineTo(226, 330); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(353, 40); ctx.lineTo(353, 330); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(100, 185); ctx.lineTo(480, 185); ctx.stroke();
 
+  // Label CtC
+  ctx.strokeStyle = '#52585b'; ctx.lineWidth = 1; ctx.setLineDash([2,2]);
+  ctx.beginPath(); ctx.moveTo(100, 20); ctx.lineTo(226, 20); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(100, 15); ctx.lineTo(100, 25); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(226, 15); ctx.lineTo(226, 25); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#6db36d'; ctx.font = "10px 'Space Mono'"; ctx.textAlign = 'center';
+  ctx.fillText("CtC 14c (locale+locale)", 163, 12);
+
+  ctx.strokeStyle = '#52585b'; ctx.lineWidth = 1; ctx.setLineDash([2,2]);
+  ctx.beginPath(); ctx.moveTo(226, 20); ctx.lineTo(480, 20); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(480, 15); ctx.lineTo(480, 25); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#c8904a'; ctx.font = "10px 'Space Mono'"; ctx.textAlign = 'center';
+  ctx.fillText("CtC 16c (se 4c+4c)", 353, 12);
+
   const drawGrowableBlock = (x, y, w, h) => {
-    ctx.fillStyle = 'rgba(64, 54, 34, 0.4)';
-    ctx.strokeStyle = '#4a3f29';
-    ctx.lineWidth = 1;
-    ctx.fillRect(x + 3, y + 3, w - 6, h - 6);
-    ctx.strokeRect(x + 3, y + 3, w - 6, h - 6);
-    
-    ctx.strokeStyle = 'rgba(64, 54, 34, 0.2)';
-    for(let i = y + 10; i < y + h - 5; i += 8) {
-      ctx.beginPath(); ctx.moveTo(x + 4, i); ctx.lineTo(x + w - 4, i); ctx.stroke();
-    }
-
-    ctx.fillStyle = '#827863';
-    ctx.font = "bold 12px 'Space Mono'";
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText("ZONING", x + w/2, y + h/2);
+    ctx.fillStyle = 'rgba(64, 54, 34, 0.4)'; ctx.strokeStyle = '#4a3f29'; ctx.lineWidth = 1;
+    ctx.fillRect(x+3, y+3, w-6, h-6); ctx.strokeRect(x+3, y+3, w-6, h-6);
+    ctx.strokeStyle = 'rgba(64,54,34,0.2)';
+    for(let i = y+10; i < y+h-5; i += 8) { ctx.beginPath(); ctx.moveTo(x+4, i); ctx.lineTo(x+w-4, i); ctx.stroke(); }
+    ctx.fillStyle = '#827863'; ctx.font = "bold 12px 'Space Mono'"; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText("ZONING", x+w/2, y+h/2);
   };
-
   drawGrowableBlock(100, 40, 126, 145);
   drawGrowableBlock(226, 40, 127, 145);
   drawGrowableBlock(353, 40, 127, 145);
@@ -587,72 +444,35 @@
   drawGrowableBlock(353, 185, 127, 145);
 
   const drawPloppable = (x, y, w, h, title, subtitle) => {
-    ctx.fillStyle = '#17181a';
-    ctx.fillRect(x, y, w, h);
-    ctx.strokeStyle = '#3d3835';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(x, y, w, h);
-    
-    ctx.fillStyle = '#a3a8a8';
-    ctx.font = "bold 13px 'Space Mono'";
-    ctx.textAlign = 'center';
-    ctx.fillText(title, x + w/2, y + h/2 - 6);
-    ctx.fillStyle = '#7a7063';
-    ctx.font = "10px 'Space Mono'";
-    ctx.fillText(subtitle, x + w/2, y + h/2 + 10);
+    ctx.fillStyle = '#17181a'; ctx.fillRect(x,y,w,h);
+    ctx.strokeStyle = '#3d3835'; ctx.lineWidth = 2; ctx.strokeRect(x,y,w,h);
+    ctx.fillStyle = '#a3a8a8'; ctx.font = "bold 13px 'Space Mono'"; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(title, x+w/2, y+h/2-6);
+    ctx.fillStyle = '#7a7063'; ctx.font = "10px 'Space Mono'";
+    ctx.fillText(subtitle, x+w/2, y+h/2+10);
   };
-
   drawPloppable(10, 150, 75, 120, "IMPIANTO", "(Arteria)");
   ctx.strokeStyle = '#232629'; ctx.lineWidth = 6;
-  ctx.beginPath(); ctx.moveTo(47, 270); ctx.lineTo(47, H - 30); ctx.stroke();
-
-  drawPloppable(150, 10, 280, 50, "YARDS (TPL) / SCALO MERCI", "(Collettore)");
-
-  const drawTrafficArrow = (x, y, dir, color) => {
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    if(dir === 'up') { ctx.moveTo(x,y); ctx.lineTo(x-5,y+8); ctx.lineTo(x+5,y+8); }
-    if(dir === 'down') { ctx.moveTo(x,y); ctx.lineTo(x-5,y-8); ctx.lineTo(x+5,y-8); }
-    if(dir === 'right') { ctx.moveTo(x,y); ctx.lineTo(x-8,y-5); ctx.lineTo(x-8,y+5); }
-    if(dir === 'left') { ctx.moveTo(x,y); ctx.lineTo(x+8,y-5); ctx.lineTo(x+8,y+5); }
-    ctx.fill();
-  };
-
-  drawTrafficArrow(150, 305, 'down', '#7a7063');
-  drawTrafficArrow(430, 305, 'down', '#7a7063');
-  drawTrafficArrow(100, 75, 'left', '#7a7063');
-  drawTrafficArrow(480, 75, 'right', '#7a7063');
-
-  ctx.strokeStyle = '#52585b'; ctx.lineWidth = 1; ctx.setLineDash([2, 2]);
-  ctx.beginPath(); ctx.moveTo(226, 20); ctx.lineTo(353, 20); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(226, 15); ctx.lineTo(226, 25); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(353, 15); ctx.lineTo(353, 25); ctx.stroke();
-  ctx.setLineDash([]);
-  ctx.fillStyle = '#7a7063';
-  ctx.font = "11px 'Space Mono'";
-  ctx.fillText("Max 12 celle", 289, 12);
-
+  ctx.beginPath(); ctx.moveTo(47, 270); ctx.lineTo(47, H-30); ctx.stroke();
+  drawPloppable(150, 10, 280, 26, "YARDS (TPL) / SCALO MERCI", "(Collettore — ploppable: nessun CtC zoning)");
 })();
 </script>
 
-<!-- 01.2 VISTA MACRO: AUTOSTRADA E HUB GLOBALE -->
+<!-- IV. VISTA MACRO -->
 <div class="section">
   <div class="section-header">
-    <span class="section-num">III</span>
+    <span class="section-num">IV</span>
     <span class="section-title">Vista Macro Regionale — Svincoli e Hub Globale (Fase 5)</span>
   </div>
   <div class="section-body">
     <div class="note" style="margin-bottom:12px;">
-      <strong>La Regola del Buffer e dei Treni:</strong> Mai attaccare la griglia urbana allo svincolo. Lascia un'Arteria a 6 corsie libera per <strong>240-300 metri</strong>. La linea Ferroviaria costeggia il lato <strong>Nord</strong> della metropoli senza scavalcare i buffer, mentre la Metro si prolunga verso l'Aeroporto.
+      <strong>La Regola del Buffer e dei Treni:</strong> Mai attaccare la griglia urbana allo svincolo. Lascia un'Arteria a 6 corsie libera per <strong>240–300 metri</strong>. La linea Ferroviaria costeggia il lato <strong>Nord</strong> della metropoli senza scavalcare i buffer, mentre la Metro si prolunga verso l'Aeroporto.
     </div>
-
-    <div style="position:relative;width:100%;max-width:800px;margin:0 auto; overflow: hidden; border:1px solid var(--border); box-shadow: 4px 4px 0px rgba(0,0,0,0.5);">
-      <canvas id="macroMap" width="800" height="420" style="width:100%; height:auto; background:#090a0b; display:block;"></canvas>
+    <div style="position:relative;width:100%;max-width:800px;margin:0 auto;overflow:hidden;border:1px solid var(--border);box-shadow:4px 4px 0px rgba(0,0,0,0.5);">
+      <canvas id="macroMap" width="800" height="420" style="width:100%;height:auto;background:#090a0b;display:block;"></canvas>
     </div>
-
-    <!-- Legend Macro -->
-    <div style="display:flex;flex-wrap:wrap;margin-top:16px;gap: 12px;font-size:0.75rem; color:var(--text);">
-      <div style="display:flex;align-items:center;gap:6px;"><div style="width:16px;height:6px;background:#2a3138; border-top:1px dashed #555; border-bottom:1px dashed #555;"></div>Autostrada</div>
+    <div style="display:flex;flex-wrap:wrap;margin-top:16px;gap:12px;font-size:0.75rem;color:var(--text);">
+      <div style="display:flex;align-items:center;gap:6px;"><div style="width:16px;height:6px;background:#2a3138;border-top:1px dashed #555;border-bottom:1px dashed #555;"></div>Autostrada</div>
       <div style="display:flex;align-items:center;gap:6px;"><div style="width:16px;height:6px;background:#2f3336;"></div>Arteria (6c)</div>
       <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;background:var(--zone-ind);opacity:0.4;"></div>Industria</div>
       <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;background:#3b2929;opacity:0.6;"></div>Metropoli</div>
@@ -663,371 +483,277 @@
 </div>
 
 <script>
-(function() {
+(function(){
   const c = document.getElementById('macroMap');
   const cx = c.getContext('2d');
   const W = 800, H = 420;
 
-  function drawArrow(x, y, angle, color) {
-    cx.save(); cx.translate(x, y); cx.rotate(angle);
-    cx.beginPath(); cx.moveTo(0, 0); cx.lineTo(-6, -4); cx.lineTo(-6, 4); cx.closePath();
+  function drawArrow(x,y,angle,color){
+    cx.save(); cx.translate(x,y); cx.rotate(angle);
+    cx.beginPath(); cx.moveTo(0,0); cx.lineTo(-6,-4); cx.lineTo(-6,4); cx.closePath();
     cx.fillStyle = color; cx.fill(); cx.restore();
   }
-
-  function drawDimLine(x1, y1, x2, y2, text, isVertical = false) {
-    cx.strokeStyle = '#52585b'; cx.lineWidth = 1; cx.setLineDash([4, 2]);
-    cx.beginPath(); cx.moveTo(x1, y1); cx.lineTo(x2, y2); cx.stroke(); cx.setLineDash([]);
-    
-    if (isVertical) {
-      cx.beginPath(); cx.moveTo(x1-5, y1); cx.lineTo(x1+5, y1); cx.stroke();
-      cx.beginPath(); cx.moveTo(x2-5, y2); cx.lineTo(x2+5, y2); cx.stroke();
+  function drawDimLine(x1,y1,x2,y2,text,isVertical=false){
+    cx.strokeStyle='#52585b'; cx.lineWidth=1; cx.setLineDash([4,2]);
+    cx.beginPath(); cx.moveTo(x1,y1); cx.lineTo(x2,y2); cx.stroke(); cx.setLineDash([]);
+    if(isVertical){
+      cx.beginPath(); cx.moveTo(x1-5,y1); cx.lineTo(x1+5,y1); cx.stroke();
+      cx.beginPath(); cx.moveTo(x2-5,y2); cx.lineTo(x2+5,y2); cx.stroke();
     } else {
-      cx.beginPath(); cx.moveTo(x1, y1-5); cx.lineTo(x1, y1+5); cx.stroke();
-      cx.beginPath(); cx.moveTo(x2, y2-5); cx.lineTo(x2, y2+5); cx.stroke();
+      cx.beginPath(); cx.moveTo(x1,y1-5); cx.lineTo(x1,y1+5); cx.stroke();
+      cx.beginPath(); cx.moveTo(x2,y2-5); cx.lineTo(x2,y2+5); cx.stroke();
     }
-
-    cx.fillStyle = '#a3a8a8'; cx.font = "11px 'Space Mono'"; cx.textAlign = 'center'; cx.textBaseline = 'middle';
-    
-    if (isVertical) {
-      cx.save(); cx.translate(x1 + 10, y1 + (y2-y1)/2); cx.rotate(-Math.PI/2);
-      cx.fillStyle = '#090a0b'; let w = cx.measureText(text).width + 6; cx.fillRect(-w/2, -8, w, 16);
-      cx.fillStyle = '#948b76'; cx.fillText(text, 0, 0); cx.restore();
+    cx.fillStyle='#a3a8a8'; cx.font="11px 'Space Mono'"; cx.textAlign='center'; cx.textBaseline='middle';
+    if(isVertical){
+      cx.save(); cx.translate(x1+10, y1+(y2-y1)/2); cx.rotate(-Math.PI/2);
+      cx.fillStyle='#090a0b'; let w=cx.measureText(text).width+6; cx.fillRect(-w/2,-8,w,16);
+      cx.fillStyle='#948b76'; cx.fillText(text,0,0); cx.restore();
     } else {
-      let w = cx.measureText(text).width + 6; cx.fillStyle = '#090a0b';
-      cx.fillRect(x1 + (x2-x1)/2 - w/2, y1 - 18, w, 16);
-      cx.fillStyle = '#948b76'; cx.fillText(text, x1 + (x2-x1)/2, y1 - 10);
+      let w=cx.measureText(text).width+6; cx.fillStyle='#090a0b';
+      cx.fillRect(x1+(x2-x1)/2-w/2, y1-18, w, 16);
+      cx.fillStyle='#948b76'; cx.fillText(text, x1+(x2-x1)/2, y1-10);
     }
   }
 
-  cx.fillStyle = '#090a0b'; cx.fillRect(0, 0, W, H);
+  cx.fillStyle='#090a0b'; cx.fillRect(0,0,W,H);
 
-  const windY = 45;
-  cx.strokeStyle = '#52585b'; cx.lineWidth = 2; cx.setLineDash([5, 5]);
-  cx.beginPath(); cx.moveTo(W - 40, windY); cx.lineTo(W - 120, windY); cx.stroke();
-  cx.setLineDash([]); drawArrow(W - 120, windY, Math.PI, '#52585b');
-  cx.fillStyle = '#7a7063'; cx.font = "12px 'Space Mono'"; cx.textAlign = 'right';
-  cx.fillText("DIREZIONE VENTO", W - 40, windY - 14);
+  const windY=45;
+  cx.strokeStyle='#52585b'; cx.lineWidth=2; cx.setLineDash([5,5]);
+  cx.beginPath(); cx.moveTo(W-40,windY); cx.lineTo(W-120,windY); cx.stroke();
+  cx.setLineDash([]); drawArrow(W-120,windY,Math.PI,'#52585b');
+  cx.fillStyle='#7a7063'; cx.font="12px 'Space Mono'"; cx.textAlign='right';
+  cx.fillText("DIREZIONE VENTO", W-40, windY-14);
 
-  const indX = 40, indY = 60, indW = 220, indH = 320;
-  cx.fillStyle = 'rgba(64, 54, 34, 0.3)'; cx.strokeStyle = '#4a3f29'; cx.lineWidth = 2;
-  cx.fillRect(indX, indY, indW, indH); cx.strokeRect(indX, indY, indW, indH);
-  cx.beginPath(); cx.moveTo(indX, indY + indH/2); cx.lineTo(indX + indW, indY + indH/2); cx.stroke();
-  cx.beginPath(); cx.moveTo(indX + indW/2, indY); cx.lineTo(indX + indW/2, indY + indH); cx.stroke();
-  cx.fillStyle = '#827863'; cx.font = "bold 14px 'Cinzel'"; cx.textAlign = 'center';
-  cx.fillText("SETTORE INDUSTRIALE", indX + indW/2, indY - 15);
+  const indX=40,indY=60,indW=220,indH=320;
+  cx.fillStyle='rgba(64,54,34,0.3)'; cx.strokeStyle='#4a3f29'; cx.lineWidth=2;
+  cx.fillRect(indX,indY,indW,indH); cx.strokeRect(indX,indY,indW,indH);
+  cx.beginPath(); cx.moveTo(indX,indY+indH/2); cx.lineTo(indX+indW,indY+indH/2); cx.stroke();
+  cx.beginPath(); cx.moveTo(indX+indW/2,indY); cx.lineTo(indX+indW/2,indY+indH); cx.stroke();
+  cx.fillStyle='#827863'; cx.font="bold 14px 'Cinzel'"; cx.textAlign='center';
+  cx.fillText("SETTORE INDUSTRIALE", indX+indW/2, indY-15);
 
-  const cityX = W/2 + 130, cityY = 60, cityW = 220, cityH = 320;
-  cx.fillStyle = 'rgba(38, 51, 38, 0.4)'; cx.fillRect(cityX, cityY, cityW, cityH); 
-  cx.fillStyle = 'rgba(52, 36, 54, 0.5)'; cx.fillRect(cityX+30, cityY+40, cityW-60, cityH-80); 
-  cx.fillStyle = 'rgba(59, 41, 41, 0.6)'; cx.fillRect(cityX+60, cityY+80, cityW-120, cityH-160); 
-  cx.strokeStyle = '#2a2d30'; cx.strokeRect(cityX, cityY, cityW, cityH);
-  cx.fillStyle = '#8c7b6c'; cx.font = "bold 14px 'Cinzel'"; cx.textAlign = 'center';
-  cx.fillText("METROPOLI (FASE 5)", cityX + cityW/2, cityY - 15);
+  const cityX=W/2+130,cityY=60,cityW=220,cityH=320;
+  cx.fillStyle='rgba(38,51,38,0.4)'; cx.fillRect(cityX,cityY,cityW,cityH);
+  cx.fillStyle='rgba(52,36,54,0.5)'; cx.fillRect(cityX+30,cityY+40,cityW-60,cityH-80);
+  cx.fillStyle='rgba(59,41,41,0.6)'; cx.fillRect(cityX+60,cityY+80,cityW-120,cityH-160);
+  cx.strokeStyle='#2a2d30'; cx.strokeRect(cityX,cityY,cityW,cityH);
+  cx.fillStyle='#8c7b6c'; cx.font="bold 14px 'Cinzel'"; cx.textAlign='center';
+  cx.fillText("METROPOLI (FASE 5)", cityX+cityW/2, cityY-15);
 
-  const hwX = W/2;
-  cx.strokeStyle = '#2a3138'; cx.lineWidth = 10;
-  cx.beginPath(); cx.moveTo(hwX - 10, 0); cx.lineTo(hwX - 10, H); cx.stroke();
-  cx.strokeStyle = '#52585b'; cx.lineWidth = 1; cx.setLineDash([8, 8]);
-  cx.beginPath(); cx.moveTo(hwX - 10, 0); cx.lineTo(hwX - 10, H); cx.stroke();
-  cx.setLineDash([]); drawArrow(hwX - 10, 100, Math.PI/2, '#7a7063'); drawArrow(hwX - 10, H - 80, Math.PI/2, '#7a7063');
-  
-  cx.strokeStyle = '#2a3138'; cx.lineWidth = 10;
-  cx.beginPath(); cx.moveTo(hwX + 10, 0); cx.lineTo(hwX + 10, H); cx.stroke();
-  cx.strokeStyle = '#52585b'; cx.lineWidth = 1; cx.setLineDash([8, 8]);
-  cx.beginPath(); cx.moveTo(hwX + 10, 0); cx.lineTo(hwX + 10, H); cx.stroke();
-  cx.setLineDash([]); drawArrow(hwX + 10, 100, -Math.PI/2, '#7a7063'); drawArrow(hwX + 10, H - 80, -Math.PI/2, '#7a7063');
+  const hwX=W/2;
+  cx.strokeStyle='#2a3138'; cx.lineWidth=10;
+  cx.beginPath(); cx.moveTo(hwX-10,0); cx.lineTo(hwX-10,H); cx.stroke();
+  cx.strokeStyle='#52585b'; cx.lineWidth=1; cx.setLineDash([8,8]);
+  cx.beginPath(); cx.moveTo(hwX-10,0); cx.lineTo(hwX-10,H); cx.stroke(); cx.setLineDash([]);
+  drawArrow(hwX-10,100,Math.PI/2,'#7a7063'); drawArrow(hwX-10,H-80,Math.PI/2,'#7a7063');
+  cx.strokeStyle='#2a3138'; cx.lineWidth=10;
+  cx.beginPath(); cx.moveTo(hwX+10,0); cx.lineTo(hwX+10,H); cx.stroke();
+  cx.strokeStyle='#52585b'; cx.lineWidth=1; cx.setLineDash([8,8]);
+  cx.beginPath(); cx.moveTo(hwX+10,0); cx.lineTo(hwX+10,H); cx.stroke(); cx.setLineDash([]);
+  drawArrow(hwX+10,100,-Math.PI/2,'#7a7063'); drawArrow(hwX+10,H-80,-Math.PI/2,'#7a7063');
+  cx.fillStyle='#8b8c89'; cx.font="bold 12px 'Space Mono'"; cx.textAlign='left';
+  cx.fillText("AUTOSTRADA EST. (130km/h)", hwX+25, 65);
+  cx.fillText("↓ VERSO PORTI / SCALI", hwX+25, H-20);
 
-  cx.fillStyle = '#8b8c89'; cx.font = "bold 12px 'Space Mono'"; cx.textAlign = 'left';
-  cx.fillText("AUTOSTRADA EST. (130km/h)", hwX + 25, 65); cx.fillText("↓ VERSO PORTI / SCALI", hwX + 25, H - 20);
+  const artY=H/2+20;
+  cx.strokeStyle='#2f3336'; cx.lineWidth=12;
+  cx.beginPath(); cx.moveTo(hwX+15,artY); cx.lineTo(cityX+cityW/2,artY); cx.stroke();
+  cx.beginPath(); cx.moveTo(hwX-15,artY); cx.lineTo(indX+indW/2,artY); cx.stroke();
 
-  const artY = H/2 + 20;
-  cx.strokeStyle = '#2f3336'; cx.lineWidth = 12;
-  cx.beginPath(); cx.moveTo(hwX + 15, artY); cx.lineTo(cityX + cityW/2, artY); cx.stroke();
-  cx.beginPath(); cx.moveTo(hwX - 15, artY); cx.lineTo(indX + indW/2, artY); cx.stroke();
+  cx.strokeStyle='#2a3138'; cx.lineWidth=4;
+  cx.beginPath(); cx.moveTo(hwX,artY-60); cx.lineTo(hwX+60,artY); cx.lineTo(hwX,artY+60); cx.lineTo(hwX-60,artY); cx.closePath(); cx.stroke();
+  cx.fillStyle='#090a0b'; cx.strokeStyle='#2f3336'; cx.lineWidth=2;
+  cx.beginPath(); cx.arc(hwX+60,artY,10,0,Math.PI*2); cx.fill(); cx.stroke();
+  cx.beginPath(); cx.arc(hwX-60,artY,10,0,Math.PI*2); cx.fill(); cx.stroke();
+  cx.beginPath(); cx.arc(cityX,artY,8,0,Math.PI*2); cx.fill(); cx.stroke();
 
-  cx.strokeStyle = '#2a3138'; cx.lineWidth = 4;
-  cx.beginPath(); cx.moveTo(hwX, artY - 60); cx.lineTo(hwX + 60, artY); cx.lineTo(hwX, artY + 60); cx.lineTo(hwX - 60, artY); cx.closePath(); cx.stroke();
-  cx.fillStyle = '#090a0b'; cx.strokeStyle = '#2f3336'; cx.lineWidth = 2;
-  cx.beginPath(); cx.arc(hwX + 60, artY, 10, 0, Math.PI*2); cx.fill(); cx.stroke();
-  cx.beginPath(); cx.arc(hwX - 60, artY, 10, 0, Math.PI*2); cx.fill(); cx.stroke();
-  cx.beginPath(); cx.arc(cityX, artY, 8, 0, Math.PI*2); cx.fill(); cx.stroke();
+  const trainY=18;
+  cx.strokeStyle='#232629'; cx.lineWidth=6;
+  cx.beginPath(); cx.moveTo(0,trainY); cx.lineTo(W,trainY); cx.stroke();
+  cx.strokeStyle='#66554e'; cx.lineWidth=2; cx.setLineDash([4,6]);
+  cx.beginPath(); cx.moveTo(0,trainY); cx.lineTo(W,trainY); cx.stroke(); cx.setLineDash([]);
 
-  const trainY = 18;
-  cx.strokeStyle = '#232629'; cx.lineWidth = 6;
-  cx.beginPath(); cx.moveTo(0, trainY); cx.lineTo(W, trainY); cx.stroke();
-  cx.strokeStyle = '#66554e'; cx.lineWidth = 2; cx.setLineDash([4, 6]);
-  cx.beginPath(); cx.moveTo(0, trainY); cx.lineTo(W, trainY); cx.stroke(); cx.setLineDash([]);
-  
-  const stationW = 120, stationH = 24; const stationX = cityX + cityW/2 - stationW/2;
-  cx.fillStyle = '#17181a'; cx.fillRect(stationX, trainY - stationH/2, stationW, stationH);
-  cx.strokeStyle = '#3d3835'; cx.lineWidth = 2; cx.strokeRect(stationX, trainY - stationH/2, stationW, stationH);
-  cx.fillStyle = '#a3a8a8'; cx.font = "12px 'Space Mono'"; cx.textAlign = 'center'; cx.textBaseline = 'middle';
-  cx.fillText("STAZIONE", stationX + stationW/2, trainY);
-  
-  const branchX = indX + indW/2; 
-  cx.strokeStyle = '#232629'; cx.lineWidth = 4;
-  cx.beginPath(); cx.moveTo(branchX + 40, trainY); cx.quadraticCurveTo(branchX, trainY, branchX, trainY + 40); cx.lineTo(branchX, indY + 20); cx.stroke();
-  cx.strokeStyle = '#66554e'; cx.lineWidth = 1.5; cx.setLineDash([3, 5]);
-  cx.beginPath(); cx.moveTo(branchX + 40, trainY); cx.quadraticCurveTo(branchX, trainY, branchX, trainY + 40); cx.lineTo(branchX, indY + 20); cx.stroke(); cx.setLineDash([]);
+  const stationW=120,stationH=24; const stationX=cityX+cityW/2-stationW/2;
+  cx.fillStyle='#17181a'; cx.fillRect(stationX,trainY-stationH/2,stationW,stationH);
+  cx.strokeStyle='#3d3835'; cx.lineWidth=2; cx.strokeRect(stationX,trainY-stationH/2,stationW,stationH);
+  cx.fillStyle='#a3a8a8'; cx.font="12px 'Space Mono'"; cx.textAlign='center'; cx.textBaseline='middle';
+  cx.fillText("STAZIONE", stationX+stationW/2, trainY);
 
-  const yardW = 100, yardH = 40;
-  cx.fillStyle = '#17181a'; cx.fillRect(branchX - yardW/2, indY + 20, yardW, yardH);
-  cx.strokeStyle = '#3d3835'; cx.lineWidth = 2; cx.strokeRect(branchX - yardW/2, indY + 20, yardW, yardH);
-  cx.fillStyle = '#a3a8a8'; cx.font = "bold 11px 'Space Mono'"; cx.textAlign = 'center'; cx.textBaseline = 'middle';
-  cx.fillText("YARDS / DEPOSITI", branchX, indY + 40);
+  const branchX=indX+indW/2;
+  cx.strokeStyle='#232629'; cx.lineWidth=4;
+  cx.beginPath(); cx.moveTo(branchX+40,trainY); cx.quadraticCurveTo(branchX,trainY,branchX,trainY+40); cx.lineTo(branchX,indY+20); cx.stroke();
+  cx.strokeStyle='#66554e'; cx.lineWidth=1.5; cx.setLineDash([3,5]);
+  cx.beginPath(); cx.moveTo(branchX+40,trainY); cx.quadraticCurveTo(branchX,trainY,branchX,trainY+40); cx.lineTo(branchX,indY+20); cx.stroke(); cx.setLineDash([]);
 
-  cx.strokeStyle = '#526b6b'; cx.lineWidth = 2; cx.setLineDash([6, 6]);
-  cx.beginPath(); cx.moveTo(cityX + cityW/2, cityY + cityH/2); cx.lineTo(cityX + cityW - 10, H - 40); cx.lineTo(W, H - 40); cx.stroke(); cx.setLineDash([]);
-  cx.fillStyle = '#526b6b'; cx.font = "bold 10px 'Space Mono'"; cx.textAlign = 'right';
-  cx.fillText("METRO -> AEROPORTO", W - 10, H - 50);
+  const yardW=100,yardH=40;
+  cx.fillStyle='#17181a'; cx.fillRect(branchX-yardW/2,indY+20,yardW,yardH);
+  cx.strokeStyle='#3d3835'; cx.lineWidth=2; cx.strokeRect(branchX-yardW/2,indY+20,yardW,yardH);
+  cx.fillStyle='#a3a8a8'; cx.font="bold 11px 'Space Mono'"; cx.textAlign='center'; cx.textBaseline='middle';
+  cx.fillText("YARDS / DEPOSITI", branchX, indY+40);
 
-  drawDimLine(hwX + 72, artY - 30, cityX - 5, artY - 30, "BUFFER: 240m");
-  drawDimLine(indX + indW + 5, artY + 30, hwX - 72, artY + 30, "BUFFER PESANTE: 160m");
+  cx.strokeStyle='#526b6b'; cx.lineWidth=2; cx.setLineDash([6,6]);
+  cx.beginPath(); cx.moveTo(cityX+cityW/2,cityY+cityH/2); cx.lineTo(cityX+cityW-10,H-40); cx.lineTo(W,H-40); cx.stroke(); cx.setLineDash([]);
+  cx.fillStyle='#526b6b'; cx.font="bold 10px 'Space Mono'"; cx.textAlign='right';
+  cx.fillText("METRO -> AEROPORTO", W-10, H-50);
+
+  drawDimLine(hwX+72,artY-30,cityX-5,artY-30,"BUFFER: 240m");
+  drawDimLine(indX+indW+5,artY+30,hwX-72,artY+30,"BUFFER PESANTE: 160m");
 })();
 </script>
 
-<!-- 02. ZONIZZAZIONE E SVILUPPO ADDITIVO -->
+<!-- V. ZONIZZAZIONE -->
 <div class="section">
   <div class="section-header">
-    <span class="section-num">IV</span>
+    <span class="section-num">V</span>
     <span class="section-title">Zonizzazione — Sviluppo Additivo</span>
   </div>
   <div class="section-body">
     <div class="note">
       <strong>Livelli (XP) Override:</strong> Demolire zone per densificare = reset del livello da 5 a 1. I cittadini perdono ricchezza, le attività perdono efficienza. <span class="ok">Costruisci in modo ADDITIVO, estendendo la griglia e preservando i blocchi storici.</span>
     </div>
-
     <table>
-      <tr>
-        <th>Fase</th>
-        <th>Coordinate</th>
-        <th>Zoning Override</th>
-      </tr>
-      <tr>
-        <td><span class="tag tag-res">1. BORGO INIZIALE</span></td>
-        <td class="val">Origin Sud</td>
-        <td>Fondi la città vicino allo svincolo (Sud). Crea l'arteria commerciale. Il resto è puro <strong>Low Density</strong>.</td>
-      </tr>
-      <tr>
-        <td><span class="tag" style="color:var(--accent3);">2. ESPANSIONE</span></td>
-        <td class="val">Fascia Y-Mid</td>
-        <td>Sblocco densità media. Estendi la maglia a Nord. Nuovi lotti come <strong>Medium Density e Low Rent</strong>.</td>
-      </tr>
-      <tr>
-        <td><span class="tag" style="color:var(--accent2);">3. CENTRO CITTÀ</span></td>
-        <td class="val">Nord Core</td>
-        <td>Esplosione uffici e High Density. Usa gli <strong>Uffici</strong> come scudo acustico per le arterie rumorose.</td>
-      </tr>
-      <tr>
-        <td><span class="tag" style="color:var(--accent);">4. METROPOLI</span></td>
-        <td class="val">Periferie</td>
-        <td>Land Value critico al centro. Congela il nucleo, spawna nuovi sobborghi Low Density ai bordi.</td>
-      </tr>
-      <tr>
-        <td><span class="tag" style="color:var(--muted);">5. HUB GLOBALE</span></td>
-        <td class="val">Connessioni EXT</td>
-        <td>Innesta Stazione Ferroviaria al margine Nord e prolunga la Metro verso gli scali esterni.</td>
-      </tr>
+      <tr><th>Fase</th><th>Coordinate</th><th>Zoning Override</th></tr>
+      <tr><td><span class="tag tag-ok">1. BORGO INIZIALE</span></td><td class="val">Origin Sud</td><td>Fondi la città vicino allo svincolo (Sud). Crea l'arteria commerciale. Il resto è puro <strong>Low Density</strong>.</td></tr>
+      <tr><td><span class="tag" style="color:var(--accent3);">2. ESPANSIONE</span></td><td class="val">Fascia Y-Mid</td><td>Sblocco densità media. Estendi la maglia a Nord. Nuovi lotti come <strong>Medium Density e Low Rent</strong>.</td></tr>
+      <tr><td><span class="tag" style="color:var(--accent2);">3. CENTRO CITTÀ</span></td><td class="val">Nord Core</td><td>Esplosione uffici e High Density. Usa gli <strong>Uffici</strong> come scudo acustico per le arterie rumorose.</td></tr>
+      <tr><td><span class="tag" style="color:var(--accent);">4. METROPOLI</span></td><td class="val">Periferie</td><td>Land Value critico al centro. Congela il nucleo, spawna nuovi sobborghi Low Density ai bordi.</td></tr>
+      <tr><td><span class="tag" style="color:var(--muted);">5. HUB GLOBALE</span></td><td class="val">Connessioni EXT</td><td>Innesta Stazione Ferroviaria al margine Nord e prolunga la Metro verso gli scali esterni.</td></tr>
     </table>
   </div>
 </div>
 
-<!-- 03. TRASPORTI PUBBLICI E CAPILLARITA' -->
+<!-- VI. TPL -->
 <div class="section">
   <div class="section-header">
-    <span class="section-num">V</span>
+    <span class="section-num">VI</span>
     <span class="section-title">Transit Network — Capillarità</span>
   </div>
   <div class="section-body">
     <div class="note">
-      <strong>Pathfinding Error:</strong> Camminata > 1km = L'IA forza l'auto privata = Gridlock. Garantisci copertura capillare.
+      <strong>Pathfinding Error:</strong> Camminata &gt; 1km = L'IA forza l'auto privata = Gridlock. Garantisci copertura capillare.
     </div>
-    
     <div class="grid-zone">
       <div class="zone-card">
         <div class="zone-card-title" style="color:var(--accent2)">Bus (Micro-Routing)</div>
         <div class="line"><span>Ruolo</span><span>Penetrazione blocchi</span></div>
         <div class="line"><span>Distanza Max</span><span>400m (50 celle)</span></div>
-        <div style="font-size: 0.8rem; color: var(--text); margin-top: 5px;">Linee a serpentina. Raccogli i pedoni dalle zone a bassa densità e scaricali sul Tram/Metro.</div>
+        <div style="font-size:0.8rem;color:var(--text);margin-top:5px;">Linee a serpentina. Raccogli pedoni da zone a bassa densità e scaricali su Tram/Metro.</div>
       </div>
       <div class="zone-card">
         <div class="zone-card-title" style="color:var(--srv-med)">Tram (Asse di Forza)</div>
         <div class="line"><span>Ruolo</span><span>Spostamento di massa</span></div>
         <div class="line"><span>Posizione</span><span>Arterie 4c / Assi Com.</span></div>
-        <div style="font-size: 0.8rem; color: var(--text); margin-top: 5px;">I tram corrono dritti per convogliare il carico dei bus verso l'Hub Metropolitano.</div>
+        <div style="font-size:0.8rem;color:var(--text);margin-top:5px;">I tram corrono dritti per convogliare il carico dei bus verso l'Hub Metropolitano.</div>
       </div>
       <div class="zone-card">
         <div class="zone-card-title" style="color:#526b6b">Metro (Deep Underground)</div>
         <div class="line"><span>Ruolo</span><span>Link Inter-Distretto</span></div>
         <div class="line"><span>Posizione</span><span>Ignora la superficie</span></div>
-        <div style="font-size: 0.8rem; color: var(--text); margin-top: 5px;">Scava a -20m. Taglia in diagonale. Punta dritto da Hub a Hub per la via più veloce.</div>
+        <div style="font-size:0.8rem;color:var(--text);margin-top:5px;">Scava a -20m. Taglia in diagonale. Punta dritto da Hub a Hub per la via più veloce.</div>
       </div>
       <div class="zone-card">
         <div class="zone-card-title" style="color:#66554e">Treno (Intercity)</div>
         <div class="line"><span>Ruolo</span><span>Import Lavoratori</span></div>
         <div class="line"><span>Acustica</span><span>Impatto Letale</span></div>
-        <div style="font-size: 0.8rem; color: var(--text); margin-top: 5px;">Tienilo ai bordi della mappa. Scambia con il TPL per non riversare auto in strada.</div>
+        <div style="font-size:0.8rem;color:var(--text);margin-top:5px;">Tienilo ai bordi della mappa. Scambia con il TPL per non riversare auto in strada.</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- 04. GESTIONE PARCHEGGI E LOGICA DI PATHFINDING -->
+<!-- VII. PARCHEGGI -->
 <div class="section">
   <div class="section-header">
-    <span class="section-num">VI</span>
-    <span class="section-title">Stoccaggio Veicoli (Park & Ride)</span>
+    <span class="section-num">VII</span>
+    <span class="section-title">Stoccaggio Veicoli (Park &amp; Ride)</span>
   </div>
   <div class="section-body">
     <div class="note">
       <strong>Pathfinding IA:</strong> Un cittadino calcola il tragitto in auto <em>solo se sa che troverà parcheggio</em>. Nessun parcheggio = Usa il bus o resta a casa.
     </div>
-
     <div class="hierarchy">
-      <div class="h-row">
-        <span class="tag" style="color:var(--zone-res);">SUBURBI (Low Density)</span>
-        <span class="h-name">Nessun Parcheggio Pubblico</span>
-        <span class="h-vals">Privato Only</span>
-      </div>
-      <div class="h-row">
-        <span class="tag" style="color:var(--accent3);">HUB METRO / TRAM</span>
-        <span class="h-name">Park & Ride Massiccio</span>
-        <span class="h-vals">Sotterranei / Multipiano</span>
-      </div>
-      <div class="h-row">
-        <span class="tag" style="color:var(--zone-high);">CENTRO CITTÀ (High Density)</span>
-        <span class="h-name">Pochi e molto costosi</span>
-        <span class="h-vals">Tariffa Max (50$)</span>
-      </div>
-      <div class="h-row">
-        <span class="tag" style="color:var(--zone-com);">ARTERIE COMMERCIALI</span>
-        <span class="h-name">Sosta in strada Disabilitata</span>
-        <span class="h-vals">Aggiungi alberi ai lati</span>
-      </div>
+      <div class="h-row"><span class="tag" style="color:var(--zone-res);">SUBURBI (Low Density)</span><span class="h-name">Nessun Parcheggio Pubblico</span><span class="h-vals">Privato Only</span></div>
+      <div class="h-row"><span class="tag" style="color:var(--accent3);">HUB METRO / TRAM</span><span class="h-name">Park &amp; Ride Massiccio</span><span class="h-vals">Sotterranei / Multipiano</span></div>
+      <div class="h-row"><span class="tag" style="color:var(--zone-high);">CENTRO CITTÀ (High Density)</span><span class="h-name">Pochi e molto costosi</span><span class="h-vals">Tariffa Max (50$)</span></div>
+      <div class="h-row"><span class="tag" style="color:var(--zone-com);">ARTERIE COMMERCIALI</span><span class="h-name">Sosta in strada Disabilitata</span><span class="h-vals">Aggiungi alberi ai lati</span></div>
     </div>
   </div>
 </div>
 
-<!-- 05. SERVIZI CITTADINI (PLOPPABLES) -->
+<!-- VIII. SERVIZI -->
 <div class="section">
   <div class="section-header">
-    <span class="section-num">VII</span>
+    <span class="section-num">VIII</span>
     <span class="section-title">Gestione Servizi (Ploppables)</span>
   </div>
   <div class="section-body">
     <div class="note">
-      <strong>Espansione Modulare:</strong> I servizi ricevono <em>upgrade fisici</em>. Lascia <strong>4-6 celle vuote</strong> attorno all'edificio. Doppio funzionamento: <em>Passivo (AoE)</em> e <em>Attivo (Veicoli fisici nel traffico)</em>.
+      <strong>Espansione Modulare:</strong> I servizi ricevono <em>upgrade fisici</em>. Lascia <strong>4–6 celle vuote</strong> attorno all'edificio. Doppio funzionamento: <em>Passivo (AoE)</em> e <em>Attivo (Veicoli fisici nel traffico)</em>.
     </div>
-
     <div class="grid-zone">
       <div class="zone-card">
-        <div class="zone-card-title" style="color:var(--srv-med)">Sanità & Morte</div>
+        <div class="zone-card-title" style="color:var(--srv-med)">Sanità &amp; Morte</div>
         <div class="line"><span>Clinica</span><span>Cuore del borgo</span></div>
         <div class="line"><span>Cimitero</span><span>Bordi isolati</span></div>
-        <div style="font-size: 0.8rem; color: var(--text); margin-top: 5px;">Clinica centrale. Il cimitero funge da parco per il Land Value attenuando il traffico funebre.</div>
+        <div style="font-size:0.8rem;color:var(--text);margin-top:5px;">Clinica centrale. Il cimitero funge da parco per il Land Value attenuando il traffico funebre.</div>
       </div>
       <div class="zone-card">
-        <div class="zone-card-title" style="color:var(--srv-fire)">Fuoco & Polizia</div>
+        <div class="zone-card-title" style="color:var(--srv-fire)">Fuoco &amp; Polizia</div>
         <div class="line"><span>Posizione</span><span>Collettori (4c)</span></div>
         <div class="line"><span>Avoid</span><span>Strade Locali</span></div>
-        <div style="font-size: 0.8rem; color: var(--text); margin-top: 5px;">Le volanti e ambulanze su una 4 corsie possono sorpassare agevolmente la coda.</div>
+        <div style="font-size:0.8rem;color:var(--text);margin-top:5px;">Le volanti e ambulanze su una 4 corsie possono sorpassare agevolmente la coda.</div>
       </div>
       <div class="zone-card">
         <div class="zone-card-title" style="color:var(--srv-edu)">Educazione</div>
         <div class="line"><span>Elementari</span><span>Centri pedonali</span></div>
         <div class="line"><span>College</span><span>Nodi TPL (Tram/Metro)</span></div>
-        <div style="font-size: 0.8rem; color: var(--text); margin-top: 5px;">Costringi gli studenti a prendere i mezzi, o il flusso di auto soffocherà i collettori.</div>
+        <div style="font-size:0.8rem;color:var(--text);margin-top:5px;">Costringi gli studenti a prendere i mezzi, o il flusso di auto soffocherà i collettori.</div>
       </div>
       <div class="zone-card">
         <div class="zone-card-title" style="color:var(--srv-post)">Logistica Lenta</div>
         <div class="line"><span>Posizione</span><span>Bordi estremi (Arterie 6c)</span></div>
         <div class="line"><span>Traffico</span><span>Camion continui</span></div>
-        <div style="font-size: 0.8rem; color: var(--text); margin-top: 5px;">Rifiuti e Poste generano furgoni lenti. Piazzali all'uscita della città verso l'autostrada.</div>
+        <div style="font-size:0.8rem;color:var(--text);margin-top:5px;">Rifiuti e Poste generano furgoni lenti. Piazzali all'uscita della città verso l'autostrada.</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- 06. GERARCHIA STRADALE -->
+<!-- IX. GERARCHIA STRADALE -->
 <div class="section">
   <div class="section-header">
-    <span class="section-num">VIII</span>
+    <span class="section-num">IX</span>
     <span class="section-title">Gerarchia Stradale Base</span>
   </div>
   <div class="section-body">
     <div class="hierarchy">
-      <div class="h-row">
-        <span class="tag">AUTOSTRADA</span>
-        <span class="h-name">2 carreggiate separate</span>
-        <span class="h-vals">130 km/h</span>
-      </div>
+      <div class="h-row"><span class="tag">AUTOSTRADA</span><span class="h-name">2 carreggiate separate</span><span class="h-vals">130 km/h</span></div>
       <div class="h-arrow" style="padding-left:20px">↓ svincolo ogni 1500–2000m (188–250 celle)</div>
-      <div class="h-row">
-        <span class="tag">ARTERIA</span>
-        <span class="h-name">6 corsie (Grande Viabilità)</span>
-        <span class="h-vals">60 km/h</span>
-      </div>
+      <div class="h-row"><span class="tag">ARTERIA</span><span class="h-name">6 corsie (Grande Viabilità)</span><span class="h-vals">60 km/h</span></div>
       <div class="h-arrow" style="padding-left:20px">↓ innesto ogni 300–400m</div>
-      <div class="h-row">
-        <span class="tag">COLLETTORE PRIM.</span>
-        <span class="h-name">4 corsie</span>
-        <span class="h-vals">50 km/h &nbsp;//&nbsp; TRAM</span>
-      </div>
+      <div class="h-row"><span class="tag">COLLETTORE PRIM.</span><span class="h-name">4 corsie</span><span class="h-vals">50 km/h &nbsp;//&nbsp; TRAM</span></div>
       <div class="h-arrow" style="padding-left:20px">↓ innesto ogni 100–150m</div>
-      <div class="h-row">
-        <span class="tag">COLLETTORE SEC.</span>
-        <span class="h-name">2 corsie</span>
-        <span class="h-vals">40 km/h &nbsp;//&nbsp; BUS</span>
-      </div>
+      <div class="h-row"><span class="tag">COLLETTORE SEC.</span><span class="h-name">2 corsie</span><span class="h-vals">40 km/h &nbsp;//&nbsp; BUS</span></div>
       <div class="h-arrow" style="padding-left:20px">↓ innesto capillare</div>
-      <div class="h-row">
-        <span class="tag">LOCALE / ALLEY</span>
-        <span class="h-name">2 corsie / 1 corsia</span>
-        <span class="h-vals">30 km/h</span>
-      </div>
+      <div class="h-row"><span class="tag">LOCALE / ALLEY</span><span class="h-name">2 corsie / 1 corsia</span><span class="h-vals">30 km/h</span></div>
     </div>
   </div>
 </div>
 
-<!-- 07. SOTTERRANEO E PENDENZE -->
+<!-- X. SOTTOSUOLO -->
 <div class="section">
   <div class="section-header">
-    <span class="section-num">IX</span>
+    <span class="section-num">X</span>
     <span class="section-title">Infrastrutture Sottosuolo</span>
   </div>
   <div class="section-body">
     <div class="underground-grid">
-      <div class="u-layer">
-        <div class="u-depth">0 → -8m</div>
-        <div class="u-content">
-          <span class="tag">PIPES</span>
-          <span style="color:var(--text);font-size:0.85rem">Acqua / Fognatura / Cavi</span>
-        </div>
-      </div>
-      <div class="u-layer">
-        <div class="u-depth">-10 → -20m</div>
-        <div class="u-content">
-          <span class="tag">METRO SUP.</span>
-          <span style="color:var(--text);font-size:0.85rem">Tunnel verso stazioni</span>
-        </div>
-      </div>
-      <div class="u-layer">
-        <div class="u-depth">-20 → -35m</div>
-        <div class="u-content">
-          <span class="tag">METRO PROF.</span>
-          <span style="color:var(--text);font-size:0.85rem">Diagonali libere nel buio</span>
-        </div>
-      </div>
-      <div class="u-layer">
-        <div class="u-depth">-35 → -50m</div>
-        <div class="u-content">
-          <span class="tag">TRENO PESANTE</span>
-          <span style="color:var(--text);font-size:0.85rem">Merci / Regionale (Curve enormi)</span>
-        </div>
-      </div>
+      <div class="u-layer"><div class="u-depth">0 → -8m</div><div class="u-content"><span class="tag">PIPES</span><span style="color:var(--text);font-size:0.85rem">Acqua / Fognatura / Cavi</span></div></div>
+      <div class="u-layer"><div class="u-depth">-10 → -20m</div><div class="u-content"><span class="tag">METRO SUP.</span><span style="color:var(--text);font-size:0.85rem">Tunnel verso stazioni</span></div></div>
+      <div class="u-layer"><div class="u-depth">-20 → -35m</div><div class="u-content"><span class="tag">METRO PROF.</span><span style="color:var(--text);font-size:0.85rem">Diagonali libere nel buio</span></div></div>
+      <div class="u-layer"><div class="u-depth">-35 → -50m</div><div class="u-content"><span class="tag">TRENO PESANTE</span><span style="color:var(--text);font-size:0.85rem">Merci / Regionale (Curve enormi)</span></div></div>
     </div>
-
-    <div class="rule-block" style="margin-top: 12px;">
+    <div class="rule-block" style="margin-top:12px;">
       <div class="rule-title">Calcolo pendenza</div>
       CS2 limite: <span style="color:var(--accent3);">max 10% = 1m discesa ogni 10m orizzontali</span><br><br>
       Per <strong>-10m</strong> servono <span>100m = 13 celle</span><br>
@@ -1037,245 +763,314 @@
   </div>
 </div>
 
+<!-- ==================== MAIN DISTRICT MAP SCRIPT ==================== -->
 <script>
 (function() {
   const canvas = document.getElementById('districtMap');
   const ctx = canvas.getContext('2d');
-  
   const W = 600, H = 600;
-  const CELLS = 9; 
-  const CS = W / CELLS; 
+
+  // Aggiungiamo i margini per contenere le quote come cornice
+  const PADDING_L = 36; 
+  const PADDING_B = 36; 
+  const mapW = W - PADDING_L;
+  const mapH = H - PADDING_B;
+
+  // Real Centerline Math for non-uniform grid
+  // Grid X: 10 vertical roads (C0 to C9)
+  // Grid Y: 10 horizontal roads (R0 to R9)
+  
+  // widths half-cells (1 cell = 8m):
+  // 6lane = 3c
+  // 4lane = 2c
+  // 2lane = 1c
+  // alley = 0.5c
+  // ped = 1c
+  
+  function getHalfW(type) {
+    if(type === '6lane') return 3;
+    if(type === '4lane') return 2;
+    if(type === '2lane') return 1;
+    if(type === 'alley') return 0.5;
+    if(type === 'ped') return 1;
+    return 1;
+  }
+
+  function getRoadType(isHorizontal, r, c) {
+    if (isHorizontal) {
+      if (r === 9) return '6lane'; // Asse Sud commerciale
+      if (r === 4 || r === 8) return '4lane'; // Collettori Est-Ovest
+      if (r === 2) return 'alley';
+      return '2lane';
+    } else {
+      if (c === 4 || c === 5) {
+        if (r >= 0 && r <= 2) return 'ped';
+        return '4lane'; // Viali centrali
+      }
+      if (c === 2 || c === 7) return 'alley';
+      return '2lane';
+    }
+  }
+
+  // Calcolo Offsets in Celle (CtC esatto)
+  // Blocco edificabile utile = 12 celle
+  const CELLS = 9;
+  let currentOffsetX = 0;
+  const offX_cells = [0];
+  for(let c = 0; c < CELLS; c++) {
+      let tLeft = getRoadType(false, 5, c); // Usa riga 5 generica per il tipo
+      let tRight = getRoadType(false, 5, c+1);
+      let step = 12 + getHalfW(tLeft) + getHalfW(tRight);
+      currentOffsetX += step;
+      offX_cells.push(currentOffsetX);
+  }
+  const totalCellsX = currentOffsetX; // Dovrebbe essere 128
+
+  let currentOffsetY = 0;
+  const offY_cells = [0];
+  for(let r = 0; r < CELLS; r++) {
+      let tTop = getRoadType(true, r, 5); 
+      let tBot = getRoadType(true, r+1, 5);
+      let step = 12 + getHalfW(tTop) + getHalfW(tBot);
+      currentOffsetY += step;
+      offY_cells.push(currentOffsetY);
+  }
+  const totalCellsY = currentOffsetY; // Dovrebbe essere 131
+
+  // Uniform scale to fit the inner map canvas
+  const scaleX = mapW / totalCellsX;
+  const scaleY = mapH / totalCellsY;
+
+  const getX = c => PADDING_L + offX_cells[c] * scaleX;
+  const getY = r => offY_cells[r] * scaleY;
+  const getW = c => (offX_cells[c+1] - offX_cells[c]) * scaleX;
+  const getH = r => (offY_cells[r+1] - offY_cells[r]) * scaleY;
+  const getCX = c => (getX(c) + getX(c+1)) / 2;
+  const getCY = r => (getY(r) + getY(r+1)) / 2;
 
   const COLORS = {
-    'COM': '#283747', 'OFF': '#2f2538', 'LOW': '#263326',
-    'LOW_R': '#3b3026', 'MED': '#342436', 'HIGH': '#3b2929',
-    'STATION': '#1a1c1e', 'PARK': '#202326'
+    'COM':'#283747','OFF':'#2f2538','LOW':'#263326',
+    'LOW_R':'#3b3026','MED':'#342436','HIGH':'#3b2929',
+    'STATION':'#1a1c1e','PARK':'#202326'
+  };
+
+  const OV = {
+    '6lane':  'rgba(255, 60,  60, 0.50)',
+    '4lane':  'rgba(  0,200, 255, 0.45)',
+    '2lane':  'rgba( 80,255, 120, 0.40)',
+    'alley':  'rgba(200, 80, 255, 0.40)',
+    'ped':    'rgba(255,140,   0, 0.45)',
   };
 
   let currentPhase = 1;
+  let currentUnit = 'c'; // Impostazione iniziale: celle
   let activeLayers = {
     zones: true, roads: true, bus: true, tram: true,
-    metro: true, park: true, services: true
+    metro: true, park: true, services: true,
+    roadOverlay: false, dims: true
   };
 
   const zoneMap = [
-    ['LOW','LOW','LOW',  'MED',  'STATION',  'MED',  'LOW','LOW','LOW'], 
-    ['LOW','LOW','MED',  'HIGH', 'HIGH', 'HIGH', 'MED','LOW','LOW'], 
-    ['LOW','MED','LOW_R','HIGH', 'OFF',  'HIGH', 'LOW_R','MED','LOW'],
-    ['LOW','MED','OFF',  'COM',  'COM',  'COM',  'OFF',  'MED','LOW'],
-    ['LOW','LOW_R','MED','MED',  'COM',  'MED',  'MED',  'LOW_R','LOW'],
-    ['LOW','LOW', 'LOW_R','MED', 'COM',  'MED',  'LOW_R','LOW','LOW'],
-    ['LOW','LOW', 'LOW', 'LOW',  'COM',  'LOW',  'LOW',  'LOW','LOW'],
-    ['LOW','LOW', 'LOW', 'LOW',  'COM',  'LOW',  'LOW',  'LOW','LOW'],
-    ['COM','COM', 'COM', 'COM',  'COM',  'COM',  'COM',  'COM','COM'] 
+    ['LOW','LOW','LOW','MED','STATION','MED','LOW','LOW','LOW'],
+    ['LOW','LOW','MED','HIGH','HIGH','HIGH','MED','LOW','LOW'],
+    ['LOW','MED','LOW_R','HIGH','OFF','HIGH','LOW_R','MED','LOW'],
+    ['LOW','MED','OFF','COM','COM','COM','OFF','MED','LOW'],
+    ['LOW','LOW_R','MED','MED','COM','MED','MED','LOW_R','LOW'],
+    ['LOW','LOW','LOW_R','MED','COM','MED','LOW_R','LOW','LOW'],
+    ['LOW','LOW','LOW','LOW','COM','LOW','LOW','LOW','LOW'],
+    ['LOW','LOW','LOW','LOW','COM','LOW','LOW','LOW','LOW'],
+    ['COM','COM','COM','COM','COM','COM','COM','COM','COM']
   ];
 
   const phaseMap = [
-    [4, 4, 4, 4, 4, 4, 4, 4, 4], 
-    [4, 4, 3, 3, 3, 3, 3, 4, 4], 
-    [4, 3, 3, 3, 3, 3, 3, 3, 4], 
-    [4, 3, 3, 3, 3, 3, 3, 3, 4], 
-    [4, 2, 2, 2, 2, 2, 2, 2, 4], 
-    [4, 2, 2, 2, 2, 2, 2, 2, 4], 
-    [4, 4, 1, 1, 1, 1, 1, 4, 4], 
-    [4, 4, 1, 1, 1, 1, 1, 4, 4], 
-    [1, 1, 1, 1, 1, 1, 1, 1, 1]  
+    [4,4,4,4,4,4,4,4,4],
+    [4,4,3,3,3,3,3,4,4],
+    [4,3,3,3,3,3,3,3,4],
+    [4,3,3,3,3,3,3,3,4],
+    [4,2,2,2,2,2,2,2,4],
+    [4,2,2,2,2,2,2,2,4],
+    [4,4,1,1,1,1,1,4,4],
+    [4,4,1,1,1,1,1,4,4],
+    [1,1,1,1,1,1,1,1,1]
   ];
 
   const servicesData = [
-    {c: 4, r: 6, minPhase: 1, color: '#7a6368', icon: '🏥', label: 'CLINICA'}, 
-    {c: 6, r: 6, minPhase: 1, color: '#8a8f91', icon: '⚰️', label: 'CIMITERO'}, 
-    {c: 2, r: 5, minPhase: 2, color: '#8c5a45', icon: '🚒', label: 'FUOCO'},  
-    {c: 5, r: 3, minPhase: 3, color: '#455a6b', icon: '🚓', label: 'POLIZIA'}, 
-    {c: 2, r: 2, minPhase: 3, color: '#5c6b54', icon: '📚', label: 'ELEM.'},
-    {c: 6, r: 2, minPhase: 3, color: '#5c6b54', icon: '📚', label: 'ELEM.'},
-    {c: 2, r: 4, minPhase: 3, color: '#5c6b54', icon: '🎓', label: 'HIGH S.'},
-    {c: 6, r: 4, minPhase: 4, color: '#5c6b54', icon: '🏛️', label: 'COLLEGE'},
-    {c: 1, r: 8, minPhase: 3, color: '#7a7452', icon: '📦', label: 'POSTE'}
+    {c:4,r:6,minPhase:1,color:'#7a6368',icon:'🏥',label:'CLINICA'},
+    {c:6,r:6,minPhase:1,color:'#8a8f91',icon:'⚰️',label:'CIMITERO'},
+    {c:2,r:5,minPhase:2,color:'#8c5a45',icon:'🚒',label:'FUOCO'},
+    {c:5,r:3,minPhase:3,color:'#455a6b',icon:'🚓',label:'POLIZIA'},
+    {c:2,r:2,minPhase:3,color:'#5c6b54',icon:'📚',label:'ELEM.'},
+    {c:6,r:2,minPhase:3,color:'#5c6b54',icon:'📚',label:'ELEM.'},
+    {c:2,r:4,minPhase:3,color:'#5c6b54',icon:'🎓',label:'HIGH S.'},
+    {c:6,r:4,minPhase:4,color:'#5c6b54',icon:'🏛️',label:'COLLEGE'},
+    {c:1,r:8,minPhase:3,color:'#7a7452',icon:'📦',label:'POSTE'}
   ];
 
-  function getHorizontalRoadType(r) {
-    if (r === 9) return '6lane'; 
-    if (r === 4) return '4lane'; 
-    if (r === 8) return '4lane'; 
-    if (r === 2) return 'alley'; 
-    return '2lane';              
-  }
-
-  function getVerticalRoadType(c, r) {
-    if (c === 4 || c === 5) {
-      if (r >= 0 && r <= 2) return 'ped'; 
-      return '4lane';                     
-    }
-    if (c === 2 || c === 7) return 'alley'; 
-    return '2lane';
-  }
-
   function drawBlock(c, r, phase) {
-    if (phase < phaseMap[r][c]) return; 
+    if (phase < phaseMap[r][c]) return;
     let type = zoneMap[r][c];
-
     if (type === 'STATION' && activeLayers.metro) {
-      ctx.fillStyle = COLORS.STATION;
-      ctx.fillRect(c * CS + 2, r * CS + 2, CS - 4, CS - 4);
-      ctx.strokeStyle = '#526b6b';
-      ctx.lineWidth = 2;
-      ctx.strokeRect(c * CS + 2, r * CS + 2, CS - 4, CS - 4);
-      ctx.fillStyle = '#a3a8a8';
-      ctx.font = "bold 20px 'Cinzel'";
-      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillText("M", c * CS + CS/2, r * CS + CS/2);
-      return;
+      ctx.fillStyle = COLORS.STATION; ctx.fillRect(getX(c)+2,getY(r)+2,getW(c)-4,getH(r)-4);
+      ctx.strokeStyle = '#526b6b'; ctx.lineWidth = 2; ctx.strokeRect(getX(c)+2,getY(r)+2,getW(c)-4,getH(r)-4);
+      ctx.fillStyle = '#a3a8a8'; ctx.font = "bold 20px 'Cinzel'"; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText("M", getCX(c), getCY(r)); return;
     } else if (type === 'STATION') { return; }
-
-    if (!activeLayers.zones) return; 
-
-    ctx.fillStyle = COLORS[type];
-    ctx.fillRect(c * CS + 2, r * CS + 2, CS - 4, CS - 4);
-    
-    ctx.strokeStyle = '#111';
-    ctx.lineWidth = 1;
-    ctx.strokeRect(c * CS + 2, r * CS + 2, CS - 4, CS - 4);
-    
-    ctx.fillStyle = '#8c8c8c';
-    ctx.font = "bold 12px 'Space Mono'";
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    let label = type === 'LOW_R' ? 'L_RENT' : type;
-    ctx.fillText(label, c * CS + CS/2, r * CS + CS/2);
+    if (!activeLayers.zones) return;
+    ctx.fillStyle = COLORS[type]; ctx.fillRect(getX(c)+2,getY(r)+2,getW(c)-4,getH(r)-4);
+    ctx.strokeStyle = '#111'; ctx.lineWidth = 1; ctx.strokeRect(getX(c)+2,getY(r)+2,getW(c)-4,getH(r)-4);
+    ctx.fillStyle = '#8c8c8c'; ctx.font = "bold 12px 'Space Mono'"; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(type === 'LOW_R' ? 'L_RENT' : type, getCX(c), getCY(r));
   }
 
   function drawService(s, phase) {
     if (!activeLayers.services || phase < s.minPhase) return;
-
-    ctx.fillStyle = '#111214';
-    ctx.fillRect(s.c * CS + 5, s.r * CS + 5, CS - 10, CS - 10);
-    
-    ctx.strokeStyle = s.color;
-    ctx.lineWidth = 2;
-    ctx.strokeRect(s.c * CS + 5, s.r * CS + 5, CS - 10, CS - 10);
-
-    ctx.fillStyle = s.color;
-    ctx.font = "16px 'Segoe UI Emoji', sans-serif";
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(s.icon, s.c * CS + CS/2, s.r * CS + CS/2 - 6);
-
-    ctx.font = "bold 9px 'Space Mono'";
-    ctx.fillStyle = '#a3a8a8';
-    ctx.fillText(s.label, s.c * CS + CS/2, s.r * CS + CS/2 + 12);
+    ctx.fillStyle = '#111214'; ctx.fillRect(getX(s.c)+5,getY(s.r)+5,getW(s.c)-10,getH(s.r)-10);
+    ctx.strokeStyle = s.color; ctx.lineWidth = 2; ctx.strokeRect(getX(s.c)+5,getY(s.r)+5,getW(s.c)-10,getH(s.r)-10);
+    ctx.fillStyle = s.color; ctx.font = "16px 'Segoe UI Emoji', sans-serif"; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(s.icon, getCX(s.c), getCY(s.r)-6);
+    ctx.font = "bold 9px 'Space Mono'"; ctx.fillStyle = '#a3a8a8';
+    ctx.fillText(s.label, getCX(s.c), getCY(s.r)+12);
   }
 
   function drawParking(c, r, type) {
     if (!activeLayers.park) return;
-    
-    ctx.fillStyle = COLORS.PARK;
-    ctx.fillRect(c * CS + 6, r * CS + 6, CS - 12, CS - 12);
-    ctx.strokeStyle = '#52585b';
-    ctx.lineWidth = 1;
-    ctx.strokeRect(c * CS + 6, r * CS + 6, CS - 12, CS - 12);
-
-    ctx.fillStyle = '#948b76';
-    ctx.font = "bold 16px 'Cinzel'";
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText("P", c * CS + CS/2, r * CS + CS/2 - 4);
-
+    ctx.fillStyle = COLORS.PARK; ctx.fillRect(getX(c)+6,getY(r)+6,getW(c)-12,getH(r)-12);
+    ctx.strokeStyle = '#52585b'; ctx.lineWidth = 1; ctx.strokeRect(getX(c)+6,getY(r)+6,getW(c)-12,getH(r)-12);
+    ctx.fillStyle = '#948b76'; ctx.font = "bold 16px 'Cinzel'"; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText("P", getCX(c), getCY(r)-4);
     ctx.font = "9px 'Space Mono'";
-    let label = type === 'underground' ? 'SUB' : (type === 'multistory' ? 'MULTI' : 'SURF');
-    ctx.fillText(label, c * CS + CS/2, r * CS + CS/2 + 10);
+    ctx.fillText(type==='underground'?'SUB':(type==='multistory'?'MULTI':'SURF'), getCX(c), getCY(r)+10);
   }
 
-  function drawRoadSegment(x1, y1, x2, y2, type) {
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    
-    if (type === '6lane') {
-      ctx.lineWidth = 8; ctx.strokeStyle = '#2f3336'; ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
-      ctx.lineWidth = 1; ctx.strokeStyle = '#545c58'; ctx.stroke();
-    } else if (type === '4lane') {
-      ctx.lineWidth = 5; ctx.strokeStyle = '#232629'; ctx.stroke();
-    } else if (type === '2lane') {
-      ctx.lineWidth = 2.5; ctx.strokeStyle = '#1a1c1e'; ctx.stroke();
-    } else if (type === 'alley') {
-      ctx.lineWidth = 1.5; ctx.strokeStyle = '#3a3f42';
-      ctx.setLineDash([2, 4]); ctx.stroke(); ctx.setLineDash([]);
-    } else if (type === 'ped') {
-      ctx.lineWidth = 3; ctx.strokeStyle = '#414d45';
-      ctx.setLineDash([2, 4]); ctx.stroke(); ctx.setLineDash([]);
+  function drawRoadSegment(x1,y1,x2,y2,type) {
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2);
+    if (type==='6lane') {
+      ctx.lineWidth=8; ctx.strokeStyle='#2f3336'; ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2);
+      ctx.lineWidth=1; ctx.strokeStyle='#545c58'; ctx.stroke();
+    } else if (type==='4lane') {
+      ctx.lineWidth=5; ctx.strokeStyle='#232629'; ctx.stroke();
+    } else if (type==='2lane') {
+      ctx.lineWidth=2.5; ctx.strokeStyle='#1a1c1e'; ctx.stroke();
+    } else if (type==='alley') {
+      ctx.lineWidth=1.5; ctx.strokeStyle='#3a3f42'; ctx.setLineDash([2,4]); ctx.stroke(); ctx.setLineDash([]);
+    } else if (type==='ped') {
+      ctx.lineWidth=3; ctx.strokeStyle='#414d45'; ctx.setLineDash([2,4]); ctx.stroke(); ctx.setLineDash([]);
     }
   }
 
-  function drawRoads(phase) {
+  function drawRoadOverlaySegment(x1,y1,x2,y2,type) {
+    const widthMap = { '6lane':6, '4lane':4, '2lane':2, 'alley':1, 'ped':2 };
+    const w = (widthMap[type] || 2) * scaleX; 
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2);
+    ctx.lineWidth = w;
+    ctx.strokeStyle = OV[type] || 'rgba(255,255,255,0.2)';
+    ctx.setLineDash([]);
+    ctx.stroke();
+  }
+
+  function drawRoads(phase, withOverlay) {
     let minY = 0;
     if (phase === 1) minY = 6;
     if (phase === 2) minY = 4;
     if (phase === 3) minY = 1;
 
     for (let r = minY; r <= 9; r++) {
-      drawRoadSegment(0, r * CS, W, r * CS, getHorizontalRoadType(r));
+      const type = getRoadType(true, r, -1);
+      if (withOverlay) {
+        drawRoadOverlaySegment(PADDING_L, getY(r), W, getY(r), type);
+      } else {
+        drawRoadSegment(PADDING_L, getY(r), W, getY(r), type);
+      }
     }
     for (let c = 0; c <= 9; c++) {
       for (let r = minY; r < 9; r++) {
-        drawRoadSegment(c * CS, r * CS, c * CS, (r+1) * CS, getVerticalRoadType(c, r));
+        const type = getRoadType(false, r, c);
+        if (withOverlay) {
+          drawRoadOverlaySegment(getX(c), getY(r), getX(c), getY(r+1), type);
+        } else {
+          drawRoadSegment(getX(c), getY(r), getX(c), getY(r+1), type);
+        }
       }
     }
   }
 
   function drawStop(p1, p2, type) {
-    const x1 = p1[0] * CS; const y1 = p1[1] * CS;
-    const x2 = p2[0] * CS; const y2 = p2[1] * CS;
-
-    const dx = x2 - x1; const dy = y2 - y1;
-    const len = Math.hypot(dx, dy);
-    if (len === 0) return;
-    const ux = dx / len; const uy = dy / len;
-    const nx = -uy; const ny = ux;
-
-    const distFromIntersection = 25; 
-    let cx = x1 + ux * distFromIntersection;
-    let cy = y1 + uy * distFromIntersection;
-
-    let offsetRoad = type === 'bus' ? 4 : 5; 
-    cx += nx * offsetRoad;
-    cy += ny * offsetRoad;
-
-    ctx.beginPath();
-    ctx.arc(cx, cy, 4, 0, Math.PI * 2);
-    ctx.fillStyle = '#0a0b0c';
-    ctx.fill();
-    ctx.lineWidth = 1.5; ctx.strokeStyle = type === 'bus' ? '#948b76' : '#7a6368'; ctx.stroke();
-    ctx.beginPath(); ctx.arc(cx, cy, 1.5, 0, Math.PI * 2); ctx.fillStyle = type === 'bus' ? '#948b76' : '#7a6368'; ctx.fill();
+    const x1=getX(p1[0]); const y1=getY(p1[1]); const x2=getX(p2[0]); const y2=getY(p2[1]);
+    const dx=x2-x1; const dy=y2-y1; const len=Math.hypot(dx,dy);
+    if(len===0) return;
+    const ux=dx/len; const uy=dy/len; const nx=-uy; const ny=ux;
+    const d=20; let cx2=x1+ux*d; let cy2=y1+uy*d;
+    cx2 += nx*(type==='bus'?4:5); cy2 += ny*(type==='bus'?4:5);
+    ctx.beginPath(); ctx.arc(cx2,cy2,4,0,Math.PI*2); ctx.fillStyle='#0a0b0c'; ctx.fill();
+    ctx.lineWidth=1.5; ctx.strokeStyle=type==='bus'?'#948b76':'#7a6368'; ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx2,cy2,1.5,0,Math.PI*2); ctx.fillStyle=type==='bus'?'#948b76':'#7a6368'; ctx.fill();
   }
 
-  function drawTransitPath(route, color, isTram = false) {
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 2;
-    if (isTram) {
-      ctx.setLineDash([8, 6]); ctx.lineWidth = 3;
-    } else {
-      ctx.setLineDash([4, 4]);
-    }
-    
-    ctx.beginPath();
-    ctx.moveTo(route[0][0] * CS, route[0][1] * CS);
-    for(let i = 1; i < route.length; i++) {
-      ctx.lineTo(route[i][0] * CS, route[i][1] * CS);
-    }
+  function drawTransitPath(route, color, isTram=false) {
+    ctx.strokeStyle=color; ctx.lineWidth=isTram?3:2;
+    ctx.setLineDash(isTram?[8,6]:[4,4]);
+    ctx.beginPath(); ctx.moveTo(getX(route[0][0]), getY(route[0][1]));
+    for(let i=1;i<route.length;i++) ctx.lineTo(getX(route[i][0]), getY(route[i][1]));
     ctx.stroke(); ctx.setLineDash([]);
   }
 
-  function drawGrid(phase) {
-    ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = '#090a0b';
-    ctx.fillRect(0, 0, W, H);
+  function drawGridDimensions() {
+    if (!activeLayers.dims) return;
 
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.02)';
+    ctx.fillStyle = '#a3a8a8';
+    ctx.strokeStyle = '#52585b';
     ctx.lineWidth = 1;
-    for(let i=0; i<W; i+=20) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, H); ctx.stroke(); }
-    for(let i=0; i<H; i+=20) { ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(W, i); ctx.stroke(); }
+    ctx.font = "10px 'Space Mono'";
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
 
-    if (activeLayers.roads) drawRoads(phase);
+    // Asse X (In basso)
+    for(let c = 0; c < CELLS; c++) {
+      let cellW = offX_cells[c+1] - offX_cells[c];
+      let testVal = currentUnit === 'c' ? cellW + "c" : (cellW * 8) + "m";
+      ctx.fillText(testVal, getCX(c), mapH + 18);
+      
+      ctx.beginPath();
+      ctx.moveTo(getX(c), mapH + 4); ctx.lineTo(getX(c), mapH + 12);
+      ctx.moveTo(getX(c+1), mapH + 4); ctx.lineTo(getX(c+1), mapH + 12);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(getX(c), mapH + 8); ctx.lineTo(getX(c+1), mapH + 8);
+      ctx.stroke();
+    }
+
+    // Asse Y (A sinistra)
+    for(let r = 0; r < CELLS; r++) {
+      let cellH = offY_cells[r+1] - offY_cells[r];
+      let testVal = currentUnit === 'c' ? cellH + "c" : (cellH * 8) + "m";
+      
+      ctx.save();
+      ctx.translate(PADDING_L - 18, getCY(r));
+      ctx.rotate(-Math.PI/2);
+      ctx.fillText(testVal, 0, 0);
+      ctx.restore();
+
+      ctx.beginPath();
+      ctx.moveTo(PADDING_L - 4, getY(r)); ctx.lineTo(PADDING_L - 12, getY(r));
+      ctx.moveTo(PADDING_L - 4, getY(r+1)); ctx.lineTo(PADDING_L - 12, getY(r+1));
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(PADDING_L - 8, getY(r)); ctx.lineTo(PADDING_L - 8, getY(r+1));
+      ctx.stroke();
+    }
+  }
+
+  function drawGrid(phase) {
+    ctx.clearRect(0,0,W,H); ctx.fillStyle='#090a0b'; ctx.fillRect(0,0,W,H);
+
+    ctx.strokeStyle='rgba(255, 255, 255, 0.02)'; ctx.lineWidth=1;
+    for(let i=PADDING_L; i<W; i+=20){ ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, mapH); ctx.stroke(); }
+    for(let i=0; i<mapH; i+=20){ ctx.beginPath(); ctx.moveTo(PADDING_L, i); ctx.lineTo(W, i); ctx.stroke(); }
+
+    if (activeLayers.roads) drawRoads(phase, false);
 
     for (let r = 0; r < CELLS; r++) {
       for (let c = 0; c < CELLS; c++) {
@@ -1293,32 +1088,29 @@
     }
 
     if (phase >= 2 && activeLayers.bus) {
-      const busRoute1 = [[3, 8], [3, 4], [2, 4], [2, 6], [6, 6], [6, 4], [5, 4], [5, 8], [3, 8]];
-      drawTransitPath(busRoute1, '#948b76'); 
-      for(let i=0; i<busRoute1.length-1; i++) drawStop(busRoute1[i], busRoute1[i+1], 'bus');
+      const b1 = [[3, 8], [3, 4], [2, 4], [2, 6], [6, 6], [6, 4], [5, 4], [5, 8], [3, 8]];
+      drawTransitPath(b1, '#948b76');
+      for(let i=0; i<b1.length-1; i++) drawStop(b1[i], b1[i+1], 'bus');
 
       if (phase >= 4) {
-        const busRoute2 = [[1, 8], [1, 2], [4, 2], [7, 2], [7, 8], [4, 8], [1, 8]];
-        drawTransitPath(busRoute2, '#665c49'); 
-        for(let i=0; i<busRoute2.length-1; i++) drawStop(busRoute2[i], busRoute2[i+1], 'bus');
+        const b2 = [[1, 8], [1, 2], [4, 2], [7, 2], [7, 8], [4, 8], [1, 8]];
+        drawTransitPath(b2, '#665c49');
+        for(let i=0; i<b2.length-1; i++) drawStop(b2[i], b2[i+1], 'bus');
       }
     }
 
     if (phase >= 3 && activeLayers.tram) {
-      const tramColor = '#7a6368';
-      const tramRoute1 = [[0, 8], [9, 8]];
-      drawTransitPath(tramRoute1, tramColor, true);
+      const tc = '#7a6368';
+      drawTransitPath([[0, 8], [9, 8]], tc, true);
       drawStop([0,8], [9,8], 'tram'); drawStop([4,8], [9,8], 'tram');
       drawStop([9,8], [0,8], 'tram'); drawStop([5,8], [0,8], 'tram'); 
       
-      const tramRoute2 = [[4, 8], [4, 1]];
-      drawTransitPath(tramRoute2, tramColor, true);
+      drawTransitPath([[4, 8], [4, 1]], tc, true);
       drawStop([4,8], [4,1], 'tram'); drawStop([4,4], [4,1], 'tram');
       drawStop([4,1], [4,8], 'tram'); drawStop([4,5], [4,8], 'tram');
 
       if (phase >= 4) {
-        const tramRoute3 = [[0, 4], [9, 4]];
-        drawTransitPath(tramRoute3, tramColor, true);
+        drawTransitPath([[0, 4], [9, 4]], tc, true);
         drawStop([1,4], [8,4], 'tram'); drawStop([4,4], [8,4], 'tram');
         drawStop([8,4], [1,4], 'tram'); drawStop([5,4], [1,4], 'tram');
       }
@@ -1328,91 +1120,70 @@
       ctx.strokeStyle = 'rgba(82, 107, 107, 0.4)';
       ctx.lineWidth = 6; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
       ctx.beginPath();
-      ctx.moveTo(CS * 0.5, CS * 8.5); 
-      ctx.bezierCurveTo(CS * 1.5, CS * 5,  CS * 3, CS * 2,  CS * 4.5, CS * 0.5); 
-      ctx.lineTo(CS * 8.5, CS * 0.5);
+      ctx.moveTo(getCX(0), getCY(8));
+      ctx.bezierCurveTo(getCX(1), getY(5), getX(3), getY(2), getCX(4), getCY(0));
+      ctx.lineTo(getCX(8), getCY(0));
       ctx.stroke();
       ctx.strokeStyle = '#526b6b';
       ctx.lineWidth = 2; ctx.setLineDash([8, 12]);
       ctx.stroke(); ctx.setLineDash([]);
     }
+
+    if (activeLayers.roadOverlay && activeLayers.roads) {
+      ctx.save(); ctx.lineCap = 'square'; drawRoads(phase, true); ctx.restore();
+    }
+
+    drawGridDimensions();
   }
 
   window.updateTransitCalc = function() {
     const pop = parseInt(document.getElementById('popSlider').value);
-    const display = pop === 0 ? "< 500 Ab." : pop.toLocaleString('it-IT') + " Ab.";
-    document.getElementById('popDisplay').innerText = display;
-
+    document.getElementById('popDisplay').innerText = pop===0 ? '< 500 Ab.' : pop.toLocaleString('it-IT')+' Ab.';
     const container = document.getElementById('transitResults');
-    container.innerHTML = '';
-
-    if (currentPhase === 1 || pop === 0) {
-      container.innerHTML = '<div class="calc-empty">Nessun trasporto di massa necessario in questa fase.</div>';
-      return;
+    if (currentPhase===1 || pop===0) {
+      container.innerHTML='<div class="calc-empty">Nessun trasporto di massa necessario in questa fase.</div>'; return;
     }
-
-    let html = '';
-    const addRow = (name, color, baseVehicles, popFactor) => {
-       let vehicles = baseVehicles + Math.floor(pop / popFactor);
-       html += `<div class="calc-row"><span style="color:${color};">${name}</span> <span>${vehicles} VETT.</span></div>`;
+    let html='';
+    const addRow = (name,color,base,factor) => {
+      let v=base+Math.floor(pop/factor);
+      html+=`<div class="calc-row"><span style="color:${color};">${name}</span><span>${v} VETT.</span></div>`;
     };
-
-    if (currentPhase >= 2 && activeLayers.bus) {
-      addRow('BUS L1 [Circolare Interna]', '#948b76', 3, 3000);
-    }
-    if (currentPhase >= 4 && activeLayers.bus) {
-      addRow('BUS L2 [Circolare Esterna]', '#665c49', 3, 4000);
-    }
-    if (currentPhase >= 3 && activeLayers.tram) {
-      addRow('TRAM [Asse Commerciale]', '#7a6368', 2, 5000);
-      addRow('TRAM [Asse Direzionale]', '#7a6368', 2, 5000);
-    }
-    if (currentPhase >= 4 && activeLayers.tram) {
-      addRow('TRAM [Asse Residenziale]', '#7a6368', 2, 5000);
-    }
-    if (currentPhase >= 4 && activeLayers.metro) {
-      let trains = Math.max(1, Math.floor(pop / 8000));
-      html += `<div class="calc-row"><span style="color:#526b6b;">METRO [Inter-Distretto]</span> <span>${trains} TRENI</span></div>`;
-    }
-    if (currentPhase >= 5) {
-      let trains = Math.max(1, Math.floor(pop / 10000));
-      html += `<div class="calc-row"><span style="color:#66554e;">TRENO REGIONALE [Esterno]</span> <span>${trains} TRENI</span></div>`;
-    }
-
-    if(html === '') {
-       html = '<div class="calc-empty">Nessun layer di trasporto attivo.</div>';
-    }
-    container.innerHTML = html;
+    if (currentPhase>=2 && activeLayers.bus)   addRow('BUS L1 [Circolare Interna]','#948b76',3,3000);
+    if (currentPhase>=4 && activeLayers.bus)   addRow('BUS L2 [Circolare Esterna]','#665c49',3,4000);
+    if (currentPhase>=3 && activeLayers.tram) { addRow('TRAM [Asse Commerciale]','#7a6368',2,5000); addRow('TRAM [Asse Direzionale]','#7a6368',2,5000); }
+    if (currentPhase>=4 && activeLayers.tram)  addRow('TRAM [Asse Residenziale]','#7a6368',2,5000);
+    if (currentPhase>=4 && activeLayers.metro) { let t=Math.max(1,Math.floor(pop/8000)); html+=`<div class="calc-row"><span style="color:#526b6b;">METRO [Inter-Distretto]</span><span>${t} TRENI</span></div>`; }
+    if (currentPhase>=5) { let t=Math.max(1,Math.floor(pop/10000)); html+=`<div class="calc-row"><span style="color:#66554e;">TRENO REGIONALE [Esterno]</span><span>${t} TRENI</span></div>`; }
+    container.innerHTML = html||'<div class="calc-empty">Nessun layer di trasporto attivo.</div>';
   };
 
   window.setPhase = function(p) {
     currentPhase = p;
     drawGrid(currentPhase);
-    
     [1,2,3,4,5].forEach(i => {
-      const btn = document.getElementById('btn-ph'+i);
-      if(i === p) {
-        btn.classList.add('active');
-      } else {
-        btn.classList.remove('active');
-      }
+      document.getElementById('btn-ph'+i).classList.toggle('active', i===p);
     });
-
-    const defaultPops = [0, 2000, 6000, 15000, 30000, 30000];
-    document.getElementById('popSlider').value = defaultPops[p];
+    const defaultPops=[0,2000,6000,15000,30000,30000];
+    document.getElementById('popSlider').value=defaultPops[p];
     updateTransitCalc();
   };
 
   window.toggleLayer = function(layerName) {
     activeLayers[layerName] = !activeLayers[layerName];
-    const btn = document.getElementById('btn-ly-' + layerName);
-    if (activeLayers[layerName]) {
-      btn.classList.add('active');
-    } else {
-      btn.classList.remove('active');
+    const btn = document.getElementById('btn-ly-'+layerName);
+    btn.classList.toggle('active', activeLayers[layerName]);
+    if (layerName === 'roadOverlay') {
+      document.getElementById('overlay-legend').style.display = activeLayers.roadOverlay ? 'block' : 'none';
     }
     drawGrid(currentPhase);
     updateTransitCalc();
+  };
+
+  window.toggleUnit = function() {
+    currentUnit = currentUnit === 'c' ? 'm' : 'c';
+    const btn = document.getElementById('btn-ly-unit');
+    btn.innerText = currentUnit === 'c' ? 'UNITÀ: CELLE' : 'UNITÀ: METRI';
+    drawGrid(currentPhase);
   };
 
   setPhase(1);
