@@ -29,6 +29,34 @@
       <label class="field">Livello del mare (m) <input id="pSea" type="number" step="1"></label>
       <label class="field">Vento <b id="vWind"></b><input id="pWind" type="range" min="0" max="355" step="5"></label>
     </section>
+    <section class="box">
+      <h4>Importa mappa</h4>
+      <button class="btn primary" id="btnHeightmap">Heightmap PNG…</button>
+      <input type="file" id="fileHeightmap" accept=".png,image/png" hidden>
+      <label class="check"><input type="checkbox" id="hmWorld"> È la mappa mondo (uso il centro)</label>
+      <label class="field">Scala altezza 16 bit (m) <input id="hmScale" type="number" min="1" step="1"></label>
+      <button class="btn primary" id="btnShot">Screenshot risorse…</button>
+      <input type="file" id="fileShot" accept="image/*" hidden>
+      <p class="hint">Heightmap: esportala dall'editor del gioco (PNG 4096×4096, 16 bit). Screenshot: vista risorse naturali, dall'alto, con tutta l'area giocabile visibile.</p>
+    </section>
+    <section class="box">
+      <h4>Modifica a mano</h4>
+      <div class="row">
+        <button class="btn" id="toolPan" title="H">Sposta</button>
+        <button class="btn" id="toolBrush" title="B">Pennello</button>
+        <span class="grow"></span>
+        <button class="btn" id="btnUndo" title="Ctrl+Z">↶</button>
+        <button class="btn" id="btnRedo" title="Ctrl+Shift+Z">↷</button>
+      </div>
+      <div id="brushOpts">
+        <label class="field">Strato <select id="brushLayer"></select></label>
+        <label class="field">Azione <select id="brushMode"></select></label>
+        <label class="field">Raggio <b id="vRadius"></b><input id="brushRadius" type="range" min="25" max="2500" step="25" value="300"></label>
+        <label class="field">Forza <b id="vStrength"></b><input id="brushStrength" type="range" min="5" max="100" step="5" value="50"></label>
+        <label class="field" id="flattenRow">Quota per Livella (m) <input id="brushTarget" type="number" step="1"><span class="hint">Alt+click sulla mappa per prenderla dal terreno</span></label>
+        <p class="hint">Click sinistro dipinge · tasto destro trascina la mappa.</p>
+      </div>
+    </section>
     <section class="box" id="panel"></section>
   </aside>
   <section class="mapwrap">
@@ -41,6 +69,26 @@
   </section>
 </main>
 
+<dialog id="shotDlg">
+  <div class="dlg-head"><b>Screenshot risorse</b> <span id="shotName" class="muted"></span><span class="grow"></span><button class="btn" id="shotClose">Chiudi</button></div>
+  <div class="dlg-body">
+    <div class="dlg-canvas"><canvas id="shotCanvas"></canvas></div>
+    <div class="dlg-side">
+      <p id="shotStep"></p>
+      <button class="btn" id="shotReset">Ricomincia angoli</button>
+      <label class="field">Strato di destinazione <select id="shotLayer"></select></label>
+      <div class="field">Colori campionati <div id="shotSamples" class="swatches"></div></div>
+      <button class="btn" id="shotClear">Togli i colori</button>
+      <label class="field">Tolleranza colore <b id="shotTolV"></b><input id="shotTol" type="range" min="5" max="120" step="1" value="35"></label>
+      <label class="check"><input type="checkbox" id="shotPreview" checked> Anteprima (magenta = riconosciuto)</label>
+      <label class="field">Modalità <select id="shotMode"><option value="replace">Sostituisci lo strato</option><option value="max">Unisci (tieni il valore più alto)</option></select></label>
+      <button class="btn primary" id="shotApply">Applica allo strato</button>
+      <p id="shotResult" class="hint"></p>
+      <p class="hint">Gli angoli sono quelli dell'area giocabile: nord-ovest, nord-est, sud-est, sud-ovest. Dopo l'import puoi correggere tutto col pennello.</p>
+    </div>
+  </div>
+</dialog>
+
 <footer class="statusbar">
   <span id="cursor">—</span>
   <span id="status"></span>
@@ -52,7 +100,12 @@
 <script src="js/core/raster.js"></script>
 <script src="js/core/project.js"></script>
 <script src="js/core/storage.js"></script>
+<script src="js/core/brush.js"></script>
+<script src="js/io/png16.js"></script>
+<script src="js/io/heightmap.js"></script>
+<script src="js/io/screenshot.js"></script>
 <script src="js/ui/view.js"></script>
+<script src="js/ui/screenshotDialog.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

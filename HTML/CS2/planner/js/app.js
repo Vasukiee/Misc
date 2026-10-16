@@ -1,14 +1,15 @@
-// Avvio dell'applicazione: progetto corrente, barra strumenti, salvataggi.
+// Avvio dell'applicazione: progetto corrente, barra strumenti, import, pennelli, salvataggi.
 (function (root) {
   'use strict';
   const CS2 = root.CS2;
-  const { Project, MapView, storage } = CS2;
+  const { Project, MapView, storage, brush } = CS2;
   const { LAYERS, RESOURCE_KEYS } = CS2.project;
   const $ = id => document.getElementById(id);
 
   let project = new Project();
   const view = new MapView($('map'), () => project);
-  CS2.app = { get project() { return project; }, view, setProject, changed, redraw: () => view.draw() };
+  const history = new brush.History(30);
+  const app = CS2.app = { get project() { return project; }, view, history, setProject, changed, redraw: () => view.draw() };
 
   // ------------------------------------------------------------ stato e salvataggio
   let saveTimer = null;
@@ -19,14 +20,18 @@
     saveTimer = setTimeout(async () => setStatus(await storage.autosave(project) ? 'Salvato nel browser' : 'Autosalvataggio non disponibile'), 600);
   }
   function setProject(p, msg) {
-    project = p; view.cache = {};
+    project = p; view.cache = {}; history.clear();
     view.fit(); view.draw(); renderPanel(); syncInputs();
     storage.autosave(project);
     if (msg) setStatus(msg);
   }
   function setStatus(t) { $('status').textContent = t; }
+  function markManual(key) {
+    const s = project.sources[key] || 'vuoto';
+    if (!/a mano$/.test(s)) project.sources[key] = (s === 'vuoto' ? '' : s + ' + ') + 'a mano';
+  }
 
-  // ------------------------------------------------------------ pannello
+  // ------------------------------------------------------------ pannello strati
   function renderPanel() {
     const p = project, r = view.elevationRange(p);
     let h = '<h4>Mappa</h4>';
@@ -43,6 +48,8 @@
     h += '<label class="layer-row"><input type="checkbox" data-show="grid" ' + (view.show.grid ? 'checked' : '') + '><span class="sw" style="background:#333"></span><span>Griglia 1 km</span><em></em></label>';
     $('panel').innerHTML = h;
     $('panel').querySelectorAll('[data-show]').forEach(el => el.addEventListener('change', () => { view.show[el.dataset.show] = el.checked; view.draw(); }));
+    $('btnUndo').disabled = !history.undoStack.length;
+    $('btnRedo').disabled = !history.redoStack.length;
   }
   const kv = (k, v) => '<div class="kv"><span>' + k + '</span><span>' + v + '</span></div>';
 
@@ -52,13 +59,14 @@
     $('pSea').value = project.map.seaLevel;
     $('pWind').value = project.wind.from;
     $('vWind').textContent = windLabel(project.wind.from);
+    $('hmScale').value = project.map.heightScale;
   }
   function windLabel(d) {
     const n = ['N', 'NE', 'E', 'SE', 'S', 'SO', 'O', 'NO'][Math.round(((d % 360) + 360) % 360 / 45) % 8];
     return 'da ' + n + ' (' + d + '°)';
   }
 
-  // ------------------------------------------------------------ barra strumenti
+  // ------------------------------------------------------------ progetto e file
   $('btnNew').addEventListener('click', () => {
     if (!confirm('Creare un progetto nuovo? Quello attuale resta solo se l\'hai salvato su file.')) return;
     setProject(new Project(), 'Nuovo progetto');
@@ -71,35 +79,131 @@
     try { setProject(await storage.openProjectFile(f), 'Aperto: ' + f.name); }
     catch (err) { alert(err.message); }
   });
-  $('btnDemo').addEventListener('click', () => { demoTerrain(project); project.sources.elevation = 'prova'; RESOURCE_KEYS.forEach(k => project.sources[k] = 'prova'); view.cache = {}; changed(); });
+  $('btnDemo').addEventListener('click', () => {
+    const before = project.layers.elevation.data.slice();
+    demoTerrain(project);
+    history.recordWhole(project, 'elevation', 'Terreno di prova', before);
+    project.sources.elevation = 'prova'; RESOURCE_KEYS.forEach(k => project.sources[k] = 'prova');
+    view.cache = {}; changed();
+  });
   $('pName').addEventListener('change', e => { project.name = e.target.value || 'Senza nome'; changed(); });
   $('pSize').addEventListener('change', e => { project.map.size = Math.max(1000, +e.target.value || 14336); view.fit(); changed(); });
   $('pSea').addEventListener('change', e => { project.map.seaLevel = +e.target.value || 0; changed(); });
   $('pWind').addEventListener('input', e => { project.wind.from = +e.target.value; $('vWind').textContent = windLabel(project.wind.from); view.draw(); });
   $('pWind').addEventListener('change', () => changed());
 
+  // ------------------------------------------------------------ import
+  $('btnHeightmap').addEventListener('click', () => $('fileHeightmap').click());
+  $('fileHeightmap').addEventListener('change', async e => {
+    const f = e.target.files[0]; e.target.value = '';
+    if (!f) return;
+    setStatus('Lettura heightmap…');
+    const before = project.layers.elevation.data.slice();
+    try {
+      const { img, warn } = await CS2.heightmap.importFile(project, f, { world: $('hmWorld').checked, heightScale: Math.max(1, +$('hmScale').value || 4096) });
+      history.recordWhole(project, 'elevation', 'Import heightmap', before);
+      view.cache = {}; changed();
+      setStatus('Heightmap importata: ' + img.width + '×' + img.height + ', ' + img.bitDepth + ' bit');
+      if (warn.length) alert(warn.join('\n'));
+    } catch (err) { setStatus('Import fallito'); alert(err.message); }
+  });
+  const shot = CS2.screenshotDialog.setup(app);
+  $('btnShot').addEventListener('click', () => $('fileShot').click());
+  $('fileShot').addEventListener('change', e => { const f = e.target.files[0]; e.target.value = ''; if (f) shot.open(f); });
+
+  // ------------------------------------------------------------ strumenti
+  const tool = { mode: 'pan', layer: 'elevation', brush: 'raise', radius: 300, strength: 0.5, target: 100, cursor: null };
+  function syncTool() {
+    $('toolPan').classList.toggle('active', tool.mode === 'pan');
+    $('toolBrush').classList.toggle('active', tool.mode === 'brush');
+    $('brushOpts').style.display = tool.mode === 'brush' ? '' : 'none';
+    const modes = brush.MODES[LAYERS[tool.layer].kind];
+    if (!modes[tool.brush]) tool.brush = Object.keys(modes)[0];
+    $('brushMode').innerHTML = Object.keys(modes).map(k => '<option value="' + k + '"' + (k === tool.brush ? ' selected' : '') + '>' + modes[k] + '</option>').join('');
+    $('flattenRow').style.display = tool.brush === 'flatten' ? '' : 'none';
+    $('brushTarget').value = Math.round(tool.target);
+    $('vRadius').textContent = tool.radius + ' m';
+    $('vStrength').textContent = Math.round(tool.strength * 100) + '%';
+    $('map').style.cursor = tool.mode === 'brush' ? 'crosshair' : 'grab';
+  }
+  $('brushLayer').innerHTML = Object.keys(LAYERS).map(k => '<option value="' + k + '">' + LAYERS[k].label + '</option>').join('');
+  $('toolPan').addEventListener('click', () => { tool.mode = 'pan'; syncTool(); view.draw(); });
+  $('toolBrush').addEventListener('click', () => { tool.mode = 'brush'; syncTool(); });
+  $('brushLayer').addEventListener('change', e => {
+    tool.layer = e.target.value; syncTool();
+    const key = tool.layer === 'elevation' ? 'terrain' : tool.layer;
+    if (!view.show[key]) { view.show[key] = true; renderPanel(); view.draw(); }
+  });
+  $('brushMode').addEventListener('change', e => { tool.brush = e.target.value; syncTool(); });
+  $('brushRadius').addEventListener('input', e => { tool.radius = +e.target.value; syncTool(); view.draw(); });
+  $('brushStrength').addEventListener('input', e => { tool.strength = +e.target.value / 100; syncTool(); });
+  $('brushTarget').addEventListener('change', e => { tool.target = +e.target.value || 0; });
+  function undo() { const e = history.undo(project); if (e) { view.cache = {}; changed(); setStatus('Annullato: ' + e.label); } }
+  function redo() { const e = history.redo(project); if (e) { view.cache = {}; changed(); setStatus('Ripristinato: ' + e.label); } }
+  $('btnUndo').addEventListener('click', undo);
+  $('btnRedo').addEventListener('click', redo);
+  document.addEventListener('keydown', e => {
+    if (e.target.matches('input, select, textarea')) return;
+    const k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && k === 'z') { e.preventDefault(); e.shiftKey ? redo() : undo(); }
+    else if ((e.ctrlKey || e.metaKey) && k === 'y') { e.preventDefault(); redo(); }
+    else if (k === 'b') { tool.mode = 'brush'; syncTool(); }
+    else if (k === 'h' || k === 'escape') { tool.mode = 'pan'; syncTool(); view.draw(); }
+  });
+  view.overlays.push((ctx, v) => {
+    if (tool.mode !== 'brush' || !tool.cursor) return;
+    ctx.strokeStyle = 'rgba(255,211,107,0.9)'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(v.sx(tool.cursor.x), v.sy(tool.cursor.y), Math.max(3, tool.radius * v.cam.s), 0, Math.PI * 2); ctx.stroke();
+  });
+
   // ------------------------------------------------------------ interazione mappa
   const cv = $('map');
-  let drag = null;
-  cv.addEventListener('pointerdown', e => { drag = { x: e.clientX, y: e.clientY, cx: view.cam.x, cy: view.cam.y }; cv.setPointerCapture(e.pointerId); });
+  let drag = null, painting = false, rafPending = false;
+  const worldOf = e => { const r = cv.getBoundingClientRect(); return view.toWorld(e.clientX - r.left, e.clientY - r.top); };
+  function scheduleDraw() { if (rafPending) return; rafPending = true; requestAnimationFrame(() => { rafPending = false; view.draw(); }); }
+  function paint(w) { history.grow(brush.dab(project, tool.layer, { x: w.x, y: w.y, radius: tool.radius, strength: tool.strength * 0.35, mode: tool.brush, target: tool.target })); scheduleDraw(); }
+
+  cv.addEventListener('contextmenu', e => e.preventDefault());
+  cv.addEventListener('pointerdown', e => {
+    cv.setPointerCapture(e.pointerId);
+    const w = worldOf(e);
+    if (tool.mode === 'brush' && e.button === 0) {
+      if (e.altKey && LAYERS[tool.layer].kind === 'f32') {           // Alt+click: prendi la quota per "Livella"
+        tool.target = project.elevationAt(w.x, w.y); syncTool(); setStatus('Quota per Livella: ' + Math.round(tool.target) + ' m'); return;
+      }
+      painting = true;
+      history.begin(project, tool.layer, (brush.MODES[LAYERS[tool.layer].kind][tool.brush]) + ' · ' + LAYERS[tool.layer].label);
+      paint(w);
+      return;
+    }
+    drag = { x: e.clientX, y: e.clientY, cx: view.cam.x, cy: view.cam.y };
+  });
   cv.addEventListener('pointermove', e => {
-    const r = cv.getBoundingClientRect(), w = view.toWorld(e.clientX - r.left, e.clientY - r.top);
+    const w = worldOf(e);
+    tool.cursor = w;
     if (project.inside(w.x, w.y)) {
       const parts = ['x ' + Math.round(w.x) + ' m', 'y ' + Math.round(w.y) + ' m', 'quota ' + Math.round(project.elevationAt(w.x, w.y)) + ' m'];
       if (project.isWater(w.x, w.y)) parts.push('acqua');
       RESOURCE_KEYS.forEach(k => { const v = project.layerAt(k, w.x, w.y); if (v > 20) parts.push(LAYERS[k].label.toLowerCase() + ' ' + Math.round(v / 2.55) + '%'); });
       $('cursor').textContent = parts.join(' · ');
     } else $('cursor').textContent = 'fuori mappa';
-    if (!drag) return;
-    view.cam.x = drag.cx - (e.clientX - drag.x) / view.cam.s;
-    view.cam.y = drag.cy - (e.clientY - drag.y) / view.cam.s;
-    view.draw();
+    if (painting) { paint(w); return; }
+    if (drag) {
+      view.cam.x = drag.cx - (e.clientX - drag.x) / view.cam.s;
+      view.cam.y = drag.cy - (e.clientY - drag.y) / view.cam.s;
+      scheduleDraw(); return;
+    }
+    if (tool.mode === 'brush') scheduleDraw();
   });
-  cv.addEventListener('pointerup', () => { drag = null; });
+  cv.addEventListener('pointerup', () => {
+    if (painting) { painting = false; history.end(project); markManual(tool.layer); changed(); }
+    drag = null;
+  });
+  cv.addEventListener('pointerleave', () => { tool.cursor = null; if (tool.mode === 'brush') scheduleDraw(); });
   cv.addEventListener('wheel', e => {
     e.preventDefault();
     const r = cv.getBoundingClientRect();
-    view.zoomAt(e.clientX - r.left, e.clientY - r.top, Math.exp(-e.deltaY * 0.0015)); view.draw();
+    view.zoomAt(e.clientX - r.left, e.clientY - r.top, Math.exp(-e.deltaY * 0.0015)); scheduleDraw();
   }, { passive: false });
   $('zIn').addEventListener('click', () => { view.zoomAt(view.W / 2, view.H / 2, 1.4); view.draw(); });
   $('zOut').addEventListener('click', () => { view.zoomAt(view.W / 2, view.H / 2, 1 / 1.4); view.draw(); });
@@ -107,7 +211,7 @@
   root.addEventListener('resize', () => { view.resize(); view.draw(); });
 
   // ------------------------------------------------------------ terreno di prova
-  // Solo per provare la pagina finché non c'è l'import (punto 2 del piano).
+  // Solo per provare la pagina senza una heightmap vera.
   function demoTerrain(p) {
     const { hash3 } = CS2.util, seed = 1729;
     const noise = (x, y, k) => {
@@ -137,7 +241,7 @@
   }
 
   // ------------------------------------------------------------ avvio
-  view.resize(); view.fit();
+  view.resize(); view.fit(); syncTool();
   storage.loadAutosave().then(p => {
     if (p) setProject(p, 'Ripreso l\'ultimo progetto salvato nel browser');
     else { view.draw(); renderPanel(); syncInputs(); setStatus('Progetto vuoto'); }
