@@ -2,7 +2,7 @@
 'use strict';
 const fs = require('fs'), path = require('path'), vm = require('vm');
 // gli script si registrano su globalThis.CS2 come nel browser
-['core/util', 'core/geom', 'core/roads', 'core/raster', 'core/project', 'core/brush', 'core/analysis', 'io/png16', 'io/heightmap', 'io/screenshot'].forEach(f =>
+['core/util', 'core/geom', 'core/roads', 'core/raster', 'core/project', 'core/brush', 'core/analysis', 'core/graph', 'io/png16', 'io/heightmap', 'io/screenshot'].forEach(f =>
   vm.runInThisContext(fs.readFileSync(path.join(__dirname, '..', 'js', f + '.js'), 'utf8'), { filename: f + '.js' }));
 const { CS2 } = globalThis;
 
@@ -165,6 +165,64 @@ function pngEncode(w, h, ch, bd, samples, filterOf) {
   const pj = CS2.Project.fromJSON(JSON.parse(JSON.stringify(ap.toJSON())));
   check('parametri vincoli salvati', pj.analysis.slopeMax === 20);
   check('strato industria prevista presente', !!pj.layers.industryPlan);
+
+  // ---------------------------------------------------------------- strade
+  const G = CS2.graph, gp = new CS2.Project();
+  const nA = gp.addNode(-500, 0), nB = gp.addNode(500, 0);
+  G.addRoad(gp, nA.id, nB.id, 'large');
+  const nC = gp.addNode(0, -500), nD = gp.addNode(0, 500);
+  G.addRoad(gp, nC.id, nD.id, 'small');
+  check('incrocio creato automaticamente', gp.graph.edges.length === 4 && gp.graph.nodes.length === 5);
+  const mid = G.nearestNode(gp, { x: 0, y: 0 }, 1);
+  check('nodo d\'incrocio al centro con 4 strade', mid && gp.edgesOf(mid.id).length === 4);
+  check('tipi conservati dopo la divisione', gp.edgesOf(mid.id).filter(e => e.type === 'large').length === 2);
+  // aggancio: angolo 90° e lunghezza multipla di 8
+  let sn = G.snap(gp, { x: 205, y: 303 }, { start: { x: 200, y: 100 }, startNode: null, prevDir: { x: 1, y: 0 }, type: 'small', pxTol: 5, angles: 90 });
+  check('aggancio a 90°', Math.abs(sn.pt.x - 200) < 1e-6 && sn.pt.y > 100);
+  check('lunghezza multipla di 8 m', Math.abs(((sn.pt.y - 100) / 8) % 1) < 1e-9);
+  // guida CtC: strada piccola parallela alla grande (32 m) → 96 + 16 + 8 = 120 m
+  const gd = G.ctcGuide(gp, { x: 250, y: 118 }, 'small', 20);
+  check('guida CtC grande+piccola = 120 m', gd && gd.dist === 120 && Math.abs(gd.linePt.y - 120) < 1e-6);
+  sn = G.snap(gp, { x: 300, y: 110 }, { start: null, type: 'small', pxTol: 5, angles: 90 });
+  check('punto libero agganciato alla linea CtC', sn.guide && Math.abs(sn.pt.y - 120) < 1e-6);
+  sn = G.snap(gp, { x: 300, y: 3 }, { start: null, type: 'small', pxTol: 5, angles: 90 });
+  check('vicino a una strada: aggancio sulla strada', !!sn.edgeHit && Math.abs(sn.pt.y) < 1e-6);
+  // spezzare una strada con nodeAt
+  const before = JSON.stringify(gp.graph);
+  const split = G.nodeAt(gp, sn.pt, sn);
+  check('nodeAt su strada la spezza', gp.edgesOf(split.id).length === 2);
+  // spostamento e fusione
+  const lone = gp.addNode(1000, 1000), lone2 = gp.addNode(1000, 1200); gp.addEdge(lone.id, lone2.id, 'small');
+  gp.moveNode(lone.id, 500.5, 0.3);
+  const merged = G.finishMove(gp, lone.id, 2);
+  check('nodo trascinato su un altro si fonde', merged === nB.id && !gp.node(lone.id) && gp.edgesOf(nB.id).length === 2);
+  // spostamento che crea un incrocio
+  const p1 = gp.addNode(-300, -300), p2 = gp.addNode(-300, -100); gp.addEdge(p1.id, p2.id, 'small');
+  gp.moveNode(p2.id, -300, 200);
+  G.finishMove(gp, p2.id, 2);
+  check('spostamento che attraversa una strada crea l\'incrocio', !!G.nearestNode(gp, { x: -300, y: 0 }, 0.5));
+  // cancellazioni
+  const cnt = gp.graph.nodes.length;
+  G.deleteEdge(gp, gp.edgesOf(p1.id)[0].id);
+  check('cancellare una strada rimuove i nodi rimasti soli', !gp.node(p1.id) && gp.graph.nodes.length < cnt);
+  // annulla del grafo
+  const hg = new CS2.brush.History();
+  hg.recordGraph(gp, 'test', before);
+  hg.undo(gp);
+  check('annulla ripristina il grafo', JSON.stringify(gp.graph) === before);
+  hg.redo(gp);
+  check('ripeti riapplica il grafo', JSON.stringify(gp.graph) !== before);
+  // nuovo tratto che passa sopra la fine di un'altra strada: la collega
+  const tp = new CS2.Project();
+  const t1 = tp.addNode(0, 0), t2 = tp.addNode(0, -100); tp.addEdge(t1.id, t2.id, 'small');
+  const t3 = tp.addNode(-100, -100), t4 = tp.addNode(100, -100);
+  G.addRoad(tp, t3.id, t4.id, 'small');
+  check('incrocio a T su un nodo esistente', tp.edgesOf(t2.id).length === 3);
+  // pendenza
+  const pg = new CS2.Project(); const PE = pg.layers.elevation;
+  for (let j = 0; j < PE.res; j++) for (let i = 0; i < PE.res; i++) PE.data[j * PE.res + i] = (i / PE.res) * 1433.6;   // 10%
+  PE.changed();
+  check('pendenza di un tratto ~10%', near(G.grade(pg, { x: -1000, y: 0 }, { x: 1000, y: 0 }), 10, 0.5));
 
   console.log(fails ? fails + ' / ' + n + ' test falliti' : 'OK: ' + n + ' test');
   process.exit(fails ? 1 : 0);

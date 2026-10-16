@@ -58,6 +58,17 @@
       </div>
     </section>
     <section class="box">
+      <h4>Strade</h4>
+      <div class="row">
+        <button class="btn" id="toolRoad" title="R">Disegna</button>
+        <button class="btn" id="toolSelect" title="V">Seleziona</button>
+      </div>
+      <label class="field">Tipo per le nuove strade <select id="roadType"></select></label>
+      <label class="field">Angoli guidati <select id="roadAngles"><option value="90">90°</option><option value="45">45°</option></select></label>
+      <div id="selInfo"></div>
+      <p class="hint">Disegna: click per ogni punto, Esc / tasto destro / doppio click per finire, Shift per angolo libero. Aggancio a nodi, strade (crea l'incrocio), angoli, multipli di 8 m e alla distanza CtC dalle strade parallele (linea verde).</p>
+    </section>
+    <section class="box">
       <h4>Vincoli</h4>
       <label class="field">Mostra
         <select id="anMode">
@@ -131,6 +142,7 @@
 <script src="js/core/storage.js"></script>
 <script src="js/core/brush.js"></script>
 <script src="js/core/analysis.js"></script>
+<script src="js/core/graph.js"></script>
 <script src="js/io/png16.js"></script>
 <script src="js/io/heightmap.js"></script>
 <script src="js/io/screenshot.js"></script>
