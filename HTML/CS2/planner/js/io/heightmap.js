@@ -28,6 +28,10 @@
     }
     E.changed();
     project.map.heightScale = scale;
+    // originale ad alta risoluzione (solo l'area giocabile) per un export senza perdita di dettaglio
+    const w = Math.round(sw), h = Math.round(sh), hi = new Uint16Array(w * h), f = 65535 / max;
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) hi[y * w + x] = Math.round(d[(Math.round(y0 + y) * img.width + Math.round(x0 + x)) * ch] * f);
+    project.hires = { w, h, scale, data: hi, base: new CS2.Raster(E.res, 'f32', E.data.slice()) };
   }
 
   async function importFile(project, file, opts) {

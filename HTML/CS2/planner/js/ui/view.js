@@ -127,17 +127,19 @@
     draw() {
       const p = this.getProject(), ctx = this.ctx, S = p.map.size, h = S / 2;
       ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
-      ctx.fillStyle = '#070809'; ctx.fillRect(0, 0, this.W, this.H);
+      if (this.transparent) ctx.clearRect(0, 0, this.W, this.H);       // export "solo strade e moduli"
+      else { ctx.fillStyle = '#070809'; ctx.fillRect(0, 0, this.W, this.H); }
       const X0 = this.sx(-h), Y0 = this.sy(-h), WW = S * this.cam.s;
 
       ctx.imageSmoothingEnabled = this.cam.s * S / p.layers.elevation.res < 3;   // pixel netti quando si zooma molto
-      if (this.show.terrain) ctx.drawImage(this.terrainImage(p), X0, Y0, WW, WW);
+      if (this.transparent) { /* niente terreno né strati */ }
+      else if (this.show.terrain) ctx.drawImage(this.terrainImage(p), X0, Y0, WW, WW);
       else { ctx.fillStyle = '#0d0f10'; ctx.fillRect(X0, Y0, WW, WW); }
-      ['fertile', 'forest', 'ore', 'oil', 'groundwater', 'industryPlan'].forEach(k => { if (this.show[k]) ctx.drawImage(this.resourceImage(p, k), X0, Y0, WW, WW); });
+      if (!this.transparent) ['fertile', 'forest', 'ore', 'oil', 'groundwater', 'industryPlan'].forEach(k => { if (this.show[k]) ctx.drawImage(this.resourceImage(p, k), X0, Y0, WW, WW); });
       if (this.analysis && this.analysis.mode !== 'none') ctx.drawImage(this.analysisImage(), X0, Y0, WW, WW);
       if (this.show.modules && this.modules) this.drawModules(p);
 
-      if (this.show.grid) {
+      if (this.show.grid && !this.transparent) {
         const step = this.cam.s * 1000 > 40 ? 1000 : 2000;
         ctx.strokeStyle = 'rgba(255,255,255,0.06)'; ctx.lineWidth = 1;
         for (let x = -h + step; x < h; x += step) { ctx.beginPath(); ctx.moveTo(this.sx(x), Y0); ctx.lineTo(this.sx(x), Y0 + WW); ctx.stroke(); }
@@ -148,8 +150,7 @@
       if (this.show.roads) this.drawRoads(p);
       if (this.show.modules && this.modules) this.drawProposals();
       this.overlays.forEach(f => f(ctx, this));
-      this.drawWind(p);
-      this.drawScale();
+      if (!this.transparent) { this.drawWind(p); this.drawScale(); }
     }
     drawRoads(p) {
       const ctx = this.ctx, byId = new Map(p.graph.nodes.map(n => [n.id, n])), sel = this.selection || {};

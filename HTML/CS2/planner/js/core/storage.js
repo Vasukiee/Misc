@@ -37,6 +37,30 @@
     } catch (e) { return null; }
   }
 
+  // heightmap originale ad alta risoluzione: binaria, separata dal progetto (troppo grande per il JSON)
+  async function putRaw(key, value) {
+    try {
+      const db = await openDb();
+      await new Promise((res, rej) => { const tx = db.transaction(STORE, 'readwrite'); tx.objectStore(STORE).put(value, key); tx.oncomplete = res; tx.onerror = () => rej(tx.error); });
+      return true;
+    } catch (e) { return false; }
+  }
+  async function getRaw(key) {
+    try {
+      const db = await openDb();
+      return await new Promise((res, rej) => { const r = db.transaction(STORE).objectStore(STORE).get(key); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+    } catch (e) { return null; }
+  }
+  function saveHires(project) {
+    const h = project.hires;
+    return putRaw('hires', h ? { created: project.created, w: h.w, h: h.h, scale: h.scale, data: h.data, base: h.base.data, baseRes: h.base.res } : null);
+  }
+  async function loadHires(project) {
+    const r = await getRaw('hires');
+    if (r && r.created === project.created && r.data) project.hires = { w: r.w, h: r.h, scale: r.scale, data: r.data, base: new CS2.Raster(r.baseRes, 'f32', r.base) };
+    return !!project.hires;
+  }
+
   async function gzip(text) {
     if (typeof CompressionStream === 'undefined') return new Blob([text], { type: 'application/json' });
     const s = new Blob([text]).stream().pipeThrough(new CompressionStream('gzip'));
@@ -64,5 +88,5 @@
     return CS2.Project.fromJSON(JSON.parse(await readText(file)));
   }
 
-  CS2.storage = { autosave, loadAutosave, downloadProject, openProjectFile };
+  CS2.storage = { autosave, loadAutosave, downloadProject, openProjectFile, saveHires, loadHires };
 })(typeof window !== 'undefined' ? window : globalThis);
