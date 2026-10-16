@@ -71,6 +71,9 @@ details summary { cursor: pointer; font-size: .75rem; color: var(--accent2); }
 .buf-grid input[type=number] { width: 70px; background: #0d0e10; border: 1px solid var(--muted); color: var(--accent3); font-family: inherit; padding: 2px 4px; font-size: .75rem; }
 .legend-list { display: flex; flex-direction: column; gap: 3px; font-size: .72rem; }
 .legend-list span.sw { margin-right: 6px; vertical-align: -2px; }
+.tips { list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: .72rem; margin-top: 6px; }
+.tips li { padding-left: 8px; border-left: 2px solid var(--muted); }
+.tips li.t-bad { border-left-color: #c85050; } .tips li.t-warn { border-left-color: #c8904a; } .tips li.t-good { border-left-color: #6db36d; }
 
 dialog#shotDlg { background: var(--panel); color: var(--text); border: 1px solid var(--accent); padding: 0; max-width: 96vw; max-height: 94vh; }
 dialog#shotDlg::backdrop { background: rgba(0,0,0,.7); }

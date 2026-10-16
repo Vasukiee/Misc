@@ -126,13 +126,43 @@
     clearTimeout(anTimer);
     anTimer = setTimeout(runAnalysis, delay === undefined ? 400 : delay);
   }
+  const MOD = CS2.modules;
+  let modules = null;
   function runAnalysis() {
     const t = performance.now();
-    analysis = AN.compute(project); anSig++;
+    // moduli → maschera industria → vincoli → vincoli sulle celle
+    modules = MOD.compute(project, project.settings.autoRoads, AN.compute);
+    analysis = modules.analysis; anSig++;
+    modules.sig = anSig;
+    view.modules = modules;
     view.analysis = { A: analysis, mode: $('anMode').value, sig: anSig };
-    view.draw(); renderAnalysis();
+    if (view.selection && view.selection.module) view.selection.moduleFace = MOD.faceAt(modules, view.selection.module);
+    view.draw(); renderAnalysis(); renderModules(); renderSelection();
     $('anStats').dataset.ms = Math.round(performance.now() - t);
   }
+  function renderModules() {
+    $('modAuto').textContent = 'Genera strade interne: ' + (project.settings.autoRoads ? 'ON' : 'OFF');
+    $('modAuto').classList.toggle('active', !!project.settings.autoRoads);
+    const T = modules && modules.totals;
+    if (!T) { $('modStats').innerHTML = ''; return; }
+    const ha = n => (n * 64 / 10000).toFixed(1) + ' ha', props = modules.faces.reduce((s, f) => s + (f.proposal ? f.proposal.segs.length : 0), 0);
+    $('modStats').innerHTML = kv('Moduli', T.modules) + kv('Zonabile', ha(T.zone)) + kv('Interno non zonabile', ha(T.interior)) + kv('Celle in conflitto', ha(T.conflict)) +
+      kv('Lotti su vincoli', ha(T.constrained)) + kv('Avvisi', T.warnings) + (project.settings.autoRoads ? kv('Strade proposte', props) : '');
+    $('modAcceptAll').disabled = !props;
+    const L = [['rgba(70,150,80,.7)', 'Zonabile (colore del tipo)'], ['rgb(25,25,25)', 'Interno: oltre 6 celle dalla strada'], ['rgb(230,60,200)', 'Conflitto tra griglie'],
+      ['rgb(230,140,40)', 'Sopra risorse da riservare'], ['rgb(150,100,50)', 'Sottovento all\'industria'], ['rgb(200,50,50)', 'Acqua / riva / troppo ripido'], ['rgb(220,200,60)', 'Pendenza da gestire'], ['rgb(70,150,220)', 'Industria sulla falda'], ['rgba(255,211,107,.9)', 'Strada proposta (tratteggio)']];
+    $('modLegend').innerHTML = L.map(([c, l]) => '<div><span class="sw" style="background:' + c + ';border:1px solid #333"></span>' + l + '</div>').join('');
+  }
+  $('modShow').addEventListener('change', e => { view.show.modules = e.target.checked; view.draw(); });
+  $('modAuto').addEventListener('click', () => { project.settings.autoRoads = !project.settings.autoRoads; changed(); renderModules(); });
+  function accept(faces) {
+    const before = JSON.stringify({ graph: project.graph, modules: project.modules });
+    let n = 0; faces.forEach(f => { n += MOD.acceptProposal(project, f); });
+    if (!n) return;
+    history.recordGraph(project, 'Accetta strade proposte', JSON.stringify(JSON.parse(before).graph));
+    view.selection = null; changed(); setStatus(n + ' strade aggiunte alla rete');
+  }
+  $('modAcceptAll').addEventListener('click', () => { if (modules) accept(modules.faces.filter(f => f.proposal && f.proposal.segs.length)); });
   function renderAnalysis() {
     const mode = $('anMode').value;
     $('anLegend').innerHTML = (LEGENDS[mode] || []).map(([c, l]) => '<div><span class="sw" style="background:' + c + ';border:1px solid #333"></span>' + l + '</div>').join('');
@@ -148,7 +178,7 @@
     $('anBuffers').innerHTML = Object.keys(P.buffers).map(k =>
       '<span>' + LAYERS[k].label + '</span><input type="number" min="0" max="3000" step="10" data-buf="' + k + '" value="' + P.buffers[k] + '">' +
       (k in P.reserve ? '<label class="check" title="Non coprire con case"><input type="checkbox" data-res="' + k + '"' + (P.reserve[k] ? ' checked' : '') + '>riserva</label>' : '<span class="hint">solo industria</span>')).join('');
-    $('anSources').innerHTML = Object.keys(P.plumeSources).map(k => '<label class="check"><input type="checkbox" data-src="' + k + '"' + (P.plumeSources[k] ? ' checked' : '') + '>' + LAYERS[k].label + '</label>').join('');
+    $('anSources').innerHTML = Object.keys(P.plumeSources).map(k => '<label class="check"><input type="checkbox" data-src="' + k + '"' + (P.plumeSources[k] ? ' checked' : '') + '>' + (LAYERS[k] ? LAYERS[k].label : 'Moduli di tipo industria') + '</label>').join('');
     $('anBuffers').querySelectorAll('[data-buf]').forEach(el => el.addEventListener('change', () => { setParam(a => { a.buffers = Object.assign({}, a.buffers, { [el.dataset.buf]: Math.max(0, +el.value || 0) }); }); }));
     $('anBuffers').querySelectorAll('[data-res]').forEach(el => el.addEventListener('change', () => { setParam(a => { a.reserve = Object.assign({}, a.reserve, { [el.dataset.res]: el.checked }); }); }));
     $('anSources').querySelectorAll('[data-src]').forEach(el => el.addEventListener('change', () => { setParam(a => { a.plumeSources = Object.assign({}, a.plumeSources, { [el.dataset.src]: el.checked }); }); }));
@@ -217,7 +247,7 @@
     const st = road.chain ? project.node(road.chain) : null;
     // curva, secondo click: il punto di controllo resta sulla tangente della strada precedente
     if (st && road.shape === 'curve' && !road.ctrl) {
-      if (road.prevDir && !free) {
+      if (road.prevDir && road.lock && !free) {
         const t = Math.max(CS2.roads.CELL, Math.round(Gm.dot(Gm.sub(w, st), road.prevDir) / CS2.roads.CELL) * CS2.roads.CELL);
         return { pt: Gm.add(st, Gm.mul(road.prevDir, t)), tangent: true };
       }
@@ -232,6 +262,7 @@
       road.before = JSON.stringify(project.graph);
       const n = G.nodeAt(project, sn.pt, sn);
       road.chain = n.id; road.prevDir = firstDir(n.id);
+      road.lock = project.edgesOf(n.id).length === 1;     // si prosegue una strada solo da un fondo cieco
       return;
     }
     const st = project.node(road.chain);
@@ -248,7 +279,7 @@
       made = G.addRoad(project, road.chain, n.id, road.type);
       road.prevDir = Gm.norm(Gm.sub(n, st));
     }
-    road.chain = n.id;
+    road.chain = n.id; road.lock = true;
     setStatus(made.length + ' tratti aggiunti · Esc o tasto destro per finire');
     view.draw(); renderPanel();
   }
@@ -316,6 +347,19 @@
   }
   function renderSelection() {
     const sel = view.selection, el = $('selInfo');
+    if (sel && sel.module) {
+      const f = sel.moduleFace; if (!f) { el.innerHTML = ''; return; }
+      const s = f.stats, ha = n => (n * 64 / 10000).toFixed(1) + ' ha', pc = n => s.cells ? Math.round(100 * n / s.cells) + '%' : '—';
+      el.innerHTML = '<h4 style="margin-top:6px;">Modulo</h4>' +
+        '<label class="field">Tipo <select id="modType">' + Object.keys(MOD.TYPES).map(k => '<option value="' + k + '"' + (k === f.type ? ' selected' : '') + '>' + MOD.TYPES[k].label + '</option>').join('') + '</select></label>' +
+        kv('Superficie (senza strade)', ha(s.cells)) + kv('Zonabile', pc(s.zone)) + kv('Interno', pc(s.interior)) + kv('Conflitto', pc(s.conflict)) +
+        (f.proposal ? kv('Fronte', ROAD_TYPES[f.proposal.frontType].label) + (f.proposal.first ? kv('Prima locale dal fronte', Math.round(f.proposal.first) + ' m') : '') + kv('Strade proposte', f.proposal.segs.length + (f.proposal.tooSmall ? ' (area piccola)' : '')) : '') +
+        (f.proposal && f.proposal.segs.length ? '<button class="btn primary" id="modAccept">Accetta strade proposte</button>' : '') +
+        '<ul class="tips">' + f.warnings.map(w => '<li class="t-' + w[0] + '">' + w[1] + '</li>').join('') + '</ul>';
+      $('modType').addEventListener('change', ev => { MOD.setType(project, f, ev.target.value); changed(); });
+      if ($('modAccept')) $('modAccept').addEventListener('click', () => accept([f]));
+      return;
+    }
     if (!sel || (!sel.edge && !sel.node)) { el.innerHTML = tool.mode === 'select' ? '<p class="hint">Clicca una strada o un nodo. Trascina i nodi per spostarli; Canc per eliminare.</p>' : ''; return; }
     if (sel.edge) {
       const e = project.graph.edges.find(x => x.id === sel.edge); if (!e) { view.selection = null; return renderSelection(); }
@@ -385,6 +429,7 @@
     if (tool.mode === 'select' && e.button === 0) {
       const h = hitTest(w);
       if (h && h.handle) { shaping = { edge: h.edge, kind: h.handle, before: JSON.stringify(project.graph), moved: false }; view.selection = { edge: h.edge, hoverHandle: h.handle }; view.draw(); return; }
+      if (!h && modules) { const f = MOD.faceAt(modules, w); if (f) { view.selection = { module: w, moduleFace: f }; renderSelection(); view.draw(); return; } }
       view.selection = h; renderSelection();
       if (h && h.node) { moving = { id: h.node, before: JSON.stringify(project.graph), moved: false }; view.draw(); return; }
       view.draw();

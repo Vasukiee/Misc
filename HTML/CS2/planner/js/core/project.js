@@ -43,6 +43,8 @@
       });
       this.graph = o.graph || { nodes: [], edges: [], nextId: 1 };
       this.analysis = o.analysis || {};          // parametri dei vincoli (vedi analysis.js)
+      this.modules = o.modules || [];            // tipo dei moduli: [{ x, y, type }] (un punto dentro l'area)
+      this.settings = Object.assign({ autoRoads: true }, o.settings);
       this.created = o.created || new Date().toISOString();
       this.modified = o.modified || this.created;
     }
@@ -98,7 +100,7 @@
       });
       return {
         format: FORMAT, version: VERSION,
-        name: this.name, map: this.map, wind: this.wind, sources: this.sources, analysis: this.analysis,
+        name: this.name, map: this.map, wind: this.wind, sources: this.sources, analysis: this.analysis, modules: this.modules, settings: this.settings,
         created: this.created, modified: this.modified,
         graph: this.graph, layers
       };
@@ -127,7 +129,9 @@
       const ids = new Set(graph.nodes.map(n => n.id));
       graph.edges = graph.edges.filter(e => ids.has(e.a) && ids.has(e.b));
       graph.nextId = Math.max(graph.nextId, 1 + Math.max(0, ...graph.nodes.map(n => n.id), ...graph.edges.map(e => e.id)));
-      return new Project({ name: o.name, map: o.map, wind: o.wind, sources: o.sources, analysis: o.analysis, created: o.created, modified: o.modified, layers, graph });
+      return new Project({ name: o.name, map: o.map, wind: o.wind, sources: o.sources, analysis: o.analysis, settings: o.settings,
+        modules: (o.modules || []).filter(m => Number.isFinite(m.x) && Number.isFinite(m.y) && typeof m.type === 'string'),
+        created: o.created, modified: o.modified, layers, graph });
     }
   }
 

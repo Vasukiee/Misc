@@ -11,9 +11,9 @@
     shore: 50,               // m di rispetto dalla riva
     threshold: 64,           // 0..255: da quale intensità una risorsa conta
     buffers: { ore: 200, oil: 200, forest: 0, fertile: 0, groundwater: 150 },   // m
-    reserve: { ore: true, oil: true, forest: true, fertile: true },             // risorse da non coprire con case
+    reserve: { ore: true, oil: true, forest: false, fertile: false },           // risorse da non coprire con case (foresta e terra fertile: a scelta)
     plumeLength: 2000,       // m di pennacchio sottovento
-    plumeSources: { ore: true, oil: true, industryPlan: true }
+    plumeSources: { ore: true, oil: true, industryPlan: true, industryModules: true }
   };
 
   // CATEGORIE del riepilogo (valori nel raster)
@@ -102,6 +102,10 @@
     const elev = resample(L.elevation), waterX = resample(L.water);
     const res = {};
     ['ore', 'oil', 'forest', 'fertile', 'groundwater', 'industryPlan'].forEach(k => { res[k] = resample(L[k]); });
+    // celle dei moduli di tipo industria (calcolate da modules.js), 0..1 → scala 0..255
+    const im = project.derived && project.derived.industryMask;
+    res.industryModules = new Float32Array(N);
+    if (im && im.length === N) for (let q = 0; q < N; q++) res.industryModules[q] = im[q] * 255;
 
     // pendenza in %
     const slope = new Float32Array(N);
@@ -149,7 +153,7 @@
       if (blocked) g = INDUSTRY.BLOCKED;
       else if (inBuf('groundwater', q)) g = INDUSTRY.GROUNDWATER;
       else if (slope[q] > P.slopeWarn) g = INDUSTRY.SLOPE;
-      else if (inBuf('ore', q) || inBuf('oil', q) || res.industryPlan[q] >= P.threshold) g = INDUSTRY.GOOD;
+      else if (inBuf('ore', q) || inBuf('oil', q) || res.industryPlan[q] >= P.threshold || res.industryModules[q] > 0) g = INDUSTRY.GOOD;
       industry[q] = g;
     }
     Object.keys(stat).forEach(k => stat[k] = stat[k] / N);
