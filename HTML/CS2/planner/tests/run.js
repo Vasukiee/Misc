@@ -2,7 +2,7 @@
 'use strict';
 const fs = require('fs'), path = require('path'), vm = require('vm');
 // gli script si registrano su globalThis.CS2 come nel browser
-['core/util', 'core/geom', 'core/roads', 'core/raster', 'core/project', 'core/brush', 'core/analysis', 'core/graph', 'core/modules', 'io/png16', 'io/heightmap', 'io/screenshot'].forEach(f =>
+['core/util', 'core/geom', 'core/roads', 'core/raster', 'core/project', 'core/brush', 'core/analysis', 'core/graph', 'core/modules', 'io/png16', 'io/heightmap', 'io/screenshot', 'io/export'].forEach(f =>
   vm.runInThisContext(fs.readFileSync(path.join(__dirname, '..', 'js', f + '.js'), 'utf8'), { filename: f + '.js' }));
 const { CS2 } = globalThis;
 
@@ -346,6 +346,29 @@ function pngEncode(w, h, ch, bd, samples, filterOf) {
   check('le aree nuove ereditano la fase', M.extractFaces(ga).every(f => M.phaseOf(ga, f) === 4));
   const gj = CS2.Project.fromJSON(JSON.parse(JSON.stringify(gr.toJSON())));
   check('fasi salvate', gj.modules.filter(m => Number.isFinite(m.phase)).length === 3);
+
+  // ---------------------------------------------------------------- export
+  const EX = CS2.exporter;
+  check('CRC32 standard', EX.crc32(new Uint8Array([73, 69, 78, 68])) === 0xAE426082);
+  const ev = new Uint16Array(64 * 32); for (let k = 0; k < ev.length; k++) ev[k] = (k * 40503) & 65535;
+  const eb = await EX.encodePNG16(64, 32, ev);
+  const dec = await CS2.png16.decode(await eb.arrayBuffer());
+  check('PNG 16 bit esportato e riletto identico', dec.width === 64 && dec.height === 32 && dec.bitDepth === 16 && ev.every((v, k) => dec.data[k] === v));
+  // heightmap: originale ad alta risoluzione + modifiche
+  const xp = new CS2.Project(), HR = 256;
+  const orig = []; for (let y = 0; y < HR; y++) for (let x = 0; x < HR; x++) orig.push(Math.round((0.1 + 0.3 * ((x * 7 + y * 13) % 17) / 17) * 65535));   // dettaglio fine
+  CS2.heightmap.applyToProject(xp, { width: HR, height: HR, channels: 1, bitDepth: 16, data: orig }, { world: false, heightScale: 4096 });
+  let hv = EX.heightValues(xp, HR);
+  check('export senza modifiche = originale (dettaglio conservato)', hv.usedHires && hv.values.every((v, k) => Math.abs(v - orig[k]) <= 2));
+  CS2.brush.dab(xp, 'elevation', { x: 0, y: 0, radius: 1500, strength: 1, mode: 'raise' });
+  hv = EX.heightValues(xp, HR);
+  const cIdx = (HR / 2) * HR + HR / 2, far = 5 * HR + 5;
+  check('modifica applicata al centro', hv.values[cIdx] > orig[cIdx] + 100);
+  check('lontano dalla modifica resta l\'originale', Math.abs(hv.values[far] - orig[far]) <= 2);
+  xp.hires = null;
+  check('senza originale: ricavata dall\'elevazione', !EX.heightValues(xp, 64).usedHires);
+  const pj2 = EX.planJSON(gr, M.compute(gr, false, null));
+  check('piano JSON: strade, moduli e fasi', pj2.strade.length === gr.graph.edges.length && pj2.moduli.length === 3 && pj2.fasi.length === new Set(pj2.moduli.map(m => m.fase)).size);
 
   // pendenza
   const pg = new CS2.Project(); const PE = pg.layers.elevation;

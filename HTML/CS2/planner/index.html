@@ -94,6 +94,19 @@
       <p class="hint">Abitanti e posti di lavoro sono stime per ettaro zonabile, non valori del gioco. Una strada appartiene alla fase più bassa tra i moduli che delimita.</p>
     </section>
     <section class="box">
+      <h4>Esporta</h4>
+      <div class="row">
+        <label class="field" style="flex:1">Immagine guida
+          <select id="exSize"><option value="1024">1024 px (14 m/px)</option><option value="2048" selected>2048 px (7 m/px)</option><option value="4096">4096 px (3,5 m/px)</option></select>
+        </label>
+      </div>
+      <label class="check"><input type="checkbox" id="exTransparent"> Sfondo trasparente (solo strade e moduli)</label>
+      <button class="btn" id="exGuide">Scarica immagine guida (PNG)</button>
+      <button class="btn" id="exHeight" title="PNG 4096×4096 a 16 bit in scala di grigi, come la vuole l'editor del gioco">Scarica heightmap modificata</button>
+      <button class="btn" id="exPlan">Scarica piano (JSON)</button>
+      <p class="hint" id="exInfo">L'immagine guida usa i layer attivi e la fase mostrata. La heightmap va nella cartella Heightmaps del gioco e si importa dall'editor.</p>
+    </section>
+    <section class="box">
       <h4>Vincoli</h4>
       <label class="field">Mostra
         <select id="anMode">
@@ -172,6 +185,7 @@
 <script src="js/io/png16.js"></script>
 <script src="js/io/heightmap.js"></script>
 <script src="js/io/screenshot.js"></script>
+<script src="js/io/export.js"></script>
 <script src="js/ui/view.js"></script>
 <script src="js/ui/screenshotDialog.js"></script>
 <script src="js/app.js"></script>

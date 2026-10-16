@@ -104,6 +104,7 @@
     try {
       const { img, warn } = await CS2.heightmap.importFile(project, f, { world: $('hmWorld').checked, heightScale: Math.max(1, +$('hmScale').value || 4096) });
       history.recordWhole(project, 'elevation', 'Import heightmap', before);
+      storage.saveHires(project);
       view.cache = {}; changed();
       setStatus('Heightmap importata: ' + img.width + '×' + img.height + ', ' + img.bitDepth + ' bit');
       if (warn.length) alert(warn.join('\n'));
@@ -224,6 +225,28 @@
   });
   const HOUSING_TXT = ['adatto alle case', 'pendenza da gestire', 'sottovento all\'industria', 'risorsa da riservare', 'non costruibile'];
 
+  // ------------------------------------------------------------ export
+  const EX = CS2.exporter;
+  const fileBase = () => (project.name.replace(/[^\w\-àèéìòù ]+/gi, '').trim().replace(/\s+/g, '_') || 'citta');
+  $('exGuide').addEventListener('click', async () => {
+    setStatus('Preparo l\'immagine…');
+    const blob = await EX.guideImage(view, { size: +$('exSize').value, transparent: $('exTransparent').checked });
+    EX.download(blob, fileBase() + '_guida_' + $('exSize').value + '.png'); setStatus('Immagine guida scaricata');
+  });
+  $('exHeight').addEventListener('click', async () => {
+    setStatus('Preparo la heightmap 4096×4096…');
+    const t = performance.now();
+    const { blob, usedHires } = await EX.heightmapPNG(project, 4096);
+    EX.download(blob, fileBase() + '_heightmap.png');
+    setStatus('Heightmap scaricata (' + Math.round((performance.now() - t) / 100) / 10 + ' s)');
+    $('exInfo').textContent = usedHires ? 'Heightmap: originale a piena risoluzione + le tue modifiche.'
+      : 'Attenzione: originale ad alta risoluzione non disponibile (progetto aperto da file o terreno creato qui): la heightmap è ricavata dall\'elevazione a 14 m/pixel. Reimporta la heightmap originale prima di modificare se ti serve tutto il dettaglio.';
+  });
+  $('exPlan').addEventListener('click', () => {
+    const blob = new Blob([JSON.stringify(EX.planJSON(project, modules), null, 2)], { type: 'application/json' });
+    EX.download(blob, fileBase() + '_piano.json'); setStatus('Piano scaricato');
+  });
+
   // ------------------------------------------------------------ strumenti
   const tool = { mode: 'pan', layer: 'elevation', brush: 'raise', radius: 300, strength: 0.5, target: 100, cursor: null };
   function syncTool() {
@@ -262,7 +285,7 @@
   $('brushRadius').addEventListener('input', e => { tool.radius = +e.target.value; syncTool(); view.draw(); });
   $('brushStrength').addEventListener('input', e => { tool.strength = +e.target.value / 100; syncTool(); });
   $('brushTarget').addEventListener('change', e => { tool.target = +e.target.value || 0; });
-  function undo() { endChain(); const e = history.undo(project); if (e) { view.cache = {}; changed(); setStatus('Annullato: ' + e.label); } }
+  function undo() { endChain(); const e = history.undo(project); if (e && e.label === 'Import heightmap') { project.hires = null; storage.saveHires(project); } if (e) { view.cache = {}; changed(); setStatus('Annullato: ' + e.label); } }
   function redo() { const e = history.redo(project); if (e) { view.cache = {}; changed(); setStatus('Ripristinato: ' + e.label); } }
   $('btnUndo').addEventListener('click', undo);
   $('btnRedo').addEventListener('click', redo);
@@ -592,7 +615,7 @@
   // ------------------------------------------------------------ avvio
   view.resize(); view.fit(); syncTool();
   storage.loadAutosave().then(p => {
-    if (p) setProject(p, 'Ripreso l\'ultimo progetto salvato nel browser');
+    if (p) { setProject(p, 'Ripreso l\'ultimo progetto salvato nel browser'); storage.loadHires(p); }
     else { view.draw(); renderPanel(); syncInputs(); setStatus('Progetto vuoto'); }
   });
 })(window);
