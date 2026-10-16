@@ -137,7 +137,7 @@
     view.modules = modules;
     view.analysis = { A: analysis, mode: $('anMode').value, sig: anSig };
     if (view.selection && view.selection.module) view.selection.moduleFace = MOD.faceAt(modules, view.selection.module);
-    view.draw(); renderAnalysis(); renderModules(); renderSelection();
+    renderGrowth(); view.draw(); renderAnalysis(); renderModules(); renderSelection();
     $('anStats').dataset.ms = Math.round(performance.now() - t);
   }
   function renderModules() {
@@ -153,6 +153,37 @@
       ['rgb(230,140,40)', 'Sopra risorse da riservare'], ['rgb(150,100,50)', 'Sottovento all\'industria'], ['rgb(200,50,50)', 'Acqua / riva / troppo ripido'], ['rgb(220,200,60)', 'Pendenza da gestire'], ['rgb(70,150,220)', 'Industria sulla falda'], ['rgba(255,211,107,.9)', 'Strada proposta (tratteggio)']];
     $('modLegend').innerHTML = L.map(([c, l]) => '<div><span class="sw" style="background:' + c + ';border:1px solid #333"></span>' + l + '</div>').join('');
   }
+  function renderGrowth() {
+    const g = modules && modules.growth; if (!g) return;
+    const sl = $('phaseShow');
+    sl.max = Math.max(1, g.maxPhase);
+    if (+sl.value > g.maxPhase) sl.value = 0;
+    const cur = +sl.value;
+    view.maxPhase = cur ? cur : null;
+    $('vPhase').textContent = cur ? 'fase ' + cur + ' di ' + g.maxPhase : 'tutto';
+    if (!g.rows.length) { $('growthTable').innerHTML = '<p class="hint">Nessuna fase assegnata. Usa "Pianifica a click" o "Suggerisci ordine".</p>'; return; }
+    const ha = x => x.toFixed(0), k = x => x >= 1000 ? (x / 1000).toFixed(1) + 'k' : Math.round(x);
+    let h = '<table class="gtable"><tr><th>Fase</th><th>Moduli</th><th>Zon. ha</th><th>Abit.</th><th>Lavoro</th><th>Strade km</th></tr>';
+    g.rows.forEach(r => {
+      const km = Object.keys(r.km).map(t => ROAD_TYPES[t].label.split(' ')[0].slice(0, 3) + ' ' + r.km[t].toFixed(1)).join(', ');
+      h += '<tr class="' + (!cur || r.phase <= cur ? 'on' : '') + '"><td>F' + r.phase + '</td><td>' + r.modules + '</td><td>' + ha(r.zone) + '</td><td>' + k(r.cumRes) + '</td><td>' + k(r.cumJobs) + '</td><td title="' + km + '">' + Object.values(r.km).reduce((a, b) => a + b, 0).toFixed(1) + '</td></tr>';
+    });
+    h += '</table>';
+    if (g.unplanned) h += '<p class="hint">' + g.unplanned + ' moduli senza fase.</p>';
+    if (g.warn.length) h += '<ul class="tips">' + g.warn.slice(0, 8).map(w => '<li class="t-warn">' + w[1] + '</li>').join('') + (g.warn.length > 8 ? '<li>… altri ' + (g.warn.length - 8) + '</li>' : '') + '</ul>';
+    $('growthTable').innerHTML = h;
+  }
+  $('phaseShow').addEventListener('input', () => { renderGrowth(); view.draw(); });
+  $('phaseSuggest').addEventListener('click', () => {
+    if (!modules || !modules.faces.length) return;
+    const start = view.selection && view.selection.moduleFace;
+    const n = MOD.suggestOrder(project, modules, start);
+    changed(); setStatus('Ordine suggerito per ' + n + ' moduli' + (start ? ' a partire dal modulo selezionato' : ''));
+  });
+  $('phaseClear').addEventListener('click', () => {
+    if (!confirm('Togliere la fase da tutti i moduli?')) return;
+    (project.modules || []).forEach(m => delete m.phase); $('phaseNext').value = 1; $('phaseShow').value = 0; changed();
+  });
   $('modShow').addEventListener('change', e => { view.show.modules = e.target.checked; view.draw(); });
   $('modAuto').addEventListener('click', () => { project.settings.autoRoads = !project.settings.autoRoads; changed(); renderModules(); });
   function accept(faces) {
@@ -209,6 +240,8 @@
     $('map').style.cursor = tool.mode === 'brush' || tool.mode === 'road' ? 'crosshair' : tool.mode === 'select' ? 'default' : 'grab';
     $('toolRoad').classList.toggle('active', tool.mode === 'road');
     $('toolSelect').classList.toggle('active', tool.mode === 'select');
+    $('toolPhase').classList.toggle('active', tool.mode === 'phase');
+    if (tool.mode === 'phase') $('map').style.cursor = 'pointer';
     view.showNodes = tool.mode === 'road' || tool.mode === 'select';
     if (tool.mode !== 'road') endChain();
     if (tool.mode !== 'select') { view.selection = null; renderSelection(); }
@@ -219,6 +252,7 @@
   $('toolBrush').addEventListener('click', () => setMode('brush'));
   $('toolRoad').addEventListener('click', () => setMode('road'));
   $('toolSelect').addEventListener('click', () => setMode('select'));
+  $('toolPhase').addEventListener('click', () => setMode(tool.mode === 'phase' ? 'pan' : 'phase'));
   $('brushLayer').addEventListener('change', e => {
     tool.layer = e.target.value; syncTool();
     const key = tool.layer === 'elevation' ? 'terrain' : tool.layer;
@@ -352,11 +386,13 @@
       const s = f.stats, ha = n => (n * 64 / 10000).toFixed(1) + ' ha', pc = n => s.cells ? Math.round(100 * n / s.cells) + '%' : '—';
       el.innerHTML = '<h4 style="margin-top:6px;">Modulo</h4>' +
         '<label class="field">Tipo <select id="modType">' + Object.keys(MOD.TYPES).map(k => '<option value="' + k + '"' + (k === f.type ? ' selected' : '') + '>' + MOD.TYPES[k].label + '</option>').join('') + '</select></label>' +
+        '<label class="field">Fase di costruzione <input id="modPhase" type="number" min="1" step="1" value="' + (f.phase === null ? '' : f.phase) + '" placeholder="non pianificato"></label>' +
         kv('Superficie (senza strade)', ha(s.cells)) + kv('Zonabile', pc(s.zone)) + kv('Interno', pc(s.interior)) + kv('Conflitto', pc(s.conflict)) +
         (f.proposal ? kv('Fronte', ROAD_TYPES[f.proposal.frontType].label) + (f.proposal.first ? kv('Prima locale dal fronte', Math.round(f.proposal.first) + ' m') : '') + kv('Strade proposte', f.proposal.segs.length + (f.proposal.tooSmall ? ' (area piccola)' : '')) : '') +
         (f.proposal && f.proposal.segs.length ? '<button class="btn primary" id="modAccept">Accetta strade proposte</button>' : '') +
         '<ul class="tips">' + f.warnings.map(w => '<li class="t-' + w[0] + '">' + w[1] + '</li>').join('') + '</ul>';
       $('modType').addEventListener('change', ev => { MOD.setType(project, f, ev.target.value); changed(); });
+      $('modPhase').addEventListener('change', ev => { const v = ev.target.value === '' ? null : +ev.target.value; MOD.setPhase(project, f, v); changed(); });
       if ($('modAccept')) $('modAccept').addEventListener('click', () => accept([f]));
       return;
     }
@@ -394,6 +430,7 @@
     else if (k === 'r') setMode('road');
     else if (k === 'v') setMode('select');
     else if (k === 'h') setMode('pan');
+    else if (k === 'p') setMode('phase');
     else if ((k === 'delete' || k === 'backspace') && tool.mode === 'select') { e.preventDefault(); deleteSelection(); }
   });
   view.overlays.push((ctx, v) => {
@@ -425,6 +462,16 @@
     if (tool.mode === 'road') {
       if (e.button === 0) { roadClick(w, e.shiftKey); road.snap = computeSnap(w, e.shiftKey); view.draw(); return; }
       if (e.button === 2 && road.chain) { endChain(); return; }
+    }
+    if (tool.mode === 'phase' && e.button === 0 && modules) {
+      const f = MOD.faceAt(modules, w);
+      if (f) {
+        const ph = Math.max(1, +$('phaseNext').value || 1);
+        MOD.setPhase(project, f, ph);
+        if ($('phaseAuto').checked) $('phaseNext').value = ph + 1;
+        changed(); setStatus('Modulo assegnato alla fase ' + ph);
+      }
+      return;
     }
     if (tool.mode === 'select' && e.button === 0) {
       const h = hitTest(w);

@@ -23,6 +23,7 @@
       this.W = 800; this.H = 600; this.dpr = 1;
       this.show = { terrain: true, grid: true, fertile: true, forest: true, ore: true, oil: true, groundwater: true, industryPlan: true, water: true, roads: true, modules: true };
       this.modules = null;     // risultato di CS2.modules.compute
+      this.maxPhase = null;    // piano di crescita: mostra solo fino a questa fase (null = tutto)
       this.analysis = null;    // { A, mode, sig } impostato dall'app
       this.cache = {};
       this.overlays = [];      // funzioni (ctx, view) disegnate sopra, per gli strumenti futuri
@@ -164,6 +165,11 @@
       };
       edges.forEach(e => {
         const t = ROAD_TYPES[e.type];
+        if (this.edgeFuture(e)) {
+          ctx.strokeStyle = 'rgba(200,200,200,0.3)'; ctx.lineWidth = 1.2; ctx.setLineDash([4, 5]);
+          path(e); ctx.stroke(); ctx.setLineDash([]);
+          return;
+        }
         const hl = sel.edge === e.id || sel.hoverEdge === e.id;
         if (hl) {
           ctx.strokeStyle = sel.edge === e.id ? '#ffd36b' : 'rgba(255,211,107,0.5)';
@@ -209,6 +215,12 @@
       this.modules.faces.forEach(f => {
         const tc = M.TYPES[f.type].color;
         ctx.beginPath(); f.poly.forEach((q, i) => i ? ctx.lineTo(this.sx(q.x), this.sy(q.y)) : ctx.moveTo(this.sx(q.x), this.sy(q.y))); ctx.closePath();
+        if (this.isFuture(f)) {
+          ctx.fillStyle = 'rgba(255,255,255,0.03)'; ctx.fill();
+          ctx.setLineDash([4, 6]); ctx.strokeStyle = 'rgba(200,200,200,0.25)'; ctx.lineWidth = 1; ctx.stroke(); ctx.setLineDash([]);
+          if (sel.module && f === sel.moduleFace) { ctx.strokeStyle = '#ffd36b'; ctx.lineWidth = 2; ctx.stroke(); }
+          return;
+        }
         ctx.fillStyle = 'rgba(' + tc.join(',') + ',0.10)'; ctx.fill();
         if (!f.img || f.imgSig !== sig) {
           const x0 = Math.floor(f.bbox.x0 / 8) * 8, y0 = Math.floor(f.bbox.y0 / 8) * 8;
@@ -228,11 +240,19 @@
       });
       ctx.imageSmoothingEnabled = true;
     }
+    isFuture(f) { return this.maxPhase !== null && (f.phase === null || f.phase > this.maxPhase); }
+    edgeFuture(e) {
+      if (this.maxPhase === null || !this.modules || !this.modules.growth) return false;
+      const m = this.modules.growth.edgePhase;
+      if (!m.has(e.id)) return false;
+      const ph = m.get(e.id);
+      return ph === null || ph > this.maxPhase;
+    }
     drawProposals() {
       const ctx = this.ctx;
       ctx.setLineDash([7, 5]); ctx.lineCap = 'butt';
       this.modules.faces.forEach(f => {
-        if (!f.proposal) return;
+        if (!f.proposal || this.isFuture(f)) return;
         f.proposal.segs.forEach(s => {
           ctx.strokeStyle = s.type === 'medium' ? 'rgba(255,211,107,0.95)' : 'rgba(255,211,107,0.7)';
           ctx.lineWidth = Math.max(1.2, ROAD_TYPES[s.type].w * this.cam.s * 0.7);
@@ -245,7 +265,11 @@
       this.modules.faces.forEach(f => {
         if ((f.bbox.x1 - f.bbox.x0) * this.cam.s < 70 || !f.stats.cells) return;
         const q = CS2.modules.interiorPoint(f), bad = f.warnings.filter(w => w[0] !== 'good').length;
-        const txt = Math.round(100 * f.stats.zone / f.stats.cells) + '% zonabile' + (bad ? ' · ⚠ ' + bad : '');
+        if (this.isFuture(f)) {
+          if (f.phase === null) return;
+          ctx.fillStyle = 'rgba(200,200,200,0.45)'; ctx.fillText('F' + f.phase, this.sx(q.x), this.sy(q.y)); return;
+        }
+        const txt = (f.phase !== null ? 'F' + f.phase + ' · ' : '') + Math.round(100 * f.stats.zone / f.stats.cells) + '% zonabile' + (bad ? ' · ⚠ ' + bad : '');
         const w = ctx.measureText(txt).width + 8;
         ctx.fillStyle = 'rgba(9,10,11,0.8)'; ctx.fillRect(this.sx(q.x) - w / 2, this.sy(q.y) - 8, w, 16);
         ctx.fillStyle = bad ? '#e8b060' : '#a8d0a8'; ctx.fillText(txt, this.sx(q.x), this.sy(q.y));
