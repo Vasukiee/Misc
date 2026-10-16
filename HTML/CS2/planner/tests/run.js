@@ -1,12 +1,10 @@
 // Test del modello dati. Uso: node HTML/CS2/planner/tests/run.js
 'use strict';
 const fs = require('fs'), path = require('path'), vm = require('vm');
-const ctx = { console, Buffer, Math, JSON, Date, Error, Set, Map, Blob, Response, DecompressionStream };
-ctx.globalThis = ctx;
-vm.createContext(ctx);
-['core/util', 'core/geom', 'core/roads', 'core/raster', 'core/project', 'core/brush', 'io/png16', 'io/heightmap', 'io/screenshot'].forEach(f =>
-  vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'js', f + '.js'), 'utf8'), ctx, { filename: f + '.js' }));
-const { CS2 } = ctx;
+// gli script si registrano su globalThis.CS2 come nel browser
+['core/util', 'core/geom', 'core/roads', 'core/raster', 'core/project', 'core/brush', 'core/analysis', 'io/png16', 'io/heightmap', 'io/screenshot'].forEach(f =>
+  vm.runInThisContext(fs.readFileSync(path.join(__dirname, '..', 'js', f + '.js'), 'utf8'), { filename: f + '.js' }));
+const { CS2 } = globalThis;
 
 let fails = 0, n = 0;
 function check(name, cond) { n++; if (!cond) { fails++; console.log('FAIL', name); } }
@@ -137,6 +135,36 @@ function pngEncode(w, h, ch, bd, samples, filterOf) {
   CS2.brush.dab(bp, 'ore', { x: 0, y: 0, radius: 500, strength: 1, mode: 'erase' });
   check('cancella risorsa', bp.layerAt('ore', 0, 0) < 10);
   check('pennello fuori mappa: nessun effetto', CS2.brush.dab(bp, 'ore', { x: 99999, y: 0, radius: 100, strength: 1, mode: 'paint' }) === null);
+
+  // ---------------------------------------------------------------- vincoli
+  const ap = new CS2.Project(); const E = ap.layers.elevation, en = E.res, S = ap.map.size;
+  // rampa est-ovest: 10% (1 m ogni 10 m) nella metà est, piano nella metà ovest
+  for (let j = 0; j < en; j++) for (let i = 0; i < en; i++) { const x = (i + 0.5) / en * S - S / 2; E.data[j * en + i] = 100 + Math.max(0, x) * 0.10; }
+  E.changed();
+  ap.wind.from = 90;                          // da est: l'inquinamento va verso ovest
+  // minerali in un quadrato a est del centro
+  const O = ap.layers.ore; for (let j = 240; j < 272; j++) for (let i = 150; i < 180; i++) O.set(i, j, 255); O.changed();
+  ap.analysis = { slopeMax: 20 };
+  let A = CS2.analysis.compute(ap);
+  const at = (x, y) => CS2.analysis.at(A, ap, x, y);
+  check('pendenza su rampa 10%', near(at(3000, 0).slope, 10, 0.6));
+  check('pendenza in piano 0%', near(at(-3000, 0).slope, 0, 0.1));
+  check('pendenza 10% > attenzione 6% → categoria "pendenza"', at(5000, 3000).housing === CS2.analysis.HOUSING.SLOPE);
+  const oreX = ((165 + 0.5) / 512 - 0.5) * S;
+  check('sopra i minerali → da riservare', at(oreX, 0).housing === CS2.analysis.HOUSING.RESERVED);
+  check('pennacchio sottovento (ovest) > sopravento (est)', at(oreX - 1200, 0).plume > 0.2 && at(oreX + 1200, 0).plume < 0.02);
+  check('ovest dei minerali → sottovento per le case', at(oreX - 1000, 0).housing === CS2.analysis.HOUSING.PLUME || at(oreX - 1000, 0).housing === CS2.analysis.HOUSING.RESERVED);
+  check('vicino ai minerali → buono per l\'industria', at(oreX, 0).industry === CS2.analysis.INDUSTRY.GOOD);
+  ap.map.seaLevel = 150; A = CS2.analysis.compute(ap);
+  check('sotto il livello del mare → non costruibile', CS2.analysis.at(A, ap, -1500, 3000).housing === CS2.analysis.HOUSING.BLOCKED);
+  const dm = new Uint8Array(512 * 512); dm[256 * 512 + 256] = 1;
+  const dd = CS2.analysis.distance(dm, 10);
+  check('distanza chamfer ~ euclidea', near(dd[256 * 512 + 266], 100, 1e-6) && near(dd[266 * 512 + 266], 141.42, 1));
+  const st = A.stat;
+  check('statistiche sommano a 1', near(st.ok + st.slope + st.plume + st.reserved + st.blocked, 1, 1e-9));
+  const pj = CS2.Project.fromJSON(JSON.parse(JSON.stringify(ap.toJSON())));
+  check('parametri vincoli salvati', pj.analysis.slopeMax === 20);
+  check('strato industria prevista presente', !!pj.layers.industryPlan);
 
   console.log(fails ? fails + ' / ' + n + ' test falliti' : 'OK: ' + n + ' test');
   process.exit(fails ? 1 : 0);

@@ -17,7 +17,8 @@
     forest:      { label: 'Foresta',      kind: 'u8',  res: 512 },
     ore:         { label: 'Minerali',     kind: 'u8',  res: 512 },
     oil:         { label: 'Petrolio',     kind: 'u8',  res: 512 },
-    groundwater: { label: 'Falda',        kind: 'u8',  res: 512 }
+    groundwater: { label: 'Falda',        kind: 'u8',  res: 512 },
+    industryPlan:{ label: 'Industria prevista', kind: 'u8', res: 512, note: 'aree che pensi di usare per l\'industria: sorgente di inquinamento' }
   };
   const RESOURCE_KEYS = ['fertile', 'forest', 'ore', 'oil', 'groundwater'];
 
@@ -41,6 +42,7 @@
         if (!this.sources[k]) this.sources[k] = 'vuoto';
       });
       this.graph = o.graph || { nodes: [], edges: [], nextId: 1 };
+      this.analysis = o.analysis || {};          // parametri dei vincoli (vedi analysis.js)
       this.created = o.created || new Date().toISOString();
       this.modified = o.modified || this.created;
     }
@@ -91,7 +93,7 @@
       });
       return {
         format: FORMAT, version: VERSION,
-        name: this.name, map: this.map, wind: this.wind, sources: this.sources,
+        name: this.name, map: this.map, wind: this.wind, sources: this.sources, analysis: this.analysis,
         created: this.created, modified: this.modified,
         graph: this.graph, layers
       };
@@ -115,7 +117,7 @@
       const ids = new Set(graph.nodes.map(n => n.id));
       graph.edges = graph.edges.filter(e => ids.has(e.a) && ids.has(e.b));
       graph.nextId = Math.max(graph.nextId, 1 + Math.max(0, ...graph.nodes.map(n => n.id), ...graph.edges.map(e => e.id)));
-      return new Project({ name: o.name, map: o.map, wind: o.wind, sources: o.sources, created: o.created, modified: o.modified, layers, graph });
+      return new Project({ name: o.name, map: o.map, wind: o.wind, sources: o.sources, analysis: o.analysis, created: o.created, modified: o.modified, layers, graph });
     }
   }
 

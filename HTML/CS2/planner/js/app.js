@@ -15,12 +15,13 @@
   let saveTimer = null;
   function changed() {
     project.touch();
+    scheduleAnalysis();
     view.draw(); renderPanel();
     clearTimeout(saveTimer);
     saveTimer = setTimeout(async () => setStatus(await storage.autosave(project) ? 'Salvato nel browser' : 'Autosalvataggio non disponibile'), 600);
   }
   function setProject(p, msg) {
-    project = p; view.cache = {}; history.clear();
+    project = p; view.cache = {}; history.clear(); analysis = null; scheduleAnalysis(0);
     view.fit(); view.draw(); renderPanel(); syncInputs();
     storage.autosave(project);
     if (msg) setStatus(msg);
@@ -54,6 +55,7 @@
   const kv = (k, v) => '<div class="kv"><span>' + k + '</span><span>' + v + '</span></div>';
 
   function syncInputs() {
+    syncAnalysisInputs();
     $('pName').value = project.name;
     $('pSize').value = project.map.size;
     $('pSea').value = project.map.seaLevel;
@@ -110,6 +112,56 @@
   const shot = CS2.screenshotDialog.setup(app);
   $('btnShot').addEventListener('click', () => $('fileShot').click());
   $('fileShot').addEventListener('change', e => { const f = e.target.files[0]; e.target.value = ''; if (f) shot.open(f); });
+
+  // ------------------------------------------------------------ vincoli
+  const AN = CS2.analysis;
+  let analysis = null, anTimer = null, anSig = 0;
+  const LEGENDS = {
+    housing: [['transparent', 'Adatto'], ['rgb(220,200,60)', 'Pendenza da gestire'], ['rgb(150,100,50)', 'Sottovento all\'industria'], ['rgb(230,140,40)', 'Risorsa da riservare'], ['rgb(200,60,60)', 'Non costruibile (acqua, riva, pendenza)']],
+    industry: [['rgb(90,190,90)', 'Vicino a minerali/petrolio o industria prevista'], ['transparent', 'Possibile'], ['rgb(220,200,60)', 'Pendenza da gestire'], ['rgb(70,150,220)', 'Sopra o vicino alla falda'], ['rgb(200,60,60)', 'Non costruibile']],
+    slope: [['rgb(230,160,40)', 'Oltre la soglia di attenzione'], ['rgb(200,60,60)', 'Oltre la soglia massima']],
+    plume: [['rgb(150,100,50)', 'Inquinamento dell\'aria trasportato dal vento']]
+  };
+  function scheduleAnalysis(delay) {
+    clearTimeout(anTimer);
+    anTimer = setTimeout(runAnalysis, delay === undefined ? 400 : delay);
+  }
+  function runAnalysis() {
+    const t = performance.now();
+    analysis = AN.compute(project); anSig++;
+    view.analysis = { A: analysis, mode: $('anMode').value, sig: anSig };
+    view.draw(); renderAnalysis();
+    $('anStats').dataset.ms = Math.round(performance.now() - t);
+  }
+  function renderAnalysis() {
+    const mode = $('anMode').value;
+    $('anLegend').innerHTML = (LEGENDS[mode] || []).map(([c, l]) => '<div><span class="sw" style="background:' + c + ';border:1px solid #333"></span>' + l + '</div>').join('');
+    if (!analysis) { $('anStats').innerHTML = ''; return; }
+    const st = analysis.stat, pc = x => (x * 100).toFixed(1) + '%';
+    $('anStats').innerHTML = '<div class="hint" style="margin-top:4px;">Mappa per le case:</div>' +
+      kv('Adatta', pc(st.ok)) + kv('Pendenza da gestire', pc(st.slope)) + kv('Sottovento', pc(st.plume)) + kv('Da riservare', pc(st.reserved)) + kv('Non costruibile', pc(st.blocked));
+  }
+  function syncAnalysisInputs() {
+    const P = AN.params(project);
+    $('anSlopeWarn').value = P.slopeWarn; $('anSlopeMax').value = P.slopeMax; $('anShore').value = P.shore;
+    $('anThreshold').value = Math.round(P.threshold / 2.55); $('anPlume').value = P.plumeLength;
+    $('anBuffers').innerHTML = Object.keys(P.buffers).map(k =>
+      '<span>' + LAYERS[k].label + '</span><input type="number" min="0" max="3000" step="10" data-buf="' + k + '" value="' + P.buffers[k] + '">' +
+      (k in P.reserve ? '<label class="check" title="Non coprire con case"><input type="checkbox" data-res="' + k + '"' + (P.reserve[k] ? ' checked' : '') + '>riserva</label>' : '<span class="hint">solo industria</span>')).join('');
+    $('anSources').innerHTML = Object.keys(P.plumeSources).map(k => '<label class="check"><input type="checkbox" data-src="' + k + '"' + (P.plumeSources[k] ? ' checked' : '') + '>' + LAYERS[k].label + '</label>').join('');
+    $('anBuffers').querySelectorAll('[data-buf]').forEach(el => el.addEventListener('change', () => { setParam(a => { a.buffers = Object.assign({}, a.buffers, { [el.dataset.buf]: Math.max(0, +el.value || 0) }); }); }));
+    $('anBuffers').querySelectorAll('[data-res]').forEach(el => el.addEventListener('change', () => { setParam(a => { a.reserve = Object.assign({}, a.reserve, { [el.dataset.res]: el.checked }); }); }));
+    $('anSources').querySelectorAll('[data-src]').forEach(el => el.addEventListener('change', () => { setParam(a => { a.plumeSources = Object.assign({}, a.plumeSources, { [el.dataset.src]: el.checked }); }); }));
+  }
+  function setParam(fn) { project.analysis = project.analysis || {}; fn(project.analysis); changed(); }
+  [['anSlopeWarn', 'slopeWarn', 1], ['anSlopeMax', 'slopeMax', 1], ['anShore', 'shore', 1], ['anThreshold', 'threshold', 2.55], ['anPlume', 'plumeLength', 1]].forEach(([id, key, f]) => {
+    $(id).addEventListener('change', e => setParam(a => { a[key] = Math.max(0, (+e.target.value || 0) * f); }));
+  });
+  $('anMode').addEventListener('change', () => {
+    if (view.analysis) view.analysis.mode = $('anMode').value;
+    renderAnalysis(); view.draw();
+  });
+  const HOUSING_TXT = ['adatto alle case', 'pendenza da gestire', 'sottovento all\'industria', 'risorsa da riservare', 'non costruibile'];
 
   // ------------------------------------------------------------ strumenti
   const tool = { mode: 'pan', layer: 'elevation', brush: 'raise', radius: 300, strength: 0.5, target: 100, cursor: null };
@@ -184,6 +236,7 @@
     if (project.inside(w.x, w.y)) {
       const parts = ['x ' + Math.round(w.x) + ' m', 'y ' + Math.round(w.y) + ' m', 'quota ' + Math.round(project.elevationAt(w.x, w.y)) + ' m'];
       if (project.isWater(w.x, w.y)) parts.push('acqua');
+      if (analysis) { const a = AN.at(analysis, project, w.x, w.y); parts.push('pendenza ' + a.slope.toFixed(1) + '%', HOUSING_TXT[a.housing]); }
       RESOURCE_KEYS.forEach(k => { const v = project.layerAt(k, w.x, w.y); if (v > 20) parts.push(LAYERS[k].label.toLowerCase() + ' ' + Math.round(v / 2.55) + '%'); });
       $('cursor').textContent = parts.join(' · ');
     } else $('cursor').textContent = 'fuori mappa';

@@ -5,11 +5,12 @@
   const { ROAD_TYPES } = CS2.roads;
 
   const RES_COLORS = {
-    fertile:     [196, 170, 70],
+    fertile:     [160, 190, 80],
     forest:      [60, 140, 70],
     ore:         [170, 120, 200],
     oil:         [205, 95, 55],
     groundwater: [70, 150, 220],
+    industryPlan:[235, 200, 40],
     water:       [40, 90, 150]
   };
 
@@ -20,7 +21,8 @@
       this.getProject = getProject;
       this.cam = { x: 0, y: 0, s: 0.05 };
       this.W = 800; this.H = 600; this.dpr = 1;
-      this.show = { terrain: true, grid: true, fertile: true, forest: true, ore: true, oil: true, groundwater: true, water: true, roads: true };
+      this.show = { terrain: true, grid: true, fertile: true, forest: true, ore: true, oil: true, groundwater: true, industryPlan: true, water: true, roads: true };
+      this.analysis = null;    // { A, mode, sig } impostato dall'app
       this.cache = {};
       this.overlays = [];      // funzioni (ctx, view) disegnate sopra, per gli strumenti futuri
     }
@@ -92,6 +94,31 @@
       this.cache[key] = { sig: L.version, img: cv };
       return cv;
     }
+    analysisImage() {
+      const { A, mode, sig } = this.analysis, c = this.cache.analysis;
+      if (c && c.sig === sig + mode) return c.img;
+      const n = A.res, cv = document.createElement('canvas'); cv.width = n; cv.height = n;
+      const g = cv.getContext('2d'), im = g.createImageData(n, n), d = im.data, P = A.params;
+      const put = (k, rgb, a) => { d[k * 4] = rgb[0]; d[k * 4 + 1] = rgb[1]; d[k * 4 + 2] = rgb[2]; d[k * 4 + 3] = a; };
+      const H = [null, [[220, 200, 60], 90], [[150, 100, 50], 140], [[230, 140, 40], 150], [[200, 60, 60], 150]];
+      const I = [null, [[220, 200, 60], 90], [[70, 150, 220], 140], null, [[200, 60, 60], 150], [[90, 190, 90], 130]];
+      for (let k = 0; k < n * n; k++) {
+        if (mode === 'slope') {
+          const s = A.slope[k];
+          if (s > P.slopeMax) put(k, [200, 60, 60], 160);
+          else if (s > P.slopeWarn) put(k, [230, 160, 40], 70 + 80 * (s - P.slopeWarn) / Math.max(1, P.slopeMax - P.slopeWarn));
+        } else if (mode === 'plume') {
+          if (A.plume[k] > 0.02) put(k, [150, 100, 50], Math.min(200, A.plume[k] * 220));
+        } else if (mode === 'housing') {
+          const e = H[A.housing[k]]; if (e) put(k, e[0], e[1]);
+        } else if (mode === 'industry') {
+          const e = I[A.industry[k]]; if (e) put(k, e[0], e[1]);
+        }
+      }
+      g.putImageData(im, 0, 0);
+      this.cache.analysis = { sig: sig + mode, img: cv };
+      return cv;
+    }
     elevationRange(p) { this.terrainImage(p); const c = this.cache.terrain; return { lo: c.lo, hi: c.hi }; }
 
     // ------------------------------------------------ disegno
@@ -104,7 +131,8 @@
       ctx.imageSmoothingEnabled = this.cam.s * S / p.layers.elevation.res < 3;   // pixel netti quando si zooma molto
       if (this.show.terrain) ctx.drawImage(this.terrainImage(p), X0, Y0, WW, WW);
       else { ctx.fillStyle = '#0d0f10'; ctx.fillRect(X0, Y0, WW, WW); }
-      ['fertile', 'forest', 'ore', 'oil', 'groundwater'].forEach(k => { if (this.show[k]) ctx.drawImage(this.resourceImage(p, k), X0, Y0, WW, WW); });
+      ['fertile', 'forest', 'ore', 'oil', 'groundwater', 'industryPlan'].forEach(k => { if (this.show[k]) ctx.drawImage(this.resourceImage(p, k), X0, Y0, WW, WW); });
+      if (this.analysis && this.analysis.mode !== 'none') ctx.drawImage(this.analysisImage(), X0, Y0, WW, WW);
 
       if (this.show.grid) {
         const step = this.cam.s * 1000 > 40 ? 1000 : 2000;
