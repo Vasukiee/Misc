@@ -235,20 +235,35 @@
 <div class="section">
   <div class="section-header">
     <span class="section-num">I</span>
-    <span class="section-title">Pianificatore a Moduli — Espansione, Reti &amp; Servizi</span>
+    <span class="section-title">Pianificatore a Moduli — Crescita Infinita, Reti &amp; Servizi</span>
   </div>
   <div class="section-body">
     <div class="note">
-      <strong>Non un quadrato, ma tanti moduli.</strong> La città è una <strong>maglia di arterie</strong> (anche storta, che segue il terreno). Ogni maglia è un <strong>modulo-quartiere</strong> con la <em>sua</em> griglia locale, il suo orientamento, i suoi servizi e la sua linea bus. Le griglie <strong>non si toccano mai direttamente</strong>: si incontrano solo su un'arteria (la <em>cucitura</em>). I triangoli che avanzano dove due orientamenti si incontrano diventano servizi, parcheggi e parchi. Così puoi aggiungere moduli all'infinito senza che si facciano la guerra.
+      <strong>Una città che non finisce.</strong> La città cresce <strong>un modulo alla volta</strong> su una maglia di arterie senza bordi, che segue il terreno: fiume, rilievi, corridoio autostradale. Ogni modulo-quartiere ha la <em>sua</em> griglia locale, il suo orientamento, i suoi servizi e la sua linea bus. I moduli si incontrano solo sulle arterie (le <em>cuciture</em>). Quando un quartiere nasce a più di 4 moduli da ogni centro esistente diventa un <strong>centro secondario</strong>, con il suo anello tram e la sua metro: la città diventa <strong>policentrica</strong> invece di copiarsi. Usa <strong>+1 MODULO</strong> per far scegliere al pianificatore, oppure <strong>clicca un riquadro tratteggiato</strong> per costruire dove vuoi tu.
     </div>
 
     <div class="control-group">
-      <span class="ctrl-label">Fase:</span>
-      <button class="btn" data-phase="1">1. BORGO</button>
-      <button class="btn" data-phase="2">2. ESPANSIONE</button>
-      <button class="btn" data-phase="3">3. CENTRO CITTÀ</button>
-      <button class="btn" data-phase="4">4. METROPOLI</button>
-      <button class="btn" data-phase="5">5. HUB GLOBALE</button>
+      <span class="ctrl-label">Crescita:</span>
+      <button class="btn primary" data-grow="1">+1 MODULO</button>
+      <button class="btn primary" data-grow="5">+5</button>
+      <button class="btn primary" data-grow="10">+10</button>
+      <button class="btn" id="btn-undo" title="Annulla l'ultimo modulo">↶ ANNULLA</button>
+      <label class="seed-box">TIPO
+        <select id="typeSel">
+          <option value="auto">AUTO (consigliato)</option>
+          <option value="centro">Centro</option>
+          <option value="urbano">Urbano</option>
+          <option value="quartiere">Quartiere</option>
+          <option value="suburbio">Suburbio</option>
+          <option value="industria">Industria</option>
+          <option value="parco">Parco</option>
+        </select>
+      </label>
+      <span id="phaseBadge" style="margin-left:auto; font-size:0.8rem; color:var(--accent2);"></span>
+    </div>
+
+    <div class="control-group">
+      <label class="sl" style="flex:1; min-width:220px;"><span class="sl-top">Storia della città <b id="v-hist"></b></span><input type="range" id="sl-hist" min="1" max="1" step="1" value="1"></label>
     </div>
 
     <div class="control-group">
@@ -264,18 +279,19 @@
       <button class="btn active" data-layer="park">PARCHEGGI</button>
       <button class="btn active" data-layer="labels">NOMI</button>
       <button class="btn active" data-layer="dims">QUOTE</button>
+      <button class="btn active" data-layer="frontier">ESPANSIONI</button>
       <button class="btn primary" id="btn-unit" style="margin-left:auto;">UNITÀ: METRI</button>
     </div>
 
     <div class="control-group" style="flex-direction:column; align-items:stretch; gap:12px;">
       <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
-        <span class="ctrl-label">Città:</span>
-        <button class="btn primary" id="btn-new">⟳ NUOVA CITTÀ</button>
+        <span class="ctrl-label">Terreno:</span>
+        <button class="btn primary" id="btn-new" title="Nuovo terreno e nuova città">⟳ NUOVA CITTÀ</button>
         <span class="seed-box">SEED <input type="number" id="seedInput" value="1729"></span>
+        <button class="btn active" id="btn-river">FIUME: ON</button>
         <button class="btn" id="btn-align" title="Se due moduli vicini hanno quasi lo stesso orientamento, il secondo eredita la griglia del primo (continuità tra quartieri, ma il fronte non è più parallelo)">ALLINEA MODULI: OFF</button>
       </div>
       <div class="sliders">
-        <label class="sl"><span class="sl-top">Estensione (moduli per lato) <b id="v-n"></b></span><input type="range" id="sl-n" min="3" max="7" step="1" value="5"></label>
         <label class="sl"><span class="sl-top">Passo maglia arterie <b id="v-S"></b></span><input type="range" id="sl-S" min="500" max="1000" step="25" value="700"></label>
         <label class="sl"><span class="sl-top">Organicità (terreno, curve) <b id="v-org"></b></span><input type="range" id="sl-org" min="0" max="100" step="5" value="40"></label>
         <label class="sl"><span class="sl-top">Tolleranza allineamento <b id="v-tol"></b></span><input type="range" id="sl-tol" min="0" max="20" step="1" value="6"></label>
@@ -291,7 +307,7 @@
             <button class="btn" id="z-out" title="Zoom −">−</button>
             <button class="btn" id="z-fit" title="Inquadra tutto">⤢</button>
           </div>
-          <div class="map-hint">trascina = sposta · rotella = zoom · click = seleziona quartiere</div>
+          <div class="map-hint">trascina = sposta · rotella = zoom · click = seleziona · click su ▢ tratteggiato = costruisci</div>
         </div>
       </div>
       <div class="info-panel">
@@ -353,6 +369,7 @@
           <li><strong>Prima strada locale = CtC esatto dal fronte</strong> (96 m + metà larghezze, vedi sezione III). Così la prima fila di lotti è piena.</li>
           <li><strong>Arteria e griglia: parallele o decisamente storte.</strong> Un'arteria storta di pochi gradi rispetto alla griglia del modulo crea strisce sottili per tutta la sua lunghezza. O la raddrizzi, o la curvi in modo netto (&gt;12°): allora diventa una transizione voluta.</li>
           <li><strong>I residui non si zonizzano a forza.</strong> Triangoli e strisce profonde sono il posto giusto per servizi, parcheggi, piazze e parchi.</li>
+          <li><strong>Non copiare la città: fai un altro centro.</strong> Oltre i 4 moduli di distanza dal centro, il quartiere successivo diventa un centro secondario con tram, ospedale e metro propri. La città cresce per poli collegati, non per copie identiche o per un unico centro che soffoca.</li>
         </ol>
       </div>
       <div class="rule-block">
@@ -371,12 +388,13 @@
       <div class="zone-card">
         <div class="zone-card-title">Tipi di modulo</div>
         <div class="line"><span>Centro</span><span>Isolati corti (CtC 160 m), alta densità, uffici</span></div>
+        <div class="line"><span>Centro secondario</span><span>Come il centro, nasce lontano dai poli esistenti</span></div>
         <div class="line"><span>Urbano</span><span>Isolati 208 m, media densità, misto sui collettori</span></div>
         <div class="line"><span>Quartiere</span><span>Isolati 208 m, bassa densità + Low Rent</span></div>
         <div class="line"><span>Suburbio</span><span>Isolati lunghi 256 m, bassa densità</span></div>
         <div class="line"><span>Industria</span><span>Isolati 288 m, sottovento, vicino all'autostrada</span></div>
         <div class="line"><span>Parco</span><span>Grande verde + servizi di città</span></div>
-        <div class="desc">Il tipo dipende dalla distanza dal centro. La densità viene <strong>limitata dalla fase in cui il modulo viene costruito</strong>: il borgo iniziale resta a bassa densità per sempre (crescita additiva, niente demolizioni).</div>
+        <div class="desc">Il tipo dipende dalla distanza dal centro <em>più vicino</em> nel momento in cui il modulo viene costruito; la densità è limitata dalla fase di quel momento. Il borgo iniziale resta a bassa densità per sempre (crescita additiva, niente demolizioni). L'industria resta intorno al 14% dei moduli, a ovest (sottovento).</div>
       </div>
       <div class="zone-card">
         <div class="zone-card-title">Ossatura di ogni modulo</div>
@@ -530,7 +548,8 @@
       <tr><td><span class="tag" style="color:var(--accent3);">2. ESPANSIONE</span></td><td class="val">Moduli adiacenti</td><td>Appena il gioco li sblocca: media densità, Low Rent e <strong>zone miste</strong> (casa sopra, negozio sotto) sui collettori.</td></tr>
       <tr><td><span class="tag" style="color:var(--accent2);">3. CENTRO CITTÀ</span></td><td class="val">Modulo centro + tram</td><td>Alta densità e uffici. Uffici e commercio sul fronte delle arterie (tollerano il rumore), case all'interno.</td></tr>
       <tr><td><span class="tag" style="color:var(--accent);">4. METROPOLI</span></td><td class="val">Anello esterno</td><td>Il valore del terreno sale al centro: non demolire, aggiungi moduli suburbani collegati dalla metro.</td></tr>
-      <tr><td><span class="tag" style="color:var(--muted);">5. HUB GLOBALE</span></td><td class="val">Connessioni esterne</td><td>Stazione ferroviaria, terminal merci, metro verso aeroporto e stazione.</td></tr>
+      <tr><td><span class="tag" style="color:var(--muted);">5. HUB GLOBALE</span></td><td class="val">Connessioni esterne</td><td>Stazione ferroviaria, terminal merci, metro verso aeroporto e stazione. Il corridoio ferroviario si fissa ora: la città potrà scavalcarlo, ma non spostarlo.</td></tr>
+      <tr><td><span class="tag" style="color:#6f9090;">6. REGIONE</span></td><td class="val">Nuovi poli</td><td>Niente più "fine": ogni nuova espansione lontana genera un <strong>centro secondario</strong>, collegato al principale dalla metro. Oltre l'autostrada e il fiume si passa solo da svincoli e ponti.</td></tr>
     </table>
     <div class="note check">
       <strong>Da verificare:</strong> l'ordine esatto in cui densità e zone miste si sbloccano dipende dai traguardi (milestone) della tua versione. Controlla il menu Progressione.
@@ -939,6 +958,18 @@ function ctcDist(a, b, depth) {
       return ((t ^ t >>> 14) >>> 0) / 4294967296;
     };
   }
+  function hash3(seed, i, j, k) {
+    let h = (seed | 0) ^ Math.imul(i | 0, 374761393) ^ Math.imul(j | 0, 668265263) ^ Math.imul(k | 0, 1442695041);
+    h = Math.imul(h ^ (h >>> 13), 1274126177); h ^= h >>> 16;
+    h = Math.imul(h ^ (h >>> 15), 2246822519); h ^= h >>> 13;
+    return (h >>> 0) / 4294967296;
+  }
+  function smoothNoise(seed, x, y, k) {
+    const xi = Math.floor(x), yi = Math.floor(y), fx = x - xi, fy = y - yi;
+    const s = t => t * t * (3 - 2 * t), u = s(fx), v = s(fy);
+    const a = hash3(seed, xi, yi, k), b = hash3(seed, xi + 1, yi, k), c = hash3(seed, xi, yi + 1, k), d = hash3(seed, xi + 1, yi + 1, k);
+    return (a * (1 - u) + b * u) * (1 - v) + (c * (1 - u) + d * u) * v - 0.5;
+  }
   const V = (x, y) => ({ x, y });
   const add = (a, b) => V(a.x + b.x, a.y + b.y);
   const sub = (a, b) => V(a.x - b.x, a.y - b.y);
@@ -948,6 +979,7 @@ function ctcDist(a, b, depth) {
   const vlen = a => Math.hypot(a.x, a.y);
   const norm = a => { const l = vlen(a) || 1; return V(a.x / l, a.y / l); };
   const lerp = (a, b, t) => V(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
+  const mod = (a, m) => ((a % m) + m) % m;
 
   function polyArea(p) { let s = 0; for (let i = 0; i < p.length; i++) s += crs(p[i], p[(i + 1) % p.length]); return s / 2; }
   function centroid(p) {
@@ -974,19 +1006,16 @@ function ctcDist(a, b, depth) {
     if (Math.abs(den) < 1e-9) return p;
     return add(p, mul(d, crs(sub(q, p), e) / den));
   }
-  // inset di un poligono convesso: ogni lato i spostato verso l'interno di ws[i]
   function insetPoly(p, ws) {
     const s = Math.sign(polyArea(p)) || 1, n = p.length, L = [];
     for (let i = 0; i < n; i++) {
       const d = norm(sub(p[(i + 1) % n], p[i]));
-      const nin = mul(V(-d.y, d.x), s);
-      L.push({ p: add(p[i], mul(nin, ws[i])), d });
+      L.push({ p: add(p[i], mul(mul(V(-d.y, d.x), s), ws[i])), d });
     }
     const out = [];
     for (let i = 0; i < n; i++) { const a = L[(i - 1 + n) % n], b = L[i]; out.push(lineX(a.p, a.d, b.p, b.d)); }
     return out;
   }
-  // Sutherland–Hodgman con poligono di taglio convesso
   function clipPoly(subj, clip) {
     const s = Math.sign(polyArea(clip)) || 1;
     let out = subj;
@@ -1003,7 +1032,6 @@ function ctcDist(a, b, depth) {
     }
     return out;
   }
-  // Cyrus–Beck: segmento ∩ poligono convesso
   function clipSeg(a, b, poly) {
     const s = Math.sign(polyArea(poly)) || 1, d = sub(b, a);
     let t0 = 0, t1 = 1;
@@ -1026,7 +1054,6 @@ function ctcDist(a, b, depth) {
     }
     return true;
   }
-  // differenza angolare modulo 90° in [-45°, 45°]
   function angDiff90(a, b) {
     const q = Math.PI / 2;
     let d = (a - b) % q; if (d > q / 2) d -= q; if (d < -q / 2) d += q;
@@ -1037,22 +1064,20 @@ function ctcDist(a, b, depth) {
 
   // ---------------------------------------------------------------- modello
   const DTYPE = {
-    centro:    { label: 'Centro',    L: 160, color: '#5e3434' },
-    urbano:    { label: 'Urbano',    L: 208, color: '#563a5a' },
-    quartiere: { label: 'Quartiere', L: 208, color: '#35503a' },
-    suburbio:  { label: 'Suburbio',  L: 256, color: '#35503a' },
-    industria: { label: 'Industria', L: 288, color: '#5e4f2a' },
-    parco:     { label: 'Parco',     L: 256, color: '#1f3326' }
+    centro:    { label: 'Centro',    L: 160 },
+    urbano:    { label: 'Urbano',    L: 208 },
+    quartiere: { label: 'Quartiere', L: 208 },
+    suburbio:  { label: 'Suburbio',  L: 256 },
+    industria: { label: 'Industria', L: 288 },
+    parco:     { label: 'Parco',     L: 256 }
   };
   const ZCOL = {
     LOW: '#35503a', LOW_R: '#5a4630', MED: '#563a5a', HIGH: '#5e3434', MIX: '#2f5a5a',
     COM: '#34506b', OFF: '#4a3a5c', IND: '#5e4f2a', PARK: '#1f3326'
   };
   const ZNAME = { LOW: 'Bassa densità', LOW_R: 'Low Rent', MED: 'Media densità', HIGH: 'Alta densità', MIX: 'Misto', COM: 'Commercio', OFF: 'Uffici', IND: 'Industria', PARK: 'Parco' };
-  // stime indicative (per ettaro di isolato)
   const RES_HA = { LOW: 40, LOW_R: 170, MED: 180, HIGH: 450, MIX: 110 };
   const JOB_HA = { COM: 80, MIX: 45, OFF: 320, IND: 60 };
-  // sblocchi per fase in cui il modulo viene costruito
   const ALLOWED = [null,
     ['LOW', 'COM', 'IND', 'PARK'],
     ['LOW', 'COM', 'IND', 'PARK', 'MED', 'LOW_R', 'MIX'],
@@ -1063,224 +1088,330 @@ function ctcDist(a, b, depth) {
     for (const c of (FALLBACK[z] || [z])) if (al.includes(c)) return c;
     return 'LOW';
   }
+  // fasi: soglie in numero di moduli costruiti
+  const PH_T = [0, 1, 2, 5, 10, 20, 40];
+  const PH_NAME = ['', 'Borgo', 'Espansione', 'Centro città', 'Metropoli', 'Hub globale', 'Regione policentrica'];
+  const phaseOf = n => n >= 40 ? 6 : n >= 20 ? 5 : n >= 10 ? 4 : n >= 5 ? 3 : n >= 2 ? 2 : 1;
+
   const SRV = {
-    CLIN:  { icon: '🏥', label: 'Clinica',          color: '#7a6368' },
-    HOSP:  { icon: '🏥', label: 'Ospedale',         color: '#a07880' },
-    FIRE:  { icon: '🚒', label: 'Pompieri',         color: '#8c5a45' },
-    POL:   { icon: '🚓', label: 'Polizia',          color: '#455a6b' },
-    EDU1:  { icon: '📚', label: 'Elementare',       color: '#5c6b54' },
-    EDU2:  { icon: '🎓', label: 'Superiore',        color: '#5c6b54' },
-    UNI:   { icon: '🏛️', label: 'Università',       color: '#7d8f72' },
-    POST:  { icon: '📦', label: 'Poste',            color: '#7a7452' },
-    WASTE: { icon: '♻️', label: 'Rifiuti',          color: '#7a7452' },
-    CEM:   { icon: '⚰️', label: 'Cimitero',         color: '#8a8f91' },
-    CARGO: { icon: '🚂', label: 'Stazione merci',   color: '#8a7366' },
-    PR:    { icon: 'P',  label: 'Park & Ride',      color: '#948b76', park: true },
-    PARKM: { icon: 'P',  label: 'Multipiano',       color: '#948b76', park: true },
-    PARKL: { icon: '🌳', label: 'Parco di città',   color: '#4f7a5a' }
+    CLIN:  { icon: '🏥', label: 'Clinica',        color: '#7a6368' },
+    HOSP:  { icon: '🏥', label: 'Ospedale',       color: '#a07880' },
+    FIRE:  { icon: '🚒', label: 'Pompieri',       color: '#8c5a45' },
+    POL:   { icon: '🚓', label: 'Polizia',        color: '#455a6b' },
+    EDU1:  { icon: '📚', label: 'Elementare',     color: '#5c6b54' },
+    EDU2:  { icon: '🎓', label: 'Superiore',      color: '#5c6b54' },
+    UNI:   { icon: '🏛️', label: 'Università',     color: '#7d8f72' },
+    POST:  { icon: '📦', label: 'Poste',          color: '#7a7452' },
+    WASTE: { icon: '♻️', label: 'Rifiuti',        color: '#7a7452' },
+    CEM:   { icon: '⚰️', label: 'Cimitero',       color: '#8a8f91' },
+    CARGO: { icon: '🚂', label: 'Stazione merci', color: '#8a7366' },
+    PR:    { icon: 'P',  label: 'Park & Ride',    color: '#948b76', park: true },
+    PARKM: { icon: 'P',  label: 'Multipiano',     color: '#948b76', park: true },
+    PARKL: { icon: '🌳', label: 'Parco di città', color: '#4f7a5a' }
   };
-  const NAMES = ['Borgo Vecchio', 'San Rocco', 'Le Fornaci', 'Porta Nuova', 'Belvedere', 'Il Molino', 'Santa Chiara', 'Le Vigne',
+  const NAMES = ['San Rocco', 'Le Fornaci', 'Porta Nuova', 'Belvedere', 'Il Molino', 'Santa Chiara', 'Le Vigne',
     'Ponte Alto', 'Campo Lungo', 'La Pieve', 'Torre Bianca', 'I Gelsi', 'Prato Grande', 'Le Cave', 'San Biagio', 'La Fontana',
     'Castellaccio', 'Valle Oscura', 'Le Mura', 'Collina Sud', 'San Lorenzo', 'I Navigli', 'La Ferriera', 'Monte Ripa', 'Il Lago',
     'Canneto', 'Poggio Verde', 'Le Rose', 'Sant\'Anna', 'Fossombrone', 'Gli Olmi', 'Il Porto', 'La Rotonda', 'Cascina Nuova',
     'Rio Secco', 'Le Logge', 'Madonna del Piano', 'San Vito', 'Quercianella', 'Il Ghetto', 'Campo dei Fiori', 'La Darsena',
-    'Pietralunga', 'San Felice', 'Ca\' Rossa', 'Le Serre', 'Ponte Rotto', 'Villa Bassa'];
+    'Pietralunga', 'San Felice', 'Ca\' Rossa', 'Le Serre', 'Ponte Rotto', 'Villa Bassa', 'Borgo Nuovo', 'Le Grazie',
+    'San Martino', 'La Torretta', 'Prato Fiorito', 'Il Casale', 'Acquaviva', 'Le Querce', 'Montebello', 'Il Pozzo'];
+  const ROMAN = ['', ' II', ' III', ' IV', ' V', ' VI'];
   const BUS_COL = ['#948b76', '#a8995e', '#8a7a52', '#b09a70', '#7d7458', '#a38c64'];
+  const TRAM_COL = ['#7a6368', '#8c5a45', '#8a6a7a', '#9a6450'];
 
-  function phaseFromHop(h) { return h === 0 ? 1 : h === 1 ? 2 : h === 2 ? 3 : h <= 4 ? 4 : 5; }
-
-  function generate(P) {
-    const rnd = mulberry32(P.seed);
-    const n = P.n, S = P.S, org = P.org;
-
-    // 1) maglia di arterie deformata (terreno) + verifica convessità
-    const ph1 = rnd() * 6.283, ph2 = rnd() * 6.283, ph3 = rnd() * 6.283;
-    const jit = [];
-    for (let j = 0; j <= n; j++) { jit[j] = []; for (let i = 0; i <= n; i++) jit[j][i] = V(rnd() - 0.5, rnd() - 0.5); }
-    let k = 1, nodes;
-    for (let attempt = 0; attempt < 12; attempt++) {
-      nodes = [];
-      for (let j = 0; j <= n; j++) {
-        nodes[j] = [];
-        for (let i = 0; i <= n; i++) {
-          const x = i * S, y = j * S;
-          const wx = Math.sin(y / (S * 1.5) + ph1) * 0.30 + Math.sin((x + y) / (S * 2.4) + ph3) * 0.12;
-          const wy = Math.sin(x / (S * 1.7) + ph2) * 0.30;
-          nodes[j][i] = V(x + (wx + jit[j][i].x * 0.32) * S * org * k, y + (wy + jit[j][i].y * 0.32) * S * org * k);
-        }
-      }
-      let ok = true;
-      for (let j = 0; j < n && ok; j++) for (let i = 0; i < n && ok; i++) {
-        const q = [nodes[j][i], nodes[j][i + 1], nodes[j + 1][i + 1], nodes[j + 1][i]];
-        if (!isConvex(q)) ok = false;
-      }
-      if (ok) break;
-      k *= 0.8;
+  // ---------------------------------------------------------------- terreno infinito
+  function makeWorld(P) {
+    const S = P.S, org = P.org, seed = P.seed;
+    const rr = mulberry32(seed * 31 + 7);
+    const rph1 = rr() * 6.283, rph2 = rr() * 6.283, ry0 = -(5.5 + rr() * 2);
+    const nodes = new Map(), faces = new Map();
+    function node(i, j) {
+      const k = i + ',' + j;
+      let p = nodes.get(k);
+      if (p) return p;
+      const nx = smoothNoise(seed, i / 2.6, j / 2.6, 1) * 0.55 + smoothNoise(seed, i / 1.3, j / 1.3, 3) * 0.2;
+      const ny = smoothNoise(seed, i / 2.6, j / 2.6, 2) * 0.55 + smoothNoise(seed, i / 1.3, j / 1.3, 4) * 0.2;
+      const jx = hash3(seed, i, j, 5) - 0.5, jy = hash3(seed, i, j, 6) - 0.5;
+      p = V(i * S + (nx + jx * 0.22) * S * org, j * S + (ny + jy * 0.22) * S * org);
+      nodes.set(k, p);
+      return p;
     }
-
-    // 2) moduli, adiacenze, fasi
-    const i0 = Math.floor((n - 1) / 2), j0 = n - 1;          // borgo: sud, vicino allo svincolo
-    const ic = i0, jc = Math.max(0, n - 3);                  // centro: due moduli più a nord
-    const faces = [];
-    const fid = (i, j) => (i < 0 || j < 0 || i >= n || j >= n) ? -1 : j * n + i;
-    for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) {
-      faces.push({
-        id: fid(i, j), i, j,
-        poly: [nodes[j][i], nodes[j][i + 1], nodes[j + 1][i + 1], nodes[j + 1][i]],
+    const riverY = x => (ry0 + 1.1 * Math.sin(x / (3.3 * S) + rph1) + 0.5 * Math.sin(x / (1.6 * S) + rph2)) * S;
+    function face(i, j) {
+      const k = i + ',' + j;
+      let f = faces.get(k);
+      if (f) return f;
+      const poly = [node(i, j), node(i + 1, j), node(i + 1, j + 1), node(i, j + 1)];
+      const C = centroid(poly);
+      let reserved = null;
+      if (j === 1) reserved = 'autostrada';
+      else if (P.river && Math.abs(C.y - riverY(C.x)) < 0.5 * S) reserved = 'acqua';
+      else if (!isConvex(poly)) reserved = 'naturale';
+      f = {
+        key: k, i, j, poly, C, reserved,
         ekeys: ['h' + j + '_' + i, 'v' + j + '_' + (i + 1), 'h' + (j + 1) + '_' + i, 'v' + j + '_' + i],
-        nb: [fid(i, j - 1), fid(i + 1, j), fid(i, j + 1), fid(i - 1, j)]
+        nb: [[i, j - 1], [i + 1, j], [i, j + 1], [i - 1, j]]
+      };
+      faces.set(k, f);
+      return f;
+    }
+    function edgeType(key) {
+      const [a, b] = key.slice(1).split('_').map(Number);
+      return key[0] === 'h' ? (mod(a, 3) === 1 ? 'large' : 'medium') : (mod(b, 3) === 0 ? 'large' : 'medium');
+    }
+    function edgeAB(key) {
+      const [j, i] = key.slice(1).split('_').map(Number);
+      return key[0] === 'h' ? [node(i, j), node(i + 1, j)] : [node(i, j), node(i, j + 1)];
+    }
+    return { P, S, seed, node, face, edgeType, edgeAB, riverY };
+  }
+
+  // ---------------------------------------------------------------- crescita
+  function chebToCenters(f, centers) {
+    let d = Infinity;
+    centers.forEach(c => { d = Math.min(d, Math.max(Math.abs(f.i - c.i), Math.abs(f.j - c.j))); });
+    return d;
+  }
+  // vicini raggiungibili: 4 direzioni; attraverso fiume (ponte) e autostrada (svincolo ogni 3 colonne)
+  function reachNeighbors(world, f) {
+    const out = [];
+    f.nb.forEach(([i, j], e) => {
+      const g = world.face(i, j);
+      if (!g.reserved) { out.push(g); return; }
+      if (e !== 0 && e !== 2) return;
+      const dj = e === 0 ? -1 : 1;
+      if (g.reserved === 'acqua') { const h = world.face(i, j + dj); if (!h.reserved) out.push(h); }
+      if (g.reserved === 'autostrada' && mod(i, 3) === 0) { const h = world.face(i, j + dj); if (!h.reserved) out.push(h); }
+    });
+    return out;
+  }
+  function frontierOf(world, city) {
+    const seen = new Set(), out = [];
+    city.order.forEach(f => reachNeighbors(world, f).forEach(g => {
+      if (seen.has(g.key) || city.faces.has(g.key)) return;
+      seen.add(g.key);
+      if (city.airport && city.airport.keys.has(g.key)) return;
+      if (g.j >= 2 && city.order.length < PH_T[4]) return;     // oltre l'autostrada solo dalla Metropoli
+      out.push(g);
+    }));
+    return out;
+  }
+  function typeFor(city, g, pref) {
+    if (pref && pref !== 'auto') return pref;
+    const n = city.order.length;
+    if (n === 0) return 'quartiere';
+    if (!city.centers.length) return n + 1 >= PH_T[3] ? 'centro' : 'quartiere';
+    const d = chebToCenters(g, city.centers);
+    if (n + 1 >= 25 && d >= 4) return 'centro';
+    return d <= 1 ? 'urbano' : d === 2 ? 'quartiere' : 'suburbio';
+  }
+  function pickNext(world, city, pref) {
+    if (!city.order.length) return { i: 0, j: 0, type: pref && pref !== 'auto' ? pref : 'quartiere' };
+    const F = frontierOf(world, city);
+    if (!F.length) return null;
+    const n = city.order.length;
+    let mi = 0, mj = 0; city.order.forEach(f => { mi += f.i; mj += f.j; }); mi /= n; mj /= n;
+    const built = (i, j) => city.faces.has(i + ',' + j);
+    let i0 = Infinity, i1 = -Infinity, j0 = Infinity, j1 = -Infinity;
+    city.order.forEach(f => { i0 = Math.min(i0, f.i); i1 = Math.max(i1, f.i); j0 = Math.min(j0, f.j); j1 = Math.max(j1, f.j); });
+    const elong = (i1 - i0 + 1) / (j1 - j0 + 1);              // >1: città allungata in orizzontale
+    const sc = g => {
+      const n4 = reachNeighbors(world, g).filter(x => city.faces.has(x.key)).length;
+      let n8 = 0;
+      for (let di = -1; di <= 1; di += 2) for (let dj = -1; dj <= 1; dj += 2) if (built(g.i + di, g.j + dj)) n8++;
+      const cross = (g.j < j0 || g.j > j1) && elong > 1.6 ? 1.5 : 0;
+      const large = g.ekeys.some(k => world.edgeType(k) === 'large') ? 0.6 : 0;
+      return { v: 3 * n4 + 1.2 * n8 - 0.45 * Math.hypot(g.i - mi, g.j - mj) + large + cross + hash3(world.seed, g.i, g.j, 900 + n) * 1.4, n4, n8 };
+    };
+    const best = (arr, f) => { let b = null, bv = -Infinity; arr.forEach(g => { const v = f(g); if (v > bv) { bv = v; b = g; } }); return b; };
+    let g, type;
+    if (pref && pref !== 'auto') {
+      g = best(F, x => sc(x).v); type = pref;
+      if (pref === 'industria') g = best(F, x => sc(x).v - 1.2 * x.i);
+      return { i: g.i, j: g.j, type };
+    }
+    const ind = city.order.filter(f => f.type === 'industria').length;
+    const parks = city.order.filter(f => f.type === 'parco').length;
+    if (!city.centers.length && n + 1 >= PH_T[3]) {
+      g = best(F, x => { const s = sc(x); return s.n4 * 3 + s.n8 - 0.2 * Math.hypot(x.i - mi, x.j - mj) + (x.j < 0 ? 0.5 : 0); }); type = 'centro';
+    } else if (n >= 3 && ind / n < 0.14) {
+      const C = F.filter(x => !city.centers.length || chebToCenters(x, city.centers) >= 2);
+      g = best(C.length ? C : F, x => sc(x).v - 1.2 * (x.i - mi) + (city.centers.length ? 0.8 * Math.min(4, chebToCenters(x, city.centers)) : 0)); type = 'industria';
+    } else if (n >= 8 && parks < Math.floor(n / 14)) {
+      const C = F.filter(x => chebToCenters(x, city.centers) === 2);
+      g = best(C.length ? C : F, x => sc(x).v); type = 'parco';
+    } else {
+      g = best(F, x => sc(x).v); type = typeFor(city, g, 'auto');
+    }
+    return { i: g.i, j: g.j, type };
+  }
+
+  // ---------------------------------------------------------------- costruzione città da storia
+  function buildCity(world, hist) {
+    const P = world.P;
+    const city = { faces: new Map(), order: [], centers: [], edges: new Map(), rail: null, airport: null };
+    const nameRnd = mulberry32(P.seed * 13 + 5);
+    const names = NAMES.slice();
+    for (let a = names.length - 1; a > 0; a--) { const b = Math.floor(nameRnd() * (a + 1)); [names[a], names[b]] = [names[b], names[a]]; }
+    const flags = { hosp: false, uni: false, cem: false, cargo: false };
+    const tol = P.tol * Math.PI / 180;
+
+    hist.forEach(h => {
+      const base = world.face(h.i, h.j);
+      if (base.reserved || city.faces.has(base.key)) return;
+      if (city.airport && city.airport.keys.has(base.key)) return;
+      if (city.order.length) {
+        // deve essere raggiungibile da un modulo già costruito
+        const ok = reachNeighbors(world, base).some(g => city.faces.has(g.key));
+        if (!ok) return;
+      }
+      const f = Object.assign({}, base);
+      f.idx = city.order.length;
+      f.phase = phaseOf(f.idx + 1);
+      f.type = h.type;
+      f.name = f.idx === 0 ? 'Borgo Vecchio' : names[(f.idx - 1) % names.length] + ROMAN[Math.min(5, Math.floor((f.idx - 1) / names.length))];
+      orient(world, city, f, tol);
+      buildModule(world, f, mulberry32(Math.floor(hash3(P.seed, f.i, f.j, 77) * 4294967295)));
+      f.centerD = city.centers.length ? chebToCenters(f, city.centers) : Infinity;
+      city.faces.set(f.key, f);
+      city.order.push(f);
+      if (f.type === 'centro') { f.centerNo = city.centers.length; city.centers.push(f); }
+      f.serviceReq = serviceList(f, city, flags);
+      f.ekeys.forEach((k, e) => {
+        let ed = city.edges.get(k);
+        if (!ed) { const ab = world.edgeAB(k); ed = { key: k, a: ab[0], b: ab[1], type: world.edgeType(k), faces: [] }; city.edges.set(k, ed); }
+        ed.faces.push(f);
+      });
+      // eventi della fase 5: corridoio ferroviario e aeroporto, fissati una volta sola
+      if (!city.rail && city.order.length >= PH_T[5]) {
+        let minJ = Infinity, maxI = -Infinity, sumJ = 0;
+        city.order.forEach(q => { minJ = Math.min(minJ, q.j); maxI = Math.max(maxI, q.i); sumJ += q.j; });
+        const c0 = city.centers[0] || city.order[0];
+        city.rail = { jr: minJ - 1, si: c0.i };
+        let aj = c0.j, ai = maxI + 2;
+        const free = (i, j) => { const g = world.face(i, j); return !g.reserved && !city.faces.has(g.key); };
+        for (let t = 0; t < 6 && !(free(ai, aj) && free(ai + 1, aj) && free(ai, aj + 1) && free(ai + 1, aj + 1)); t++) aj += (t % 2 ? -t : t);
+        const cells = [[ai, aj], [ai + 1, aj], [ai, aj + 1], [ai + 1, aj + 1]].map(([i, j]) => world.face(i, j));
+        city.airport = { keys: new Set(cells.map(c => c.key)), cells, p: centroid(cells.map(c => c.C)) };
+      }
+    });
+
+    const n = city.order.length;
+    city.count = n;
+    city.phase = phaseOf(n);
+    computeMetro(world, city);
+    city.order.forEach(f => {
+      if (f.station && (f.type === 'suburbio' || f.type === 'quartiere')) f.serviceReq.push(['PR', 4]);
+      assignServices(f);
+    });
+    return city;
+  }
+
+  function orient(world, city, f, tol) {
+    let best = -1, bestScore = -Infinity;
+    for (let e = 0; e < 4; e++) {
+      const k = f.ekeys[e], ab = world.edgeAB(k);
+      const rank = world.edgeType(k) === 'large' ? 2 : 1;
+      const nb = f.nb[e], toward = city.faces.has(nb[0] + ',' + nb[1]) ? 3 : 0;
+      let sc = rank * 10 + toward + vlen(sub(ab[1], ab[0])) / world.S;
+      if (f.idx === 0 && e === 2) sc += 100;
+      if (sc > bestScore) { bestScore = sc; best = e; }
+    }
+    const a = f.poly[best], b = f.poly[(best + 1) % 4];
+    f.front = best;
+    f.frontType = world.edgeType(f.ekeys[best]);
+    f.anchor = lerp(a, b, 0.5);
+    let th = Math.atan2(b.y - a.y, b.x - a.x);
+    f.snapped = null; f.snapDelta = 0;
+    if (world.P.align) {
+      let bd = Infinity, bn = null;
+      f.nb.forEach(([i, j]) => {
+        const g = city.faces.get(i + ',' + j);
+        if (!g) return;
+        const dd = angDiff90(th, g.theta);
+        if (Math.abs(dd) < Math.abs(bd)) { bd = dd; bn = g; }
+      });
+      if (bn && Math.abs(bd) <= tol) { th -= bd; f.snapped = bn; f.snapDelta = bd; }
+    }
+    f.theta = th;
+    f.eU = V(Math.cos(th), Math.sin(th));
+    f.eV = V(-f.eU.y, f.eU.x);
+    if (dot(sub(f.C, f.anchor), f.eV) < 0) f.eV = mul(f.eV, -1);
+  }
+
+  function serviceList(f, city, flags) {
+    const L = [], t = f.type, n = city.order.length;
+    if (f.idx === 0) L.push(['CLIN', 1], ['FIRE', 1], ['POL', 1], ['EDU1', 1]);
+    else if (t === 'centro') { L.push(['POL', 1], ['EDU2', 1], ['POST', 1], ['PARKM', 3]); if (f.centerNo > 0) L.push(['HOSP', 3]); }
+    else if (t === 'urbano') { L.push(['EDU1', 1], ['FIRE', 1], ['CLIN', 1]); if (!flags.hosp) { L.unshift(['HOSP', 3]); flags.hosp = true; } else if (!flags.uni && n >= PH_T[4]) { L.push(['UNI', 4]); flags.uni = true; } }
+    else if (t === 'quartiere') L.push(['EDU1', 1], ['CLIN', 1], [f.idx % 2 ? 'FIRE' : 'POL', 1]);
+    else if (t === 'suburbio') { L.push(['EDU1', 1], [f.idx % 2 ? 'FIRE' : 'POL', 1]); if (!flags.cem) { L.push(['CEM', 1]); flags.cem = true; } }
+    else if (t === 'industria') { L.push(['FIRE', 1], ['WASTE', 1], ['POST', 1]); if (!flags.cargo) { L.push(['CARGO', 5]); flags.cargo = true; } }
+    else if (t === 'parco') { L.push(['PARKL', 1]); if (!flags.uni) { L.push(['UNI', 4]); flags.uni = true; } }
+    return L;
+  }
+
+  function computeMetro(world, city) {
+    city.metro = []; city.tram = [];
+    if (city.count >= PH_T[3]) {
+      city.centers.forEach((c, k) => {
+        const ia = c.i - 1, ib = c.i + 2, ja = c.j - 1, jb = c.j + 2, keys = [];
+        for (let i = ia; i < ib; i++) keys.push('h' + ja + '_' + i);
+        for (let j = ja; j < jb; j++) keys.push('v' + j + '_' + ib);
+        for (let i = ib - 1; i >= ia; i--) keys.push('h' + jb + '_' + i);
+        for (let j = jb - 1; j >= ja; j--) keys.push('v' + j + '_' + ia);
+        city.tram.push({ name: 'Tram T' + (k + 1) + ' · anello ' + c.name, keys, center: c, color: TRAM_COL[k % TRAM_COL.length] });
       });
     }
-    const origin = faces[fid(i0, j0)], core = faces[fid(ic, jc)];
-    // BFS dal borgo
-    faces.forEach(f => f.hop = Infinity);
-    origin.hop = 0;
-    const q = [origin];
-    while (q.length) { const f = q.shift(); f.nb.forEach(id => { if (id >= 0 && faces[id].hop === Infinity) { faces[id].hop = f.hop + 1; q.push(faces[id]); } }); }
-    faces.forEach(f => { f.phase = phaseFromHop(f.hop); f.d = Math.max(Math.abs(f.i - ic), Math.abs(f.j - jc)); });
-
-    // tipo di modulo
-    faces.forEach(f => {
-      if (f === core) f.type = 'centro';
-      else if (f.d === 1) f.type = 'urbano';
-      else if (f.d === 2) f.type = 'quartiere';
-      else f.type = 'suburbio';
+    if (city.count < PH_T[4]) return;
+    const built = (i, j) => { const f = city.faces.get(i + ',' + j); return f && f; };
+    const seen = new Set();
+    let no = 1;
+    const addLine = (fs, label, ext) => {
+      if (fs.length < 2 && !ext) return;
+      const key = fs.map(f => f.key).join('|');
+      if (seen.has(key)) return; seen.add(key);
+      fs.forEach(f => f.station = true);
+      city.metro.push({ name: 'Metro M' + (no++) + ' · ' + label, faces: fs, ext: ext || null });
+    };
+    city.centers.forEach((c, k) => {
+      const row = [c], col = [c];
+      for (let i = c.i - 1; built(i, c.j); i--) row.unshift(built(i, c.j));
+      for (let i = c.i + 1; built(i, c.j); i++) row.push(built(i, c.j));
+      for (let j = c.j - 1; built(c.i, j); j--) col.unshift(built(c.i, j));
+      for (let j = c.j + 1; built(c.i, j); j++) col.push(built(c.i, j));
+      // la colonna del centro principale scende fino al borgo, anche oltre l'autostrada/fiume
+      if (k === 0 && !col.includes(city.order[0])) col.push(city.order[0]);
+      addLine(col, c.name + ' nord-sud', k === 0 && city.rail ? 'rail' : null);
+      addLine(row, c.name + ' ovest-est', k === 0 && city.airport ? 'air' : null);
     });
-    const indCand = faces.filter(f => f !== origin && f.i === 0 && f.j >= n - 2);
-    if (n === 3) indCand.splice(0, indCand.length, faces[fid(0, n - 1)]);
-    indCand.forEach(f => f.type = 'industria');
-    if (n >= 6) { const f = faces[fid(1, n - 1)]; if (f !== origin) f.type = 'industria'; }
-    if (n >= 5) {
-      const pc = faces.filter(f => f.d === 2 && f.type === 'quartiere' && f !== origin);
-      if (pc.length) pc[Math.floor(rnd() * pc.length)].type = 'parco';
+    // collegamenti tra centri (albero minimo)
+    const hubs = city.centers.slice();
+    if (hubs.length > 1) {
+      const inT = [hubs[0]], out = hubs.slice(1);
+      while (out.length) {
+        let bd = Infinity, ba = null, bb = null;
+        inT.forEach(a => out.forEach(b => { const d = vlen(sub(a.hub, b.hub)); if (d < bd) { bd = d; ba = a; bb = b; } }));
+        addLine([ba, bb], ba.name + ' ↔ ' + bb.name);
+        inT.push(bb); out.splice(out.indexOf(bb), 1);
+      }
     }
-    // nomi
-    const names = NAMES.slice();
-    for (let a = names.length - 1; a > 0; a--) { const b = Math.floor(rnd() * (a + 1)); [names[a], names[b]] = [names[b], names[a]]; }
-    origin.name = 'Borgo Vecchio';
-    let ni = 0;
-    faces.forEach(f => { if (f !== origin) { if (names[ni] === 'Borgo Vecchio') ni++; f.name = names[ni++ % names.length]; } });
-
-    // 3) arterie: tipo e linee tram
-    const edges = {};
-    function edge(key, a, b) { if (!edges[key]) edges[key] = { key, a, b, faces: [], type: 'medium', tram: [] }; return edges[key]; }
-    faces.forEach(f => f.ekeys.forEach((kk, e) => { const ed = edge(kk, f.poly[e], f.poly[(e + 1) % 4]); ed.faces.push(f.id); }));
-    // T1: perimetro del centro
-    const T1 = core.ekeys.slice();
-    // T2: anello più largo attorno al centro
-    const ia = Math.max(0, ic - 1), ib = Math.min(n, ic + 2), ja = Math.max(0, jc - 1), jb = Math.min(n, jc + 2);
-    const T2 = [], T2nodes = [];
-    for (let i = ia; i < ib; i++) { T2.push('h' + ja + '_' + i); T2nodes.push(nodes[ja][i]); }
-    for (let j = ja; j < jb; j++) { T2.push('v' + j + '_' + ib); T2nodes.push(nodes[j][ib]); }
-    for (let i = ib; i > ia; i--) { T2.push('h' + jb + '_' + (i - 1)); T2nodes.push(nodes[jb][i]); }
-    for (let j = jb; j > ja; j--) { T2.push('v' + (j - 1) + '_' + ia); T2nodes.push(nodes[j][ia]); }
-    T1.forEach(kk => edges[kk].tram.push(1));
-    T2.forEach(kk => edges[kk] && edges[kk].tram.push(2));
-    Object.values(edges).forEach(e => {
-      if (e.tram.length) e.type = 'large';
-      if (e.key.startsWith('h' + n + '_')) e.type = 'large';                  // arteria commerciale sud
-      if (/^v\d+_/.test(e.key) && +e.key.split('_')[1] === i0) e.type = 'large'; // asse nord-sud
-      e.phase = Math.min.apply(null, e.faces.map(id => faces[id].phase));
-    });
-    const tramLines = [
-      { id: 'T1', name: 'Tram T1 · anello centro', poly: core.poly.slice(), minPhase: 3, color: '#7a6368' },
-      { id: 'T2', name: 'Tram T2 · anello urbano', poly: T2nodes, minPhase: 4, color: '#8c5a45' }
-    ];
-    if (n === 3) tramLines.pop();
-
-    // 4) orientamento dei moduli (in ordine di costruzione)
-    const order = faces.slice().sort((a, b) => a.hop - b.hop || a.id - b.id);
-    const tol = P.tol * Math.PI / 180;
-    order.forEach(f => {
-      const C = centroid(f.poly);
-      let best = -1, bestScore = -Infinity;
-      for (let e = 0; e < 4; e++) {
-        const ed = edges[f.ekeys[e]];
-        const rank = ed.type === 'large' ? 2 : 1;
-        const nbid = f.nb[e];
-        const toward = nbid >= 0 && faces[nbid].hop < f.hop ? 1 : 0;
-        let sc = rank * 10 + toward * 3 + vlen(sub(ed.b, ed.a)) / S;
-        if (f === origin && e === 2) sc += 100;                                // il borgo guarda l'arteria sud
-        if (sc > bestScore) { bestScore = sc; best = e; }
-      }
-      const a = f.poly[best], b = f.poly[(best + 1) % 4];
-      f.front = best;
-      f.frontType = edges[f.ekeys[best]].type;
-      f.anchor = lerp(a, b, 0.5);
-      let th = Math.atan2(b.y - a.y, b.x - a.x);
-      f.theta0 = th; f.snapped = null; f.snapDelta = 0;
-      if (P.align) {
-        let bd = Infinity, bn = null;
-        f.nb.forEach(id => {
-          if (id < 0) return;
-          const g = faces[id];
-          if (g.theta === undefined) return;
-          const dd = angDiff90(th, g.theta);
-          if (Math.abs(dd) < Math.abs(bd)) { bd = dd; bn = g; }
-        });
-        if (bn && Math.abs(bd) <= tol && Math.abs(bd) > 1e-6) { th -= bd; f.snapped = bn.id; f.snapDelta = bd; }
-        else if (bn && Math.abs(bd) <= 1e-6) f.snapped = bn.id;
-      }
-      f.theta = th;
-      f.eU = V(Math.cos(th), Math.sin(th));
-      f.eV = V(-f.eU.y, f.eU.x);
-      if (dot(sub(C, f.anchor), f.eV) < 0) f.eV = mul(f.eV, -1);
-      buildModule(f, edges, rnd);
-    });
-
-    // 5) servizi
-    let cemDone = false, uniDone = false, hospDone = false, cargoDone = false;
-    order.forEach(f => {
-      const L = [];
-      const t = f.type;
-      if (f === origin) L.push(['CLIN', 1], ['FIRE', 1], ['POL', 1], ['EDU1', 1]);
-      else if (t === 'centro') L.push(['POL', 1], ['EDU2', 1], ['POST', 1], ['PARKM', 3]);
-      else if (t === 'urbano') { L.push(['EDU1', 1], ['FIRE', 1], ['CLIN', 1]); if (!hospDone) { L.unshift(['HOSP', 3]); hospDone = true; } }
-      else if (t === 'quartiere') L.push(['EDU1', 1], ['CLIN', 1], [f.hop % 2 ? 'FIRE' : 'POL', 1]);
-      else if (t === 'suburbio') { L.push(['EDU1', 1], [f.hop % 2 ? 'FIRE' : 'POL', 1]); if (!cemDone && f.phase >= 2) { L.push(['CEM', 1]); cemDone = true; } }
-      else if (t === 'industria') { L.push(['FIRE', 1], ['WASTE', 1], ['POST', 1]); if (!cargoDone) { L.push(['CARGO', 5]); cargoDone = true; } }
-      else if (t === 'parco') { L.push(['PARKL', 1]); if (!uniDone) { L.push(['UNI', 4]); uniDone = true; } }
-      if (t === 'urbano' && !uniDone && f.d === 1 && f.phase >= 3) { L.push(['UNI', 4]); uniDone = true; }
-      f.serviceReq = L;
-    });
-
-    // 6) metro
-    const metro = [];
-    const m1 = []; for (let j = n - 1; j >= 0; j--) m1.push(faces[fid(ic, j)]);
-    const m2 = []; for (let i = 0; i < n; i++) m2.push(faces[fid(i, jc)]);
-    metro.push({ id: 'M1', name: 'Metro M1 · nord-sud', faces: m1, minPhase: 4, ext: 'rail' });
-    if (n >= 4) metro.push({ id: 'M2', name: 'Metro M2 · ovest-est', faces: m2, minPhase: 4, ext: 'air' });
-    metro.forEach(m => m.faces.forEach(f => { f.station = true; if (f.type === 'suburbio' || f.type === 'quartiere') f.serviceReq.push(['PR', 4]); }));
-
-    order.forEach(f => assignServices(f));
-
-    // 7) elementi esterni
-    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-    nodes.forEach(r => r.forEach(p => { minX = Math.min(minX, p.x); maxX = Math.max(maxX, p.x); minY = Math.min(minY, p.y); maxY = Math.max(maxY, p.y); }));
-    const hwY = maxY + 300;
-    const interchange = V(origin.anchor.x, hwY);
-    const railY = minY - 320;
-    const railStation = V(nodes[0][ic].x + (nodes[0][ic + 1].x - nodes[0][ic].x) / 2, railY);
-    const airport = V(maxX + 650, (minY + maxY) / 2 + (jc - n / 2) * S * 0.5);
-    const bounds = { minX: minX - 450, maxX: maxX + 950, minY: minY - 520, maxY: maxY + 460 };
-
-    return { P, n, S, nodes, faces, edges, origin, core, tramLines, metro, hwY, interchange, railY, railStation, airport, bounds };
   }
 
   // ---------------------------------------------------------------- modulo
-  function buildModule(f, edges, rnd) {
+  function buildModule(world, f, rnd) {
     const toW = (u, v) => add(f.anchor, add(mul(f.eU, u), mul(f.eV, v)));
     const toL = p => { const d = sub(p, f.anchor); return { u: dot(d, f.eU), v: dot(d, f.eV) }; };
     f.toW = toW; f.toL = toL;
     let umin = Infinity, umax = -Infinity, vmin = Infinity, vmax = -Infinity;
     f.poly.forEach(p => { const l = toL(p); umin = Math.min(umin, l.u); umax = Math.max(umax, l.u); vmin = Math.min(vmin, l.v); vmax = Math.max(vmax, l.v); });
     const W = t => ROAD[t].w;
-    const ewidths = f.ekeys.map(k => W(edges[k].type) / 2);
-    f.inset = insetPoly(f.poly, ewidths);
+    f.etypes = f.ekeys.map(k => world.edgeType(k));
+    f.inset = insetPoly(f.poly, f.etypes.map(t => W(t) / 2));
 
-    // linee parallele al fronte (v): CtC esatto dal fronte, collettore a metà
-    const first = ctcDist(f.frontType, 'small');
-    const tent = []; for (let p = first; p < vmax - 64; p += ctcDist('small', 'small')) tent.push(p);
+    const first = ctcDist(f.frontType, 'small'), step = ctcDist('small', 'small');
+    const tent = []; for (let p = first; p < vmax - 64; p += step) tent.push(p);
     const collIdx = tent.length >= 3 ? Math.floor(tent.length / 2) : -1;
     const vl = [];
     let cur = first, prevT = null;
@@ -1290,8 +1421,7 @@ function ctcDist(a, b, depth) {
       if (cur >= vmax - 64) break;
       vl.push({ pos: cur, type: t }); prevT = t;
     }
-    for (let p = first - ctcDist('small', 'small'); p > vmin + 64; p -= ctcDist('small', 'small')) vl.unshift({ pos: p, type: 'small' });
-    // linee perpendicolari (u): spina al centro, isolati lunghi L
+    for (let p = first - step; p > vmin + 64; p -= step) vl.unshift({ pos: p, type: 'small' });
     const L = DTYPE[f.type].L;
     const spineType = (umax - umin) > 420 ? 'medium' : 'small';
     const ul = [{ pos: 0, type: spineType, spine: true }];
@@ -1301,12 +1431,10 @@ function ctcDist(a, b, depth) {
     f.vLines = vl; f.uLines = ul; f.firstCtc = first;
     f.collector = vl.find(l => l.type === 'medium') || null;
 
-    // segmenti stradali
     f.roads = [];
     vl.forEach(l => { const s = clipSeg(toW(umin - 50, l.pos), toW(umax + 50, l.pos), f.poly); if (s) f.roads.push({ a: s[0], b: s[1], type: l.type }); });
-    ul.forEach(l => { const s = clipSeg(toW(l.pos, vmin - 50), toW(l.pos, vmax + 50), f.poly); if (s) f.roads.push({ a: s[0], b: s[1], type: l.type, spine: !!l.spine }); });
+    ul.forEach(l => { const s = clipSeg(toW(l.pos, vmin - 50), toW(l.pos, vmax + 50), f.poly); if (s) f.roads.push({ a: s[0], b: s[1], type: l.type }); });
 
-    // isolati
     const vs = [{ pos: vmin - 80, type: 'none' }].concat(vl, [{ pos: vmax + 80, type: 'none' }]);
     const us = [{ pos: umin - 80, type: 'none' }].concat(ul, [{ pos: umax + 80, type: 'none' }]);
     f.blocks = [];
@@ -1314,8 +1442,7 @@ function ctcDist(a, b, depth) {
       const v0 = vs[r].pos + W(vs[r].type) / 2, v1 = vs[r + 1].pos - W(vs[r + 1].type) / 2;
       const u0 = us[c].pos + W(us[c].type) / 2, u1 = us[c + 1].pos - W(us[c + 1].type) / 2;
       if (v1 - v0 < 4 || u1 - u0 < 4) continue;
-      const rect = [toW(u0, v0), toW(u1, v0), toW(u1, v1), toW(u0, v1)];
-      const cp = clipPoly(rect, f.inset);
+      const cp = clipPoly([toW(u0, v0), toW(u1, v0), toW(u1, v1), toW(u0, v1)], f.inset);
       if (cp.length < 3) continue;
       const A = Math.abs(polyArea(cp));
       let a0 = Infinity, a1 = -Infinity, b0 = Infinity, b1 = -Infinity;
@@ -1328,10 +1455,9 @@ function ctcDist(a, b, depth) {
       else cls = 'pieno';
       const touchColl = vs[r].type === 'medium' || vs[r + 1].type === 'medium' || us[c].type === 'medium' || us[c + 1].type === 'medium';
       const touchArt = r === 0 || r === vs.length - 2 || c === 0 || c === us.length - 2;
-      f.blocks.push({ poly: cp, area: A, cls, depth, len, touchColl, touchArt, h: rnd(), zone: null, service: null, c: centroid(cp) });
+      f.blocks.push({ poly: cp, area: A, cls, touchColl, touchArt, h: rnd(), zone: null, service: null, c: centroid(cp) });
     }
 
-    // zonizzazione (limitata dalla fase di costruzione)
     f.blocks.forEach(b => {
       if (b.cls !== 'pieno') return;
       const h = b.h; let z;
@@ -1343,11 +1469,10 @@ function ctcDist(a, b, depth) {
         case 'industria': z = 'IND'; break;
         case 'parco':     z = b.touchColl && h < .4 ? 'COM' : 'PARK'; break;
       }
-      if (f.hop === 0) z = b.touchColl && h < .3 ? 'COM' : 'LOW';
+      if (f.idx === 0) z = b.touchColl && h < .3 ? 'COM' : 'LOW';
       b.zone = capZone(z, f.phase);
     });
 
-    // linea bus: anello interno che tocca il fronte
     f.bus = null;
     const si = ul.findIndex(l => l.spine);
     const posV = vl.filter(l => l.pos > 0);
@@ -1355,26 +1480,22 @@ function ctcDist(a, b, depth) {
       for (let kk = 2; kk >= 1 && !f.bus; kk--) {
         const kl = Math.min(kk, si), kr = Math.min(kk, ul.length - 1 - si);
         if (kl < 1 || kr < 1) continue;
-        const u1 = ul[si - kl].pos, u2 = ul[si + kr].pos;
-        const vA = posV[0].pos;
+        const u1 = ul[si - kl].pos, u2 = ul[si + kr].pos, vA = posV[0].pos;
         const cands = (f.collector && f.collector.pos > vA) ? [f.collector.pos, posV[posV.length - 1].pos] : [posV[posV.length - 1].pos];
         for (const vB of cands) {
-          const pts = [toW(u1, vA), toW(u2, vA), toW(u2, vB), toW(u1, vB)];
-          if (pts.every(p => inConvex(p, f.inset))) {
+          if ([toW(u1, vA), toW(u2, vA), toW(u2, vB), toW(u1, vB)].every(p => inConvex(p, f.inset))) {
             const sp = clipSeg(toW(0, vmin - 50), toW(0, vA), f.poly);
             const F = sp ? sp[0] : toW(0, 0);
-            f.bus = { pts: [F, toW(0, vA), toW(u2, vA), toW(u2, vB), toW(u1, vB), toW(u1, vA), toW(0, vA)], len: 0 };
-            let Lb = 0; const pp = f.bus.pts; for (let z = 0; z < pp.length; z++) Lb += vlen(sub(pp[(z + 1) % pp.length], pp[z]));
-            f.bus.len = Lb;
+            const pts = [F, toW(0, vA), toW(u2, vA), toW(u2, vB), toW(u1, vB), toW(u1, vA), toW(0, vA)];
+            let Lb = 0; for (let z = 0; z < pts.length; z++) Lb += vlen(sub(pts[(z + 1) % pts.length], pts[z]));
+            f.bus = { pts, len: Lb };
             break;
           }
         }
       }
     }
-    // stazione/hub: incrocio spina × collettore
-    f.hub = f.collector ? toW(0, f.collector.pos) : centroid(f.poly);
+    f.hub = f.collector ? toW(0, f.collector.pos) : f.C;
 
-    // statistiche
     f.stats = { pieno: 0, residuo: 0, profondo: 0, scarto: 0, zoneArea: {}, res: 0, jobs: 0 };
     f.blocks.forEach(b => {
       f.stats[b.cls]++;
@@ -1389,107 +1510,143 @@ function ctcDist(a, b, depth) {
 
   function assignServices(f) {
     f.services = [];
+    f.blocks.forEach(b => b.service = null);
     const resid = f.blocks.filter(b => b.cls === 'residuo' || b.cls === 'profondo').sort((a, b) => b.area - a.area);
     const coll = f.blocks.filter(b => b.cls === 'pieno' && b.touchColl).sort((a, b) => a.h - b.h);
     const pool = resid.concat(coll);
-    let pi = 0;
     f.serviceReq.forEach(([kind, minP]) => {
-      // P&R e multipiano: residuo più vicino all'hub
       let b = null;
-      if (SRV[kind].park) {
-        const free = pool.filter(x => !x.service);
-        free.sort((x, y) => vlen(sub(x.c, f.hub)) - vlen(sub(y.c, f.hub)));
-        b = free[0] || null;
-      } else {
-        while (pi < pool.length && pool[pi].service) pi++;
-        b = pool[pi] || null;
-      }
+      const free = pool.filter(x => !x.service);
+      if (SRV[kind].park) { free.sort((x, y) => vlen(sub(x.c, f.hub)) - vlen(sub(y.c, f.hub))); }
+      b = free[0] || null;
       if (!b) return;
       b.service = kind;
-      f.services.push({ kind, minPhase: Math.max(minP, f.phase), block: b });
+      f.services.push({ kind, minPhase: minP, block: b });
     });
   }
 
-  // ---------------------------------------------------------------- stato + vista
+  // ---------------------------------------------------------------- stato
   const canvas = document.getElementById('planMap');
   const ctx = canvas.getContext('2d');
-  const P = { seed: 1729, n: 5, S: 700, org: 0.4, align: false, tol: 6 };
-  let city = null, phase = 1, selId = null, unit = 'm';
-  const layers = { zones: true, roads: true, typeColor: false, seams: false, services: true, bus: true, tram: true, metro: true, park: true, labels: true, dims: true };
+  const P = { seed: 1729, S: 700, org: 0.4, align: false, tol: 6, river: true };
+  let history = [], view = 0, world = null, city = null, selKey = null, hoverKey = null, unit = 'm';
+  const layers = { zones: true, roads: true, typeColor: false, seams: false, services: true, bus: true, tram: true, metro: true, park: true, labels: true, dims: true, frontier: true };
   let cam = { x: 0, y: 0, s: 0.1 }, Wc = 800, Hc = 800, dpr = 1;
+  const STORE = 'cs2-planner-v2';
 
-  function fit() {
-    const b = city.bounds;
-    cam.s = Math.min(Wc / (b.maxX - b.minX), Hc / (b.maxY - b.minY));
-    cam.x = (b.minX + b.maxX) / 2; cam.y = (b.minY + b.maxY) / 2;
+  function save() { try { localStorage.setItem(STORE, JSON.stringify({ P, history })); } catch (e) { /* storage non disponibile */ } }
+  function load() {
+    try {
+      const d = JSON.parse(localStorage.getItem(STORE) || 'null');
+      if (d && d.P && Array.isArray(d.history)) { Object.assign(P, d.P); history = d.history; return true; }
+    } catch (e) { /* ignora */ }
+    return false;
   }
+
   const sx = p => (p.x - cam.x) * cam.s + Wc / 2;
   const sy = p => (p.y - cam.y) * cam.s + Hc / 2;
   const toWorld = (X, Y) => V((X - Wc / 2) / cam.s + cam.x, (Y - Hc / 2) / cam.s + cam.y);
 
+  function rebuild() {
+    world = makeWorld(P);
+    city = buildCity(world, history.slice(0, view));
+    city.frontier = frontierOf(world, city);
+    if (selKey && !city.faces.has(selKey)) selKey = null;
+  }
+  function fit() {
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    city.order.forEach(f => f.poly.forEach(p => { minX = Math.min(minX, p.x); maxX = Math.max(maxX, p.x); minY = Math.min(minY, p.y); maxY = Math.max(maxY, p.y); }));
+    if (!city.order.length) { minX = 0; maxX = P.S; minY = 0; maxY = P.S; }
+    const m = P.S * 0.9;
+    minX -= m; maxX += m; minY -= m; maxY += m * 1.2;
+    cam.s = Math.min(0.5, Math.min(Wc / (maxX - minX), Hc / (maxY - minY)));
+    cam.x = (minX + maxX) / 2; cam.y = (minY + maxY) / 2;
+  }
   function resize() {
     dpr = window.devicePixelRatio || 1;
-    const w = canvas.clientWidth || 800;
-    const oldW = Wc;
+    const w = canvas.clientWidth || 800, oldW = Wc;
     Wc = w; Hc = w;
     canvas.width = Math.round(w * dpr); canvas.height = Math.round(w * dpr);
     canvas.style.height = w + 'px';
     if (city) { if (oldW && oldW !== w) cam.s *= w / oldW; draw(); }
   }
-
-  const built = f => f.phase <= phase;
+  const srvActive = s => city.count >= PH_T[s.minPhase];
 
   // ---------------------------------------------------------------- disegno
   function pathPoly(p) { ctx.beginPath(); p.forEach((q, i) => i ? ctx.lineTo(sx(q), sy(q)) : ctx.moveTo(sx(q), sy(q))); ctx.closePath(); }
-  function pathLine(p, closed) { ctx.beginPath(); p.forEach((q, i) => i ? ctx.lineTo(sx(q), sy(q)) : ctx.moveTo(sx(q), sy(q))); if (closed) ctx.closePath(); }
+  function pathLine(p) { ctx.beginPath(); p.forEach((q, i) => i ? ctx.lineTo(sx(q), sy(q)) : ctx.moveTo(sx(q), sy(q))); }
   const ROADSTYLE = {
     small:  { col: '#24272a', ov: 'rgba(80,255,120,0.55)', min: 1 },
     medium: { col: '#2c3034', ov: 'rgba(0,200,255,0.6)', min: 1.8 },
     large:  { col: '#3a3f44', ov: 'rgba(255,60,60,0.65)', min: 2.8 }
   };
-  function strokeRoad(a, b, type) {
+  function strokeRoad(a, b, type, col) {
     const st = ROADSTYLE[type];
-    ctx.strokeStyle = layers.typeColor ? st.ov : st.col;
+    ctx.strokeStyle = col || (layers.typeColor ? st.ov : st.col);
     ctx.lineWidth = Math.max(st.min, ROAD[type].w * cam.s);
     ctx.beginPath(); ctx.moveTo(sx(a), sy(a)); ctx.lineTo(sx(b), sy(b)); ctx.stroke();
   }
-  // angolo tra un'arteria e la griglia locale di un modulo (0° = parallela o perpendicolare)
   function sideAngle(e, f) { return Math.abs(deg(angDiff90(Math.atan2(e.b.y - e.a.y, e.b.x - e.a.x), f.theta))); }
   const angCls = d => d < 1 ? 'ok' : d < 12 ? 'bad' : 'warn';
   function seamClass(e) {
-    const fs = e.faces.map(id => city.faces[id]).filter(built);
-    if (!fs.length) return null;
-    const d = Math.max.apply(null, fs.map(f => sideAngle(e, f)));
-    return { d, cls: angCls(d), fs };
+    const d = Math.max.apply(null, e.faces.map(f => sideAngle(e, f)));
+    return { d, cls: angCls(d) };
   }
+  function viewRange() {
+    const a = toWorld(0, 0), b = toWorld(Wc, Hc), S = P.S;
+    return { x0: a.x, x1: b.x, y0: a.y, y1: b.y, i0: Math.floor(a.x / S) - 2, i1: Math.ceil(b.x / S) + 2, j0: Math.floor(a.y / S) - 2, j1: Math.ceil(b.y / S) + 2 };
+  }
+  const midEdge = (f, e) => lerp(f.poly[e], f.poly[(e + 1) % 4], 0.5);
 
   function draw() {
-    const c = city;
+    const c = city, S = P.S, vr = viewRange();
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.fillStyle = '#090a0b'; ctx.fillRect(0, 0, Wc, Hc);
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
 
-    // griglia di sfondo 500 m
     ctx.strokeStyle = 'rgba(255,255,255,0.025)'; ctx.lineWidth = 1;
-    const g0 = toWorld(0, 0), g1 = toWorld(Wc, Hc);
-    for (let x = Math.floor(g0.x / 500) * 500; x < g1.x; x += 500) { ctx.beginPath(); ctx.moveTo(sx(V(x, 0)), 0); ctx.lineTo(sx(V(x, 0)), Hc); ctx.stroke(); }
-    for (let y = Math.floor(g0.y / 500) * 500; y < g1.y; y += 500) { ctx.beginPath(); ctx.moveTo(0, sy(V(0, y))); ctx.lineTo(Wc, sy(V(0, y))); ctx.stroke(); }
+    for (let x = Math.floor(vr.x0 / 500) * 500; x < vr.x1; x += 500) { ctx.beginPath(); ctx.moveTo(sx(V(x, 0)), 0); ctx.lineTo(sx(V(x, 0)), Hc); ctx.stroke(); }
+    for (let y = Math.floor(vr.y0 / 500) * 500; y < vr.y1; y += 500) { ctx.beginPath(); ctx.moveTo(0, sy(V(0, y))); ctx.lineTo(Wc, sy(V(0, y))); ctx.stroke(); }
 
-    // moduli futuri
-    c.faces.forEach(f => {
-      if (built(f)) return;
-      pathPoly(f.poly); ctx.fillStyle = 'rgba(255,255,255,0.012)'; ctx.fill();
-      ctx.setLineDash([4, 6]); ctx.strokeStyle = 'rgba(160,160,160,0.15)'; ctx.lineWidth = 1; ctx.stroke(); ctx.setLineDash([]);
-      if (layers.labels) {
-        const C = centroid(f.poly);
-        ctx.fillStyle = 'rgba(160,160,160,0.25)'; ctx.font = "10px 'Space Mono', monospace"; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillText('FASE ' + f.phase, sx(C), sy(C));
+    // terreno: aree vincolate in vista
+    const span = (vr.i1 - vr.i0) * (vr.j1 - vr.j0);
+    if (span < 5000) {
+      for (let i = vr.i0; i <= vr.i1; i++) for (let j = vr.j0; j <= vr.j1; j++) {
+        const g = world.face(i, j);
+        if (g.reserved === 'acqua') { pathPoly(g.poly); ctx.fillStyle = '#0d1820'; ctx.fill(); }
+        else if (g.reserved === 'naturale') { pathPoly(g.poly); ctx.fillStyle = '#121a14'; ctx.fill(); }
       }
-    });
+    }
+    if (P.river) {
+      ctx.strokeStyle = '#1d3a52'; ctx.lineWidth = Math.max(3, 140 * cam.s);
+      ctx.beginPath();
+      for (let x = vr.x0 - 100; x <= vr.x1 + 100; x += Math.max(20, 6 / cam.s)) { const p = V(x, world.riverY(x)); x === vr.x0 - 100 ? ctx.moveTo(sx(p), sy(p)) : ctx.lineTo(sx(p), sy(p)); }
+      ctx.stroke();
+    }
+    if (c.airport) {
+      c.airport.cells.forEach(g => { pathPoly(g.poly); ctx.fillStyle = '#15191c'; ctx.fill(); });
+      ctx.strokeStyle = '#3a4448'; ctx.lineWidth = Math.max(4, 60 * cam.s);
+      const p = c.airport.p, L = S * 0.8;
+      ctx.beginPath(); ctx.moveTo(sx(V(p.x - L, p.y - L * 0.2)), sy(V(0, p.y - L * 0.2))); ctx.lineTo(sx(V(p.x + L, p.y + L * 0.2)), sy(V(0, p.y + L * 0.2))); ctx.stroke();
+    }
+
+    // possibili espansioni
+    if (layers.frontier) {
+      c.frontier.forEach(g => {
+        pathPoly(g.poly);
+        const hov = g.key === hoverKey;
+        ctx.fillStyle = hov ? 'rgba(148,139,118,0.16)' : 'rgba(148,139,118,0.04)'; ctx.fill();
+        ctx.setLineDash([5, 5]); ctx.strokeStyle = hov ? 'rgba(214,207,174,0.8)' : 'rgba(148,139,118,0.35)'; ctx.lineWidth = 1; ctx.stroke(); ctx.setLineDash([]);
+        if (S * cam.s > 60) {
+          ctx.fillStyle = hov ? '#d6cfae' : 'rgba(148,139,118,0.55)'; ctx.font = "bold 13px 'Space Mono', monospace"; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillText('+', sx(g.C), sy(g.C) - (hov ? 8 : 0));
+          if (hov) { ctx.font = "9px 'Space Mono', monospace"; ctx.fillText(DTYPE[typeFor(c, g, typeSel.value)].label.toUpperCase(), sx(g.C), sy(g.C) + 8); }
+        }
+      });
+    }
 
     // isolati
-    c.faces.forEach(f => {
-      if (!built(f)) return;
+    c.order.forEach(f => {
       f.blocks.forEach(b => {
         pathPoly(b.poly);
         if (b.zone && layers.zones) { ctx.fillStyle = ZCOL[b.zone]; ctx.fill(); }
@@ -1500,37 +1657,47 @@ function ctcDist(a, b, depth) {
       });
     });
 
-    // strade locali
+    // strade, ponti, autostrada
     if (layers.roads) {
-      c.faces.forEach(f => { if (built(f)) f.roads.forEach(r => strokeRoad(r.a, r.b, r.type)); });
-      Object.values(c.edges).forEach(e => { if (e.phase <= phase) strokeRoad(e.a, e.b, e.type); });
-      // autostrada + raccordo con buffer
-      ctx.strokeStyle = '#2a3138'; ctx.lineWidth = Math.max(5, 46 * cam.s);
-      ctx.beginPath(); ctx.moveTo(sx(V(c.bounds.minX - 2000, c.hwY)), sy(V(0, c.hwY))); ctx.lineTo(sx(V(c.bounds.maxX + 2000, c.hwY)), sy(V(0, c.hwY))); ctx.stroke();
-      ctx.strokeStyle = '#52585b'; ctx.lineWidth = 1; ctx.setLineDash([8, 8]); ctx.stroke(); ctx.setLineDash([]);
-      const og = c.origin, fa = og.poly[2], fb = og.poly[3], mid = lerp(fa, fb, 0.5);
-      strokeRoad(mid, c.interchange, 'large');
-      ctx.strokeStyle = '#2a3138'; ctx.lineWidth = 3;
-      ctx.beginPath(); ctx.arc(sx(c.interchange), sy(c.interchange), Math.max(6, 70 * cam.s), 0, Math.PI * 2); ctx.stroke();
-      ctx.fillStyle = '#8b8c89'; ctx.font = "bold 10px 'Space Mono', monospace"; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-      ctx.fillText('AUTOSTRADA', sx(V(c.bounds.minX, 0)) + 6, sy(V(0, c.hwY)) - Math.max(8, 30 * cam.s));
-      if (layers.dims) {
-        const t = Math.round(vlen(sub(c.interchange, mid)));
-        ctx.fillStyle = '#948b76'; ctx.font = "10px 'Space Mono', monospace";
-        ctx.fillText('BUFFER ' + (unit === 'm' ? t + ' m' : Math.round(t / 8) + 'c'), sx(lerp(mid, c.interchange, 0.5)) + 8, sy(lerp(mid, c.interchange, 0.5)));
+      c.order.forEach(f => f.roads.forEach(r => strokeRoad(r.a, r.b, r.type)));
+      c.edges.forEach(e => strokeRoad(e.a, e.b, e.type));
+      // ponti
+      for (let i = vr.i0; i <= vr.i1; i++) for (let j = vr.j0; j <= vr.j1; j++) {
+        const g = world.face(i, j);
+        if (g.reserved !== 'acqua') continue;
+        if (c.faces.has(i + ',' + (j - 1)) && c.faces.has(i + ',' + (j + 1))) strokeRoad(midEdge(g, 0), midEdge(g, 2), 'large', '#4a5258');
+      }
+      // autostrada nel corridoio j = 1
+      const hw = [];
+      for (let i = vr.i0; i <= vr.i1; i++) hw.push(world.face(i, 1).C);
+      ctx.strokeStyle = '#2a3138'; ctx.lineWidth = Math.max(5, 46 * cam.s); pathLine(hw); ctx.stroke();
+      ctx.strokeStyle = '#52585b'; ctx.lineWidth = 1; ctx.setLineDash([8, 8]); pathLine(hw); ctx.stroke(); ctx.setLineDash([]);
+      for (let i = vr.i0; i <= vr.i1; i++) {
+        if (mod(i, 3) !== 0) continue;
+        const g = world.face(i, 1), up = c.faces.has(i + ',0'), dn = c.faces.has(i + ',2');
+        if (!up && !dn) continue;
+        if (up) strokeRoad(midEdge(g, 0), g.C, 'large');
+        if (dn) strokeRoad(g.C, midEdge(g, 2), 'large');
+        ctx.strokeStyle = '#2a3138'; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(sx(g.C), sy(g.C), Math.max(6, 70 * cam.s), 0, Math.PI * 2); ctx.stroke();
+        if (layers.dims && i === 0 && up) {
+          const t = Math.round(vlen(sub(g.C, midEdge(g, 0))));
+          ctx.fillStyle = '#948b76'; ctx.font = "10px 'Space Mono', monospace"; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+          const m = lerp(g.C, midEdge(g, 0), 0.5);
+          ctx.fillText('BUFFER ' + (unit === 'm' ? t + ' m' : Math.round(t / 8) + 'c'), sx(m) + 8, sy(m));
+        }
       }
     }
 
     // cuciture
     if (layers.seams) {
-      Object.values(c.edges).forEach(e => {
-        const sc = seamClass(e); if (!sc) return;
+      c.edges.forEach(e => {
+        const sc = seamClass(e);
         ctx.strokeStyle = sc.cls === 'ok' ? 'rgba(109,179,109,0.85)' : sc.cls === 'bad' ? 'rgba(200,80,80,0.9)' : 'rgba(200,144,74,0.9)';
         ctx.lineWidth = Math.max(4, 40 * cam.s);
         ctx.beginPath(); ctx.moveTo(sx(e.a), sy(e.a)); ctx.lineTo(sx(e.b), sy(e.b)); ctx.stroke();
-        if (sc.cls === 'ok' || city.S * cam.s < 90) return;
-        const m = lerp(e.a, e.b, 0.5);
-        const txt = sc.d.toFixed(1) + '°';
+        if (sc.cls === 'ok' || S * cam.s < 90) return;
+        const m = lerp(e.a, e.b, 0.5), txt = sc.d.toFixed(1) + '°';
         ctx.font = "bold 10px 'Space Mono', monospace"; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         const w = ctx.measureText(txt).width + 6;
         ctx.fillStyle = 'rgba(9,10,11,0.85)'; ctx.fillRect(sx(m) - w / 2, sy(m) - 7, w, 14);
@@ -1540,131 +1707,134 @@ function ctcDist(a, b, depth) {
 
     // tram
     if (layers.tram) {
-      c.tramLines.forEach((t, k) => {
-        if (phase < t.minPhase) return;
-        const off = k * 6;
-        ctx.save(); ctx.translate(off * 0.5, off * 0.5);
+      c.tram.forEach(t => {
         ctx.strokeStyle = t.color; ctx.lineWidth = 3; ctx.setLineDash([10, 6]);
-        pathLine(t.poly, true); ctx.stroke(); ctx.setLineDash([]);
-        // fermate ogni ~450 m
-        for (let i = 0; i < t.poly.length; i++) {
-          const a = t.poly[i], b = t.poly[(i + 1) % t.poly.length], Ls = vlen(sub(b, a)), ns = Math.max(1, Math.round(Ls / 450));
-          for (let s = 0; s < ns; s++) drawStop(lerp(a, b, s / ns), t.color, 4);
-        }
-        ctx.restore();
+        t.keys.forEach(k => {
+          const e = c.edges.get(k); if (!e) return;
+          ctx.beginPath(); ctx.moveTo(sx(e.a), sy(e.a)); ctx.lineTo(sx(e.b), sy(e.b)); ctx.stroke();
+        });
+        ctx.setLineDash([]);
+        t.keys.forEach(k => {
+          const e = c.edges.get(k); if (!e) return;
+          const ns = Math.max(1, Math.round(vlen(sub(e.b, e.a)) / 450));
+          if (S * cam.s >= 75) for (let s = 0; s <= ns; s++) drawStop(lerp(e.a, e.b, s / ns), t.color, 4);
+        });
       });
     }
 
     // bus
-    if (layers.bus && phase >= 2) {
-      c.faces.forEach((f, k) => {
-        if (!built(f) || !f.bus || f.type === 'parco') return;
+    if (layers.bus && c.count >= PH_T[2]) {
+      c.order.forEach((f, k) => {
+        if (!f.bus || f.type === 'parco') return;
         const col = BUS_COL[k % BUS_COL.length];
-        ctx.strokeStyle = col; ctx.lineWidth = 2; ctx.setLineDash([5, 4]);
-        pathLine(f.bus.pts, true); ctx.stroke(); ctx.setLineDash([]);
-        f.bus.pts.forEach((p, i) => { if (i !== 6) drawStop(p, col, 3); });
+        ctx.strokeStyle = col; ctx.lineWidth = S * cam.s < 75 ? 1 : 2; ctx.setLineDash([5, 4]);
+        pathLine(f.bus.pts); ctx.closePath(); ctx.stroke(); ctx.setLineDash([]);
+        if (S * cam.s >= 75) f.bus.pts.forEach((p, i) => { if (i !== 6) drawStop(p, col, 3); });
       });
     }
 
-    // metro + treno
-    if (layers.metro) {
-      if (phase >= 5) {
-        ctx.strokeStyle = '#232629'; ctx.lineWidth = Math.max(4, 20 * cam.s);
-        ctx.beginPath(); ctx.moveTo(sx(V(c.bounds.minX - 2000, 0)), sy(V(0, c.railY))); ctx.lineTo(sx(V(c.bounds.maxX + 2000, 0)), sy(V(0, c.railY))); ctx.stroke();
-        ctx.strokeStyle = '#8a7366'; ctx.lineWidth = 2; ctx.setLineDash([3, 5]); ctx.stroke(); ctx.setLineDash([]);
-        // diramazione merci verso l'industria
-        c.faces.forEach(f => f.services.forEach(s => {
-          if (s.kind !== 'CARGO' || phase < s.minPhase) return;
+    // ferrovia, metro
+    let railStation = null;
+    if (c.rail) {
+      const pts = [];
+      for (let i = vr.i0; i <= vr.i1 + 1; i++) { const p = world.node(i, c.rail.jr); pts.push(V(p.x, p.y - 45)); }
+      const a = world.node(c.rail.si, c.rail.jr), b = world.node(c.rail.si + 1, c.rail.jr);
+      railStation = V((a.x + b.x) / 2, (a.y + b.y) / 2 - 45);
+      if (layers.metro) {
+        ctx.strokeStyle = '#232629'; ctx.lineWidth = Math.max(4, 20 * cam.s); pathLine(pts); ctx.stroke();
+        ctx.strokeStyle = '#8a7366'; ctx.lineWidth = 2; ctx.setLineDash([3, 5]); pathLine(pts); ctx.stroke(); ctx.setLineDash([]);
+        c.order.forEach(f => f.services.forEach(s => {
+          if (s.kind !== 'CARGO' || !srvActive(s)) return;
+          const q = s.block.c, r = V(q.x, railStation.y);
           ctx.strokeStyle = '#8a7366'; ctx.lineWidth = 2; ctx.setLineDash([3, 5]);
-          ctx.beginPath(); ctx.moveTo(sx(V(s.block.c.x - 300, 0)), sy(V(0, c.railY))); ctx.quadraticCurveTo(sx(s.block.c), sy(V(0, c.railY)), sx(s.block.c), sy(s.block.c)); ctx.stroke(); ctx.setLineDash([]);
+          ctx.beginPath(); ctx.moveTo(sx(V(q.x - 300, 0)), sy(r)); ctx.quadraticCurveTo(sx(r), sy(r), sx(q), sy(q)); ctx.stroke(); ctx.setLineDash([]);
         }));
       }
+    }
+    if (layers.metro) {
       c.metro.forEach(m => {
-        if (phase < m.minPhase) return;
-        const pts = m.faces.filter(built).map(f => f.hub);
-        if (phase >= 5) { if (m.ext === 'rail') pts.push(c.railStation); else pts.push(c.airport); }
+        const pts = m.faces.map(f => f.hub);
+        if (m.ext === 'rail' && railStation) pts.unshift(railStation);
+        if (m.ext === 'air' && c.airport) pts.push(c.airport.p);
         if (pts.length < 2) return;
-        ctx.strokeStyle = 'rgba(82,107,107,0.45)'; ctx.lineWidth = 7;
-        smooth(pts); ctx.stroke();
+        ctx.strokeStyle = 'rgba(82,107,107,0.45)'; ctx.lineWidth = 7; smooth(pts); ctx.stroke();
         ctx.strokeStyle = '#6f9090'; ctx.lineWidth = 2; ctx.setLineDash([10, 8]); smooth(pts); ctx.stroke(); ctx.setLineDash([]);
         pts.forEach(p => {
-          const r = 7;
+          const r = S * cam.s < 75 ? 4 : 7;
           ctx.fillStyle = '#111416'; ctx.fillRect(sx(p) - r, sy(p) - r, 2 * r, 2 * r);
           ctx.strokeStyle = '#6f9090'; ctx.lineWidth = 1.5; ctx.strokeRect(sx(p) - r, sy(p) - r, 2 * r, 2 * r);
+          if (r < 6) return;
           ctx.fillStyle = '#a3c0c0'; ctx.font = "bold 9px 'Space Mono', monospace"; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
           ctx.fillText('M', sx(p), sy(p) + 0.5);
         });
       });
-      if (phase >= 5) {
-        boxLabel(V(c.railStation.x, c.railStation.y - 30), 'STAZIONE', '#8a7366', 70, 18);
-        boxLabel(V(c.airport.x + 40, c.airport.y), 'AEROPORTO', '#526b6b', 90, 40);
-      }
+      if (railStation) boxLabel(V(railStation.x, railStation.y - 30), 'STAZIONE', '#8a7366', 70, 18);
+      if (c.airport) boxLabel(c.airport.p, 'AEROPORTO', '#526b6b', 90, 40);
     }
 
     // servizi
-    c.faces.forEach(f => {
-      if (!built(f)) return;
+    c.order.forEach(f => {
       f.services.forEach(s => {
-        if (phase < s.minPhase) return;
+        if (!srvActive(s)) return;
         const def = SRV[s.kind];
         if (def.park ? !layers.park : !layers.services) return;
         const b = s.block;
         pathPoly(b.poly); ctx.fillStyle = '#16181a'; ctx.fill(); ctx.strokeStyle = def.color; ctx.lineWidth = 1.5; ctx.stroke();
-        const r = cam.s > 0.09 ? 9 : 5;
-        const X = sx(b.c), Y = sy(b.c);
+        if (S * cam.s < 75) return;
+        const r = cam.s > 0.09 ? 9 : 5, X = sx(b.c), Y = sy(b.c);
         ctx.fillStyle = '#0d0e10'; ctx.fillRect(X - r, Y - r, 2 * r, 2 * r);
         ctx.strokeStyle = def.color; ctx.lineWidth = 1.5; ctx.strokeRect(X - r, Y - r, 2 * r, 2 * r);
         if (r > 6) {
-          ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-          if (def.icon === 'P') { ctx.fillStyle = def.color; ctx.font = "bold 12px 'Cinzel', serif"; }
-          else { ctx.fillStyle = def.color; ctx.font = "11px 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif"; }
+          ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = def.color;
+          ctx.font = def.icon === 'P' ? "bold 12px 'Cinzel', serif" : "11px 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif";
           ctx.fillText(def.icon, X, Y + 1);
           if (cam.s > 0.22) { ctx.font = "bold 8px 'Space Mono', monospace"; ctx.fillStyle = '#a3a8a8'; ctx.fillText(def.label.toUpperCase(), X, Y + r + 7); }
         }
       });
     });
 
-    // selezione + quote
-    const sel = selId !== null ? c.faces[selId] : null;
+    const sel = selKey ? c.faces.get(selKey) : null;
     if (sel) {
       pathPoly(sel.poly); ctx.strokeStyle = '#d6cfae'; ctx.lineWidth = 2; ctx.setLineDash([6, 4]); ctx.stroke(); ctx.setLineDash([]);
-      if (layers.dims && built(sel)) drawDims(sel);
+      if (layers.dims) drawDims(sel);
     }
 
-    // etichette
     if (layers.labels) {
-      c.faces.forEach(f => {
-        if (!built(f)) return;
-        const C = centroid(f.poly);
-        const X = sx(C), Y = sy(C) - (cam.s > 0.15 ? 0 : 0);
+      const small = S * cam.s < 110, tiny = S * cam.s < 75;
+      c.order.forEach(f => {
+        if (tiny && f.type !== 'centro' && f.idx !== 0) return;
+        const X = sx(f.C), Y = sy(f.C);
         ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        const small = city.S * cam.s < 110;
         ctx.font = small ? "bold 9px 'Cinzel', serif" : "bold 11px 'Cinzel', serif";
-        const t1 = f.name.toUpperCase(), t2 = DTYPE[f.type].label.toUpperCase() + ' · F' + f.phase;
-        const w = Math.max(ctx.measureText(t1).width, small ? 0 : 70) + 10;
+        const t1 = f.name.toUpperCase(), t2 = DTYPE[f.type].label.toUpperCase() + (f.type === 'centro' && f.centerNo > 0 ? ' SEC.' : '') + ' · #' + (f.idx + 1);
+        const w = Math.max(ctx.measureText(t1).width, small ? 0 : 80) + 10;
         ctx.fillStyle = 'rgba(9,10,11,0.72)';
-        if (small) { ctx.fillRect(X - w / 2, Y - 7, w, 14); ctx.fillStyle = '#d0ccbc'; ctx.fillText(t1, X, Y); return; }
+        if (small) { ctx.fillRect(X - w / 2, Y - 7, w, 14); ctx.fillStyle = f.type === 'centro' ? '#e8c9a0' : '#d0ccbc'; ctx.fillText(t1, X, Y); return; }
         ctx.fillRect(X - w / 2, Y - 14, w, 28);
-        ctx.fillStyle = '#d0ccbc'; ctx.fillText(t1, X, Y - 5);
+        ctx.fillStyle = f.type === 'centro' ? '#e8c9a0' : '#d0ccbc'; ctx.fillText(t1, X, Y - 5);
         ctx.font = "9px 'Space Mono', monospace"; ctx.fillStyle = '#948b76'; ctx.fillText(t2, X, Y + 8);
       });
+      if (P.river && S * cam.s > 40) {
+        const x = (vr.x0 + vr.x1) / 2, p = V(x, world.riverY(x));
+        ctx.fillStyle = '#4a7090'; ctx.font = "italic 10px 'Space Mono', monospace"; ctx.textAlign = 'center';
+        ctx.fillText('~ FIUME ~', sx(p), sy(p));
+      }
     }
 
-    // vento + scala
     ctx.fillStyle = '#7a7063'; ctx.font = "10px 'Space Mono', monospace"; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-    ctx.fillText('VENTO ←', 10, 14);
+    ctx.fillText('VENTO ←   ·   AUTOSTRADA A SUD', 10, 14);
     const bar = niceBar(120 / cam.s);
     ctx.strokeStyle = '#a3a8a8'; ctx.lineWidth = 2;
     ctx.beginPath(); ctx.moveTo(10, Hc - 28); ctx.lineTo(10 + bar * cam.s, Hc - 28); ctx.stroke();
     ctx.fillStyle = '#a3a8a8'; ctx.fillText(bar >= 1000 ? (bar / 1000) + ' km' : bar + ' m', 14 + bar * cam.s, Hc - 28);
   }
-  function niceBar(m) { const s = [50, 100, 200, 250, 500, 1000, 2000, 5000]; let r = s[0]; s.forEach(v => { if (v <= m) r = v; }); return r; }
+  function niceBar(m) { const s = [50, 100, 200, 250, 500, 1000, 2000, 5000, 10000]; let r = s[0]; s.forEach(v => { if (v <= m) r = v; }); return r; }
   function drawStop(p, col, r) {
     ctx.beginPath(); ctx.arc(sx(p), sy(p), r, 0, Math.PI * 2); ctx.fillStyle = '#0a0b0c'; ctx.fill();
     ctx.lineWidth = 1.5; ctx.strokeStyle = col; ctx.stroke();
   }
   function boxLabel(p, txt, col, w, h) {
-    const W = Math.max(w * cam.s, 58), H = Math.max(h * cam.s, 16);
+    const W = Math.max(w * cam.s, 64), H = Math.max(h * cam.s, 16);
     ctx.fillStyle = '#17181a'; ctx.fillRect(sx(p) - W / 2, sy(p) - H / 2, W, H);
     ctx.strokeStyle = col; ctx.lineWidth = 1.5; ctx.strokeRect(sx(p) - W / 2, sy(p) - H / 2, W, H);
     ctx.fillStyle = '#a3a8a8'; ctx.font = "bold 9px 'Space Mono', monospace"; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
@@ -1679,7 +1849,6 @@ function ctcDist(a, b, depth) {
     }
   }
   function drawDims(f) {
-    // quote tra le linee parallele al fronte, lungo una linea laterale alla spina
     const ul = f.uLines, si = ul.findIndex(l => l.spine);
     const uq = si >= 0 && si + 1 < ul.length ? (ul[si].pos + ul[si + 1].pos) / 2 : 40;
     const pts = [{ pos: 0, type: f.frontType, front: true }].concat(f.vLines.filter(l => l.pos > 0));
@@ -1699,50 +1868,43 @@ function ctcDist(a, b, depth) {
   }
 
   // ---------------------------------------------------------------- pannelli
-  function cityTotals() {
-    let res = 0, jobs = 0, nb = 0, bus = 0, busVeh = 0, conflicts = 0, trans = 0, ok = 0;
-    city.faces.forEach(f => {
-      if (!built(f)) return;
-      nb++; res += f.stats.res; jobs += f.stats.jobs;
-      if (phase >= 2 && f.bus && f.type !== 'parco') { bus++; busVeh += busVehicles(f); }
-    });
-    Object.values(city.edges).forEach(e => {
-      const sc = seamClass(e); if (!sc) return;
-      if (sc.cls === 'bad') conflicts++; else if (sc.cls === 'warn') trans++; else ok++;
-    });
-    return { res, jobs, nb, bus, busVeh, conflicts, trans, ok };
-  }
-  function busVehicles(f) { return Math.max(2, Math.min(10, Math.round(f.stats.res / 2500 + f.stats.jobs / 4000) + 1)); }
-  function popWithin(pred) { let s = 0; city.faces.forEach(f => { if (built(f) && pred(f)) s += f.stats.res + f.stats.jobs * 0.5; }); return s; }
+  const kv = (k, v) => '<div class="kv"><span>' + k + '</span><span>' + v + '</span></div>';
+  const fmtD = m => unit === 'm' ? Math.round(m) + ' m' : (m / 8) + ' celle';
+  const busVehicles = f => Math.max(2, Math.min(10, Math.round(f.stats.res / 2500 + f.stats.jobs / 4000) + 1));
 
   function renderInfo() {
-    const t = cityTotals();
-    let h = '<h4>Città · Fase ' + phase + '</h4>';
-    h += kv('Moduli costruiti', t.nb + ' / ' + city.faces.length);
-    h += kv('Area urbana', (t.nb * city.S * city.S / 1e6).toFixed(1) + ' km²');
-    h += kv('Abitanti (stima)', fmtInt(t.res));
-    h += kv('Posti di lavoro (stima)', fmtInt(t.jobs));
-    h += kv('Cuciture', '<span class="good">' + t.ok + '</span> · <span class="badc">' + t.conflicts + '</span> · <span class="warnc">' + t.trans + '</span>');
-    if (phase >= 2) h += kv('Linee bus', t.bus + ' (' + t.busVeh + ' veicoli)');
-    city.tramLines.forEach(tl => {
-      if (phase < tl.minPhase) return;
-      const pop = popWithin(f => f.d <= (tl.id === 'T1' ? 1 : 2));
-      h += kv(tl.name, Math.max(3, Math.round(pop / 4000) + 2) + ' veicoli');
+    const c = city;
+    let res = 0, jobs = 0, bus = 0, busVeh = 0, ok = 0, bad = 0, warn = 0;
+    c.order.forEach(f => { res += f.stats.res; jobs += f.stats.jobs; if (c.count >= PH_T[2] && f.bus && f.type !== 'parco') { bus++; busVeh += busVehicles(f); } });
+    c.edges.forEach(e => { const s = seamClass(e).cls; if (s === 'ok') ok++; else if (s === 'bad') bad++; else warn++; });
+    const next = PH_T[c.phase + 1];
+    document.getElementById('phaseBadge').textContent = 'FASE ' + c.phase + ' · ' + PH_NAME[c.phase].toUpperCase() + (next ? '  →  F' + (c.phase + 1) + ' a ' + next + ' moduli' : '  ·  crescita libera');
+    let h = '<h4>Città · Fase ' + c.phase + ' — ' + PH_NAME[c.phase] + '</h4>';
+    h += kv('Moduli', c.count + (view < history.length ? ' (storia ' + view + '/' + history.length + ')' : ''));
+    h += kv('Centri', c.centers.length ? c.centers.map(x => x.name).join(', ') : '— (nasce a ' + PH_T[3] + ' moduli)');
+    h += kv('Area urbana', (c.count * P.S * P.S / 1e6).toFixed(1) + ' km²');
+    h += kv('Abitanti (stima)', fmtInt(res));
+    h += kv('Posti di lavoro (stima)', fmtInt(jobs));
+    h += kv('Cuciture', '<span class="good">' + ok + '</span> · <span class="badc">' + bad + '</span> · <span class="warnc">' + warn + '</span>');
+    h += kv('Espansioni possibili', c.frontier.length);
+    if (c.count >= PH_T[2]) h += kv('Linee bus', bus + ' (' + busVeh + ' veicoli)');
+    c.tram.forEach(t => {
+      let pop = 0; c.order.forEach(f => { if (Math.max(Math.abs(f.i - t.center.i), Math.abs(f.j - t.center.j)) <= 1) pop += f.stats.res + f.stats.jobs * 0.5; });
+      h += kv(t.name, Math.max(3, Math.round(pop / 4000) + 2) + ' veicoli');
     });
-    city.metro.forEach(m => {
-      if (phase < m.minPhase) return;
-      const pop = m.faces.filter(built).reduce((s, f) => s + f.stats.res + f.stats.jobs * 0.5, 0);
+    c.metro.forEach(m => {
+      const pop = m.faces.reduce((s, f) => s + f.stats.res + f.stats.jobs * 0.5, 0);
       h += kv(m.name, Math.max(2, Math.round(pop / 9000) + 1) + ' treni');
     });
-    if (phase >= 5) h += kv('Treno esterno', 'stazione + scalo merci');
+    if (c.rail) h += kv('Ferrovia', 'corridoio fissato a nord · stazione + aeroporto');
     document.getElementById('cityInfo').innerHTML = h;
 
-    const f = selId !== null ? city.faces[selId] : null;
+    const f = selKey ? c.faces.get(selKey) : null;
     const el = document.getElementById('districtInfo');
-    if (!f) { el.innerHTML = '<h4>Quartiere</h4><div style="color:var(--muted)">Clicca un modulo sulla mappa per vedere orientamento, cuciture, isolati e consigli.</div>'; return; }
+    if (!f) { el.innerHTML = '<h4>Quartiere</h4><div style="color:var(--muted)">Clicca un modulo costruito per vedere orientamento, cuciture, isolati e consigli. Clicca un riquadro tratteggiato per costruire lì il prossimo modulo.</div>'; return; }
     let d = '<h4>' + f.name + ' · ' + DTYPE[f.type].label + '</h4>';
-    if (!built(f)) d += '<div class="warnc" style="margin-bottom:6px;">Non ancora costruito: arriva in fase ' + f.phase + '.</div>';
-    d += kv('Fase di costruzione', f.phase);
+    d += kv('Costruito', 'modulo #' + (f.idx + 1) + ' · fase ' + f.phase);
+    d += kv('Distanza dal centro', isFinite(f.centerD) ? f.centerD + ' moduli' : '—');
     d += kv('Orientamento griglia', deg(((f.theta % Math.PI) + Math.PI) % Math.PI).toFixed(1) + '°');
     d += kv('Fronte', ROAD[f.frontType].label);
     d += kv('Prima locale dal fronte', fmtD(f.firstCtc));
@@ -1751,45 +1913,68 @@ function ctcDist(a, b, depth) {
     d += kv('Abitanti / lavoro (stima)', fmtInt(f.stats.res) + ' / ' + fmtInt(f.stats.jobs));
     const zs = Object.entries(f.stats.zoneArea).sort((a, b) => b[1] - a[1]);
     if (zs.length) d += kv('Zone principali', zs.slice(0, 3).map(([z, a]) => '<span style="color:' + ZCOL[z] + ';filter:brightness(1.8)">■</span> ' + ZNAME[z] + ' ' + (a / 10000).toFixed(1) + ' ha').join('<br>'));
-    if (f.services.length) d += kv('Servizi', f.services.map(s => SRV[s.kind].label + (s.minPhase > f.phase ? ' (F' + s.minPhase + ')' : '')).join(', '));
+    if (f.services.length) d += kv('Servizi', f.services.map(s => SRV[s.kind].label + (srvActive(s) ? '' : ' (da F' + s.minPhase + ')')).join(', '));
     if (f.bus && f.type !== 'parco') d += kv('Bus di quartiere', (f.bus.len / 1000).toFixed(1) + ' km · ' + busVehicles(f) + ' veicoli');
 
-    // consigli automatici
     const tips = [];
-    if (f.snapped !== null && f.snapped !== undefined && Math.abs(f.snapDelta) > 1e-6) {
-      tips.push(['warn', 'Griglia ereditata da <b>' + city.faces[f.snapped].name + '</b> (ruotata di ' + Math.abs(deg(f.snapDelta)).toFixed(1) + '°): strade parallele al vicino, ma il fronte non è più parallelo alla griglia. Vale la pena solo se la continuità visiva conta più dei lotti persi.']);
-    }
+    if (f.snapped && Math.abs(f.snapDelta) > 1e-6) tips.push(['warn', 'Griglia ereditata da <b>' + f.snapped.name + '</b> (ruotata di ' + Math.abs(deg(f.snapDelta)).toFixed(1) + '°): strade parallele al vicino, ma il fronte non è più parallelo alla griglia.']);
     const SIDE = ['nord', 'est', 'sud', 'ovest'];
     f.ekeys.forEach((k, e) => {
-      const ed = city.edges[k], d = sideAngle(ed, f), cl = angCls(d);
-      const nb = f.nb[e] >= 0 ? ' (verso ' + city.faces[f.nb[e]].name + ')' : ' (bordo città)';
-      if (cl === 'bad') tips.push(['bad', 'Lato ' + SIDE[e] + nb + ': arteria storta di ' + d.toFixed(1) + '° rispetto alla griglia → strisce sottili e lotti che non crescono. Rendila parallela alla griglia oppure curvala decisamente (&gt;12°).']);
-      else if (cl === 'warn') tips.push(['warn', 'Lato ' + SIDE[e] + nb + ': ' + d.toFixed(1) + '° → transizione netta. I triangoli vanno a servizi, parcheggi o parchi.']);
+      const ed = c.edges.get(k), dd = sideAngle(ed, f), cl = angCls(dd);
+      const nb = c.faces.get(f.nb[e][0] + ',' + f.nb[e][1]);
+      const who = nb ? ' (verso ' + nb.name + ')' : ' (margine)';
+      if (cl === 'bad') tips.push(['bad', 'Lato ' + SIDE[e] + who + ': arteria storta di ' + dd.toFixed(1) + '° rispetto alla griglia → strisce sottili. Rendila parallela oppure curvala decisamente (&gt;12°).']);
+      else if (cl === 'warn') tips.push(['warn', 'Lato ' + SIDE[e] + who + ': ' + dd.toFixed(1) + '° → transizione netta. I triangoli vanno a servizi, parcheggi o parchi.']);
     });
     if (f.stats.profondo) tips.push(['warn', f.stats.profondo + ' strisce più profonde di 6+6 celle: aggiungi un vicolo (8 m) nel mezzo o usale per servizi e parcheggi.']);
-    if (f.stats.residuo + f.stats.profondo > f.services.length + 2) tips.push(['', 'Residui liberi oltre ai servizi: piazze, parchi di quartiere, parcheggi. Non zonizzarli a forza.']);
-    if (f.hop === 0) tips.push(['', 'Borgo storico: resta a bassa densità. Densifica nei moduli nuovi invece di demolire.']);
-    if (f.type === 'industria') tips.push(['', 'Sottovento rispetto alla città e vicino all\'autostrada. I camion devono raggiungere l\'arteria senza attraversare quartieri.']);
-    if (f.station) tips.push(['good', 'Stazione metro sull\'incrocio spina × collettore: è l\'hub del modulo, bus e P&amp;R convergono qui.']);
+    if (f.idx === 0) tips.push(['', 'Borgo storico: resta a bassa densità. Densifica nei moduli nuovi invece di demolire.']);
+    if (f.type === 'centro' && f.centerNo > 0) tips.push(['good', 'Centro secondario: ha il suo anello tram, ospedale e metro. Alleggerisce il centro principale invece di farlo crescere all\'infinito.']);
+    if (f.type === 'industria') tips.push(['', 'Sottovento (ovest) e lontano dai centri: i camion raggiungono l\'arteria senza attraversare quartieri.']);
+    if (f.station) tips.push(['good', 'Stazione metro sull\'incrocio spina × collettore: è l\'hub del modulo.']);
+    if (f.j >= 2) tips.push(['', 'Oltre l\'autostrada: collegato solo dagli svincoli. Tieni qui industria e logistica, o quartieri con un buon collegamento metro.']);
     if (tips.length) d += '<ul class="tips" style="margin-top:8px;">' + tips.map(t => '<li class="t-' + t[0] + '">' + t[1] + '</li>').join('') + '</ul>';
     el.innerHTML = d;
   }
-  const kv = (k, v) => '<div class="kv"><span>' + k + '</span><span>' + v + '</span></div>';
-  const fmtD = m => unit === 'm' ? Math.round(m) + ' m' : (m / 8) + ' celle';
 
   // ---------------------------------------------------------------- controlli
-  function regen(keepView) {
-    city = generate(P);
-    if (selId !== null && selId >= city.faces.length) selId = null;
-    if (!keepView) fit();
-    draw(); renderInfo();
+  const typeSel = document.getElementById('typeSel');
+  const histSl = document.getElementById('sl-hist');
+  function syncHist() {
+    histSl.max = Math.max(1, history.length); histSl.value = view;
+    histSl.disabled = history.length <= 1;
+    document.getElementById('v-hist').textContent = 'passo ' + view + ' / ' + history.length;
   }
-  function setPhase(p) {
-    phase = p;
-    document.querySelectorAll('[data-phase]').forEach(b => b.classList.toggle('active', +b.dataset.phase === p));
-    draw(); renderInfo();
+  function refresh(refit) { rebuild(); syncHist(); if (refit) fit(); draw(); renderInfo(); save(); }
+
+  function grow(k, at) {
+    if (view < history.length) history = history.slice(0, view);     // costruire dal passato riscrive il futuro
+    for (let t = 0; t < k; t++) {
+      if (t > 0 || !city || city.count !== view) { rebuild(); }
+      let step;
+      if (at) {
+        step = { i: at.i, j: at.j, type: typeFor(city, at, typeSel.value) };
+        if (!city.centers.length && city.count + 1 >= PH_T[3] && typeSel.value === 'auto') step.type = 'centro';
+      } else step = pickNext(world, city, typeSel.value);
+      if (!step) break;
+      history.push(step); view = history.length;
+      rebuild();
+    }
+    syncHist(); draw(); renderInfo(); save();
   }
-  document.querySelectorAll('[data-phase]').forEach(b => b.addEventListener('click', () => setPhase(+b.dataset.phase)));
+  document.querySelectorAll('[data-grow]').forEach(b => b.addEventListener('click', () => {
+    const before = city.count;
+    grow(+b.dataset.grow);
+    // inquadra se la città esce dalla vista
+    const vr = viewRange();
+    if (city.order.some(f => f.C.x < vr.x0 || f.C.x > vr.x1 || f.C.y < vr.y0 || f.C.y > vr.y1) || before === 0) { fit(); draw(); }
+  }));
+  document.getElementById('btn-undo').addEventListener('click', () => {
+    if (view < history.length) history = history.slice(0, view);
+    if (history.length > 1) { history.pop(); view = history.length; refresh(false); }
+  });
+  histSl.addEventListener('input', () => { view = +histSl.value; refresh(false); });
+  typeSel.addEventListener('change', draw);
+
   document.querySelectorAll('[data-layer]').forEach(b => b.addEventListener('click', () => {
     const k = b.dataset.layer; layers[k] = !layers[k]; b.classList.toggle('active', layers[k]); draw();
   }));
@@ -1797,48 +1982,71 @@ function ctcDist(a, b, depth) {
     unit = unit === 'm' ? 'c' : 'm'; e.target.textContent = unit === 'm' ? 'UNITÀ: METRI' : 'UNITÀ: CELLE'; draw(); renderInfo();
   });
   const seedIn = document.getElementById('seedInput');
-  document.getElementById('btn-new').addEventListener('click', () => { P.seed = Math.floor(Math.random() * 99999) + 1; seedIn.value = P.seed; selId = null; regen(); });
-  seedIn.addEventListener('change', () => { P.seed = Math.max(1, parseInt(seedIn.value, 10) || 1); selId = null; regen(); });
-  document.getElementById('btn-align').addEventListener('click', e => {
-    P.align = !P.align; e.target.classList.toggle('active', P.align); e.target.textContent = 'ALLINEA MODULI: ' + (P.align ? 'ON' : 'OFF'); regen(true);
-  });
+  function newCity(seed) {
+    P.seed = seed; seedIn.value = seed; selKey = null;
+    history = []; view = 0; rebuild();
+    grow(12);
+    fit(); draw();
+  }
+  document.getElementById('btn-new').addEventListener('click', () => newCity(Math.floor(Math.random() * 99999) + 1));
+  seedIn.addEventListener('change', () => newCity(Math.max(1, parseInt(seedIn.value, 10) || 1)));
+  const btnAlign = document.getElementById('btn-align'), btnRiver = document.getElementById('btn-river');
+  function syncToggles() {
+    btnAlign.classList.toggle('active', P.align); btnAlign.textContent = 'ALLINEA MODULI: ' + (P.align ? 'ON' : 'OFF');
+    btnRiver.classList.toggle('active', P.river); btnRiver.textContent = 'FIUME: ' + (P.river ? 'ON' : 'OFF');
+  }
+  btnAlign.addEventListener('click', () => { P.align = !P.align; syncToggles(); refresh(false); });
+  btnRiver.addEventListener('click', () => { P.river = !P.river; syncToggles(); refresh(false); });
   const sliders = [
-    ['sl-n', 'v-n', v => { P.n = v; selId = null; }, v => v + ' × ' + v, false],
-    ['sl-S', 'v-S', v => { P.S = v; }, v => v + ' m', false],
-    ['sl-org', 'v-org', v => { P.org = v / 100; }, v => v + '%', true],
-    ['sl-tol', 'v-tol', v => { P.tol = v; }, v => v + '°', true]
+    ['sl-S', 'v-S', v => { P.S = v; }, v => v + ' m', 'S'],
+    ['sl-org', 'v-org', v => { P.org = v / 100; }, v => v + '%', 'org'],
+    ['sl-tol', 'v-tol', v => { P.tol = v; }, v => v + '°', 'tol']
   ];
-  sliders.forEach(([id, vid, set, fmt, keep]) => {
+  function syncSliders() {
+    sliders.forEach(([id, vid, , fmt, key]) => {
+      const el = document.getElementById(id);
+      el.value = key === 'org' ? Math.round(P.org * 100) : P[key];
+      document.getElementById(vid).textContent = fmt(+el.value);
+    });
+  }
+  sliders.forEach(([id, vid, set, fmt, key]) => {
     const el = document.getElementById(id), out = document.getElementById(vid);
-    out.textContent = fmt(+el.value);
-    el.addEventListener('input', () => { set(+el.value); out.textContent = fmt(+el.value); regen(keep); });
+    el.addEventListener('input', () => { set(+el.value); out.textContent = fmt(+el.value); refresh(key === 'S'); });
   });
 
-  // pan / zoom / selezione
+  // pan / zoom / selezione / costruzione
   let drag = null;
+  const evWorld = e => { const r = canvas.getBoundingClientRect(); return toWorld(e.clientX - r.left, e.clientY - r.top); };
   canvas.addEventListener('pointerdown', e => {
     drag = { x: e.clientX, y: e.clientY, cx: cam.x, cy: cam.y, moved: false };
     canvas.setPointerCapture(e.pointerId);
   });
   canvas.addEventListener('pointermove', e => {
-    if (!drag) return;
+    if (!drag) {
+      if (!layers.frontier) return;
+      const w = evWorld(e), g = city.frontier.find(x => inConvex(w, x.poly));
+      const k = g ? g.key : null;
+      if (k !== hoverKey) { hoverKey = k; canvas.style.cursor = k ? 'pointer' : ''; draw(); }
+      return;
+    }
     const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
     if (!drag.moved && Math.hypot(dx, dy) > 4) { drag.moved = true; canvas.classList.add('dragging'); }
     if (drag.moved) { cam.x = drag.cx - dx / cam.s; cam.y = drag.cy - dy / cam.s; draw(); }
   });
   canvas.addEventListener('pointerup', e => {
     if (drag && !drag.moved) {
-      const r = canvas.getBoundingClientRect();
-      const w = toWorld(e.clientX - r.left, e.clientY - r.top);
-      const f = city.faces.find(ff => inConvex(w, ff.poly));
-      selId = f ? (selId === f.id ? null : f.id) : null;
-      draw(); renderInfo();
+      const w = evWorld(e);
+      const f = city.order.find(ff => inConvex(w, ff.poly));
+      const g = !f && layers.frontier ? city.frontier.find(x => inConvex(w, x.poly)) : null;
+      if (g) { grow(1, g); hoverKey = null; }
+      else { selKey = f ? (selKey === f.key ? null : f.key) : null; draw(); renderInfo(); }
     }
     drag = null; canvas.classList.remove('dragging');
   });
+  canvas.addEventListener('pointerleave', () => { if (hoverKey) { hoverKey = null; draw(); } });
   function zoomAt(X, Y, k) {
     const before = toWorld(X, Y);
-    cam.s = Math.max(0.02, Math.min(3, cam.s * k));
+    cam.s = Math.max(0.01, Math.min(3, cam.s * k));
     const after = toWorld(X, Y);
     cam.x += before.x - after.x; cam.y += before.y - after.y;
     draw();
@@ -1854,8 +2062,13 @@ function ctcDist(a, b, depth) {
   window.addEventListener('resize', resize);
 
   resize();
-  regen();
-  setPhase(1);
+  if (load() && history.length) {
+    view = history.length; seedIn.value = P.seed;
+    syncToggles(); syncSliders(); refresh(true);
+  } else {
+    syncToggles(); syncSliders();
+    newCity(P.seed);
+  }
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => draw());
 })();
 </script>
