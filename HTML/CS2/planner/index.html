@@ -79,6 +79,21 @@
       <p class="hint">Ogni area chiusa da strade è un modulo. Clicca dentro un modulo (strumento Seleziona) per sceglierne il tipo e vedere gli avvisi. Le celle si colorano come le zone del gioco: zonabili entro 6 celle (48 m) dal bordo strada.</p>
     </section>
     <section class="box">
+      <h4>Crescita</h4>
+      <label class="field">Mostra fino alla fase <b id="vPhase"></b><input id="phaseShow" type="range" min="0" max="1" step="1" value="0"></label>
+      <div class="row">
+        <button class="btn" id="toolPhase" title="P: clicca i moduli per assegnare la fase">Pianifica a click</button>
+        <label class="check">fase <input id="phaseNext" type="number" min="1" step="1" value="1" style="width:52px;background:#0d0e10;border:1px solid var(--muted);color:var(--accent3);font-family:inherit;padding:2px 4px;"></label>
+      </div>
+      <label class="check"><input type="checkbox" id="phaseAuto" checked> +1 dopo ogni click</label>
+      <div class="row">
+        <button class="btn" id="phaseSuggest" title="Anelli di moduli confinanti a partire dal modulo selezionato (o dal migliore)">Suggerisci ordine</button>
+        <button class="btn" id="phaseClear">Azzera</button>
+      </div>
+      <div id="growthTable"></div>
+      <p class="hint">Abitanti e posti di lavoro sono stime per ettaro zonabile, non valori del gioco. Una strada appartiene alla fase più bassa tra i moduli che delimita.</p>
+    </section>
+    <section class="box">
       <h4>Vincoli</h4>
       <label class="field">Mostra
         <select id="anMode">

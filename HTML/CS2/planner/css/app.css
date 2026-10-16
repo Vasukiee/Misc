@@ -71,6 +71,11 @@ details summary { cursor: pointer; font-size: .75rem; color: var(--accent2); }
 .buf-grid input[type=number] { width: 70px; background: #0d0e10; border: 1px solid var(--muted); color: var(--accent3); font-family: inherit; padding: 2px 4px; font-size: .75rem; }
 .legend-list { display: flex; flex-direction: column; gap: 3px; font-size: .72rem; }
 .legend-list span.sw { margin-right: 6px; vertical-align: -2px; }
+.gtable { width: 100%; border-collapse: collapse; font-size: .68rem; margin-top: 4px; }
+.gtable th, .gtable td { padding: 3px 4px; border-bottom: 1px dashed var(--border); text-align: right; }
+.gtable th { color: var(--accent2); font-weight: normal; }
+.gtable td:first-child, .gtable th:first-child { text-align: left; }
+.gtable tr.on td { color: var(--accent3); }
 .tips { list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: .72rem; margin-top: 6px; }
 .tips li { padding-left: 8px; border-left: 2px solid var(--muted); }
 .tips li.t-bad { border-left-color: #c85050; } .tips li.t-warn { border-left-color: #c8904a; } .tips li.t-good { border-left-color: #6db36d; }

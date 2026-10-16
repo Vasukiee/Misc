@@ -93,15 +93,20 @@
   }
 
   // ------------------------------------------------------------ tipo dei moduli (marcatori salvati nel progetto)
-  function typeOf(p, f) {
-    const m = (p.modules || []).find(mk => inPoly(mk, f.poly));
-    return m ? m.type : 'residenziale';
-  }
-  function setType(p, f, type) {
+  function markerOf(p, f) { return (p.modules || []).find(mk => inPoly(mk, f.poly)) || null; }
+  function typeOf(p, f) { const m = markerOf(p, f); return m && m.type ? m.type : 'residenziale'; }
+  function phaseOf(p, f) { const m = markerOf(p, f); return m && Number.isFinite(m.phase) ? m.phase : null; }
+  // un solo marcatore per modulo: { x, y, type, phase }
+  function setProps(p, f, props) {
+    const old = markerOf(p, f) || {};
     p.modules = (p.modules || []).filter(mk => !inPoly(mk, f.poly));
     const q = interiorPoint(f);
-    p.modules.push({ x: q.x, y: q.y, type });
+    const m = Object.assign({ type: old.type || 'residenziale', phase: Number.isFinite(old.phase) ? old.phase : null }, props, { x: q.x, y: q.y });
+    if (!Number.isFinite(m.phase)) delete m.phase;
+    p.modules.push(m);
   }
+  function setType(p, f, type) { setProps(p, f, { type }); }
+  function setPhase(p, f, phase) { setProps(p, f, { phase: phase === null ? null : Math.max(1, Math.round(phase)) }); }
 
   // ------------------------------------------------------------ proposta di strade interne
   function propose(p, f, type) {
@@ -201,7 +206,7 @@
   // analysisFn(project) viene chiamata dopo aver preparato la maschera dell'industria (sorgente di inquinamento)
   function compute(p, auto, analysisFn) {
     const faces = extractFaces(p);
-    faces.forEach(f => { f.type = typeOf(p, f); f.proposal = auto && !f.dangling ? propose(p, f, f.type) : null; });
+    faces.forEach(f => { f.type = typeOf(p, f); f.phase = phaseOf(p, f); f.proposal = auto && !f.dangling ? propose(p, f, f.type) : null; });
     const extra = []; faces.forEach(f => { if (f.proposal) f.proposal.segs.forEach(s => extra.push(s)); });
     const idx = roadIndex(p, extra);
     faces.forEach(f => { f.cells = cells(f, idx); });
@@ -241,7 +246,61 @@
       tot.cells += st.cells; tot.zone += st.zone; tot.conflict += st.conflict; tot.interior += st.interior;
       tot.constrained += st.reserved + st.plume + st.blocked + st.groundwater; tot.warnings += f.warnings.filter(w => w[0] !== 'good').length;
     });
-    return { faces, totals: tot, analysis: A };
+    const res = { faces, totals: tot, analysis: A };
+    res.growth = growth(p, res);
+    return res;
+  }
+
+  // ------------------------------------------------------------ piano di crescita
+  // stime indicative per ettaro zonabile
+  const DENS = { residenziale: { res: 110, jobs: 10 }, centro: { res: 280, jobs: 150 }, industria: { res: 0, jobs: 70 }, parco: { res: 0, jobs: 5 } };
+  function neighbors(res) {
+    const byEdge = new Map();
+    res.faces.forEach(f => f.bound.forEach(h => { const k = h.edge.id; if (!byEdge.has(k)) byEdge.set(k, new Set()); byEdge.get(k).add(f); }));
+    const nb = new Map(res.faces.map(f => [f, new Set()]));
+    byEdge.forEach(set => set.forEach(f => set.forEach(g => { if (f !== g) nb.get(f).add(g); })));
+    return { nb, byEdge };
+  }
+  function growth(p, res) {
+    const { nb, byEdge } = neighbors(res), G = CS2.graph;
+    // fase di ogni strada: la più bassa tra i moduli che delimita
+    const edgePhase = new Map();
+    byEdge.forEach((set, id) => { let ph = null; set.forEach(f => { if (f.phase !== null && (ph === null || f.phase < ph)) ph = f.phase; }); edgePhase.set(id, ph); });
+    const phases = [...new Set(res.faces.map(f => f.phase).filter(x => x !== null))].sort((a, b) => a - b);
+    const rows = [], warn = [];
+    let cumRes = 0, cumJobs = 0, cumZone = 0, cumMods = 0;
+    phases.forEach(ph => {
+      const fs = res.faces.filter(f => f.phase === ph);
+      let zone = 0, rr = 0, jj = 0;
+      fs.forEach(f => { const z = f.stats.zone * CELL * CELL / 10000, d = DENS[f.type]; zone += z; rr += z * d.res; jj += z * d.jobs; });
+      const km = {};
+      p.graph.edges.forEach(e => { if (edgePhase.get(e.id) === ph) km[e.type] = (km[e.type] || 0) + G.edgeLength(p, e) / 1000; });
+      cumRes += rr; cumJobs += jj; cumZone += zone; cumMods += fs.length;
+      rows.push({ phase: ph, modules: fs.length, zone, res: rr, jobs: jj, km, cumRes, cumJobs, cumZone, cumMods });
+      fs.forEach(f => {
+        if (ph > phases[0] && ![...nb.get(f)].some(g => g.phase !== null && g.phase < ph)) warn.push([f, 'Fase ' + ph + ': il modulo non confina con nessun modulo delle fasi precedenti (resterebbe isolato).']);
+        if (f.type === 'centro' && ph === phases[0]) warn.push([f, 'Centro nella prima fase: all\'inizio le densità alte non sono ancora sbloccate (verifica i traguardi del gioco).']);
+      });
+    });
+    const unplanned = res.faces.filter(f => f.phase === null).length;
+    return { rows, warn, edgePhase, unplanned, maxPhase: phases.length ? phases[phases.length - 1] : 0 };
+  }
+  // ordine suggerito: anelli di moduli confinanti a partire da start; centro dalla 3ª fase, parchi dopo
+  function suggestOrder(p, res, start) {
+    const { nb } = neighbors(res);
+    if (!start) start = res.faces.slice().sort((a, b) => (b.stats.zone - b.stats.reserved - b.stats.plume - b.stats.blocked) - (a.stats.zone - a.stats.reserved - a.stats.plume - a.stats.blocked))[0];
+    if (!start) return 0;
+    const hop = new Map([[start, 0]]), q = [start];
+    while (q.length) { const f = q.shift(); nb.get(f).forEach(g => { if (!hop.has(g)) { hop.set(g, hop.get(f) + 1); q.push(g); } }); }
+    let n = 0, far = 0;
+    hop.forEach(h => { if (h > far) far = h; });
+    res.faces.forEach(f => {
+      let ph = hop.has(f) ? hop.get(f) + 1 : far + 2;            // non collegati: in fondo
+      if (f.type === 'centro') ph = Math.max(ph, 3);
+      if (f.type === 'parco') ph = Math.max(ph, 2);
+      setPhase(p, f, ph); n++;
+    });
+    return n;
   }
 
   const ha = n => (n * CELL * CELL / 10000).toFixed(1) + ' ha';
@@ -276,8 +335,9 @@
     let n = 0;
     f.proposal.segs.forEach(s => { const a = at(s.a), b = at(s.b); if (a.id !== b.id) { G.addRoad(p, a.id, b.id, s.type); n++; } });
     // le aree nuove ereditano il tipo del modulo
+    const ph = phaseOf(p, f);
     const sub = extractFaces(p).filter(g => inPoly(interiorPoint(g), poly));
-    sub.forEach(g => setType(p, g, type));
+    sub.forEach(g => setProps(p, g, { type, phase: ph }));
     return n;
   }
 
@@ -288,5 +348,5 @@
     return best;
   }
 
-  CS2.modules = { TYPES, C, REACH, extractFaces, inPoly, interiorPoint, clipLine, propose, roadIndex, cells, compute, acceptProposal, faceAt, typeOf, setType };
+  CS2.modules = { TYPES, C, REACH, extractFaces, inPoly, interiorPoint, clipLine, propose, roadIndex, cells, compute, acceptProposal, faceAt, typeOf, setType, phaseOf, setPhase, setProps, growth, suggestOrder, neighbors, DENS };
 })(typeof window !== 'undefined' ? window : globalThis);

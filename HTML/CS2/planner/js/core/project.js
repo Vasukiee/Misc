@@ -130,7 +130,8 @@
       graph.edges = graph.edges.filter(e => ids.has(e.a) && ids.has(e.b));
       graph.nextId = Math.max(graph.nextId, 1 + Math.max(0, ...graph.nodes.map(n => n.id), ...graph.edges.map(e => e.id)));
       return new Project({ name: o.name, map: o.map, wind: o.wind, sources: o.sources, analysis: o.analysis, settings: o.settings,
-        modules: (o.modules || []).filter(m => Number.isFinite(m.x) && Number.isFinite(m.y) && typeof m.type === 'string'),
+        modules: (o.modules || []).filter(m => Number.isFinite(m.x) && Number.isFinite(m.y) && typeof m.type === 'string')
+          .map(m => Number.isFinite(m.phase) ? { x: m.x, y: m.y, type: m.type, phase: m.phase } : { x: m.x, y: m.y, type: m.type }),
         created: o.created, modified: o.modified, layers, graph });
     }
   }

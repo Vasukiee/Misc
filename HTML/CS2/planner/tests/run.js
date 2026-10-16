@@ -310,6 +310,43 @@ function pngEncode(w, h, ch, bd, samples, filterOf) {
   const cfc = M.extractFaces(cv2);
   check('area chiusa da una curva e una dritta = 1 modulo', cfc.length === 1 && cfc[0].area > 150000);
 
+  // ---------------------------------------------------------------- crescita
+  const gr = new CS2.Project();
+  // tre moduli in fila: A | B | C
+  sq(gr, -900, -300, -300, 300, 'medium'); sq(gr, -300, -300, 300, 300, 'medium'); sq(gr, 300, -300, 900, 300, 'medium');
+  R = M.compute(gr, false, null);
+  check('tre moduli in fila', R.faces.length === 3);
+  const byX = R.faces.slice().sort((f1, f2) => f1.bbox.x0 - f2.bbox.x0);
+  M.setPhase(gr, byX[0], 1); M.setPhase(gr, byX[2], 2);
+  R = M.compute(gr, false, null);
+  check('modulo isolato segnalato', R.growth.warn.some(w => /non confina/.test(w[1])));
+  check('righe del piano', R.growth.rows.length === 2 && R.growth.rows[1].cumMods === 2);
+  check('moduli senza fase contati', R.growth.unplanned === 1);
+  const sharedEdge = gr.graph.edges.find(e => { const a2 = gr.node(e.a), b2 = gr.node(e.b); return Math.abs(a2.x + 300) < 1 && Math.abs(b2.x + 300) < 1; });
+  check('strada condivisa prende la fase più bassa', R.growth.edgePhase.get(sharedEdge.id) === 1);
+  // suggerimento: anelli dal modulo di sinistra
+  const R2 = M.compute(gr, false, null);
+  const left = R2.faces.slice().sort((f1, f2) => f1.bbox.x0 - f2.bbox.x0)[0];
+  M.suggestOrder(gr, R2, left);
+  R = M.compute(gr, false, null);
+  const ord = R.faces.slice().sort((f1, f2) => f1.bbox.x0 - f2.bbox.x0).map(f => f.phase).join(',');
+  check('ordine suggerito ad anelli: 1,2,3', ord === '1,2,3');
+  check('nessun isolato dopo il suggerimento', !R.growth.warn.length);
+  check('abitanti cumulati crescono', R.growth.rows[2].cumRes > R.growth.rows[0].cumRes);
+  // centro non nelle prime fasi
+  M.setType(gr, R.faces.sort((f1, f2) => f1.bbox.x0 - f2.bbox.x0)[1], 'centro');
+  const R3 = M.compute(gr, false, null);
+  M.suggestOrder(gr, R3, R3.faces.slice().sort((f1, f2) => f1.bbox.x0 - f2.bbox.x0)[0]);
+  const R4 = M.compute(gr, false, null);
+  check('centro spostato almeno alla fase 3', R4.faces.find(f => f.type === 'centro').phase >= 3);
+  // fase ereditata quando si accetta una proposta
+  const ga = new CS2.Project(); sq(ga, -400, -400, 400, 400, 'small');
+  let RA = M.compute(ga, true, null); M.setPhase(ga, RA.faces[0], 4);
+  RA = M.compute(ga, true, null); M.acceptProposal(ga, RA.faces[0]);
+  check('le aree nuove ereditano la fase', M.extractFaces(ga).every(f => M.phaseOf(ga, f) === 4));
+  const gj = CS2.Project.fromJSON(JSON.parse(JSON.stringify(gr.toJSON())));
+  check('fasi salvate', gj.modules.filter(m => Number.isFinite(m.phase)).length === 3);
+
   // pendenza
   const pg = new CS2.Project(); const PE = pg.layers.elevation;
   for (let j = 0; j < PE.res; j++) for (let i = 0; i < PE.res; i++) PE.data[j * PE.res + i] = (i / PE.res) * 1433.6;   // 10%
