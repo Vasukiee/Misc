@@ -57,6 +57,35 @@
         <p class="hint">Click sinistro dipinge · tasto destro trascina la mappa.</p>
       </div>
     </section>
+    <section class="box">
+      <h4>Vincoli</h4>
+      <label class="field">Mostra
+        <select id="anMode">
+          <option value="none">Nessuno</option>
+          <option value="housing">Dove mettere le case</option>
+          <option value="industry">Dove mettere l'industria</option>
+          <option value="slope">Pendenza</option>
+          <option value="plume">Inquinamento sottovento</option>
+        </select>
+      </label>
+      <div id="anLegend" class="legend-list"></div>
+      <div id="anStats"></div>
+      <details>
+        <summary>Parametri</summary>
+        <div class="params">
+          <label class="field">Pendenza "attenzione" (%) <input id="anSlopeWarn" type="number" min="1" max="50" step="1"></label>
+          <label class="field">Pendenza "non costruibile" (%) <input id="anSlopeMax" type="number" min="2" max="80" step="1"></label>
+          <label class="field">Rispetto dalla riva (m) <input id="anShore" type="number" min="0" max="1000" step="10"></label>
+          <label class="field">Soglia risorsa (%) <input id="anThreshold" type="number" min="1" max="100" step="1"></label>
+          <label class="field">Lunghezza pennacchio (m) <input id="anPlume" type="number" min="200" max="8000" step="100"></label>
+          <div class="field">Fascia di rispetto (m) e riserva per le case
+            <div id="anBuffers" class="buf-grid"></div>
+          </div>
+          <div class="field">Sorgenti di inquinamento <div id="anSources"></div></div>
+          <p class="hint">Le soglie non sono valori ufficiali del gioco: sono regole pratiche. "Industria prevista" si dipinge col pennello.</p>
+        </div>
+      </details>
+    </section>
     <section class="box" id="panel"></section>
   </aside>
   <section class="mapwrap">
@@ -101,6 +130,7 @@
 <script src="js/core/project.js"></script>
 <script src="js/core/storage.js"></script>
 <script src="js/core/brush.js"></script>
+<script src="js/core/analysis.js"></script>
 <script src="js/io/png16.js"></script>
 <script src="js/io/heightmap.js"></script>
 <script src="js/io/screenshot.js"></script>

@@ -65,6 +65,12 @@ select { background: #0d0e10; border: 1px solid var(--muted); color: var(--accen
 .hint { font-size: .68rem; color: var(--muted); line-height: 1.4; }
 .muted { color: var(--muted); font-size: .75rem; }
 #brushOpts { display: flex; flex-direction: column; gap: 6px; }
+details summary { cursor: pointer; font-size: .75rem; color: var(--accent2); }
+.params { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+.buf-grid { display: grid; grid-template-columns: 1fr 70px auto; gap: 4px 6px; align-items: center; }
+.buf-grid input[type=number] { width: 70px; background: #0d0e10; border: 1px solid var(--muted); color: var(--accent3); font-family: inherit; padding: 2px 4px; font-size: .75rem; }
+.legend-list { display: flex; flex-direction: column; gap: 3px; font-size: .72rem; }
+.legend-list span.sw { margin-right: 6px; vertical-align: -2px; }
 
 dialog#shotDlg { background: var(--panel); color: var(--text); border: 1px solid var(--accent); padding: 0; max-width: 96vw; max-height: 94vh; }
 dialog#shotDlg::backdrop { background: rgba(0,0,0,.7); }
