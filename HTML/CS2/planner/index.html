@@ -70,6 +70,15 @@
       <p class="hint">Disegna: click per ogni punto, Esc / tasto destro / doppio click per finire, Shift per angolo libero. Curva: il punto di controllo segue la direzione della strada da cui parti (Shift lo libera). Aggancio a nodi, strade (crea l'incrocio), angoli, multipli di 8 m e alla distanza CtC dalle strade parallele (linea verde).</p>
     </section>
     <section class="box">
+      <h4>Moduli</h4>
+      <label class="check"><input type="checkbox" id="modShow" checked> Mostra moduli e celle (8 m)</label>
+      <button class="btn" id="modAuto" title="Propone collettore e strade locali alla distanza giusta dentro ogni area chiusa">Genera strade interne: ON</button>
+      <button class="btn primary" id="modAcceptAll">Accetta tutte le proposte</button>
+      <div id="modStats"></div>
+      <div class="legend-list" id="modLegend"></div>
+      <p class="hint">Ogni area chiusa da strade è un modulo. Clicca dentro un modulo (strumento Seleziona) per sceglierne il tipo e vedere gli avvisi. Le celle si colorano come le zone del gioco: zonabili entro 6 celle (48 m) dal bordo strada.</p>
+    </section>
+    <section class="box">
       <h4>Vincoli</h4>
       <label class="field">Mostra
         <select id="anMode">
@@ -144,6 +153,7 @@
 <script src="js/core/brush.js"></script>
 <script src="js/core/analysis.js"></script>
 <script src="js/core/graph.js"></script>
+<script src="js/core/modules.js"></script>
 <script src="js/io/png16.js"></script>
 <script src="js/io/heightmap.js"></script>
 <script src="js/io/screenshot.js"></script>

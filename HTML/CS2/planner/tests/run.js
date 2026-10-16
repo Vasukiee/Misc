@@ -2,7 +2,7 @@
 'use strict';
 const fs = require('fs'), path = require('path'), vm = require('vm');
 // gli script si registrano su globalThis.CS2 come nel browser
-['core/util', 'core/geom', 'core/roads', 'core/raster', 'core/project', 'core/brush', 'core/analysis', 'core/graph', 'io/png16', 'io/heightmap', 'io/screenshot'].forEach(f =>
+['core/util', 'core/geom', 'core/roads', 'core/raster', 'core/project', 'core/brush', 'core/analysis', 'core/graph', 'core/modules', 'io/png16', 'io/heightmap', 'io/screenshot'].forEach(f =>
   vm.runInThisContext(fs.readFileSync(path.join(__dirname, '..', 'js', f + '.js'), 'utf8'), { filename: f + '.js' }));
 const { CS2 } = globalThis;
 
@@ -248,6 +248,67 @@ function pngEncode(w, h, ch, bd, samples, filterOf) {
   // dividere una curva con nodeAt
   const hitC = G.nearestEdge(cj, Gm.bezPoint(G.shape(cj, cj.graph.edges.find(e => e.c1)), 0.5), 5);
   check('click su una curva la trova', !!hitC);
+
+  // ---------------------------------------------------------------- moduli
+  const M = CS2.modules;
+  const sq = (pp, x0, y0, x1, y1, type) => {
+    const q = [[x0, y0], [x1, y0], [x1, y1], [x0, y1]].map(([x, y]) => G.nodeAt(pp, { x, y }, { node: G.nearestNode(pp, { x, y }, 0.5) }));
+    for (let i = 0; i < 4; i++) G.addRoad(pp, q[i].id, q[(i + 1) % 4].id, type);
+  };
+  const mp = new CS2.Project();
+  sq(mp, -400, -400, 400, 400, 'large');
+  check('un anello = 1 modulo', M.extractFaces(mp).length === 1);
+  const mid1 = G.nodeAt(mp, { x: 0, y: -400 }, G.snap(mp, { x: 0, y: -400 }, { start: null, type: 'small', pxTol: 2 }));
+  const mid2 = G.nodeAt(mp, { x: 0, y: 400 }, G.snap(mp, { x: 0, y: 400 }, { start: null, type: 'small', pxTol: 2 }));
+  G.addRoad(mp, mid1.id, mid2.id, 'medium');
+  check('anello diviso a metà = 2 moduli', M.extractFaces(mp).length === 2);
+  const dn = mp.addNode(-200, 0), dn2 = mp.addNode(-200, 400);
+  G.addRoad(mp, dn.id, G.nearestNode(mp, { x: 0, y: 400 }, 1).id, 'small');   // strada a fondo cieco dentro un modulo
+  const fd = M.extractFaces(mp);
+  check('strada a fondo cieco non crea moduli', fd.length === 2 && fd.some(f => f.dangling));
+  // analisi senza strade interne: banda zonabile di 48 m dal bordo
+  const z = new CS2.Project(); sq(z, -400, -400, 400, 400, 'small');
+  let R = M.compute(z, false, null);
+  const st0 = R.faces[0].stats;
+  // lato interno libero: 800 - 16 = 784 m; banda = 48 m per lato → (784² - 688²) / 64 celle circa
+  check('banda zonabile di 6 celle', near(st0.zone, (784 * 784 - 688 * 688) / 64, 120));
+  check('interno non zonabile segnalato', R.faces[0].warnings.some(w => w[0] === 'warn' && /oltre 6 celle/.test(w[1])));
+  // con le strade proposte: prima locale a CtC esatto dal fronte
+  R = M.compute(z, true, null);
+  const pr = R.faces[0].proposal;
+  check('proposta presente', pr && pr.segs.length > 4);
+  check('prima locale proposta a 112 m dal fronte (piccola+piccola)', pr.first === 112);
+  check('con la proposta quasi tutto zonabile', R.faces[0].stats.interior / R.faces[0].stats.cells < 0.05);
+  // accettare la proposta crea i lotti come moduli
+  M.setType(z, R.faces[0], 'centro');
+  const nAdded = M.acceptProposal(z, R.faces[0]);
+  const after = M.extractFaces(z);
+  check('accetta proposta: strade aggiunte e area divisa', nAdded > 4 && after.length > 6);
+  check('le aree nuove ereditano il tipo', after.every(f => M.typeOf(z, f) === 'centro'));
+  check('dopo l\'accettazione niente nuove proposte (lotti piccoli)', M.compute(z, true, null).faces.every(f => !f.proposal || !f.proposal.segs.length));
+  // conflitto: strada storta di 20° vicino a una dritta
+  const cf = new CS2.Project(); sq(cf, -300, -300, 300, 300, 'small');
+  const k1c = G.nodeAt(cf, { x: -300, y: -100 }, G.snap(cf, { x: -300, y: -100 }, { start: null, type: 'small', pxTol: 2 }));
+  const ang = 20 * Math.PI / 180, endX = 300, endY = -100 + Math.tan(ang) * 600;
+  const k2c = G.nodeAt(cf, { x: endX, y: endY }, G.snap(cf, { x: endX, y: endY }, { start: null, type: 'small', pxTol: 2 }));
+  G.addRoad(cf, k1c.id, k2c.id, 'small');
+  R = M.compute(cf, false, null);
+  check('griglie storte: celle in conflitto', R.totals.conflict > 50);
+  // industria → sorgente di inquinamento
+  const ip = new CS2.Project(); sq(ip, 1000, -200, 1400, 200, 'medium');
+  ip.wind.from = 90;
+  const fI = M.extractFaces(ip)[0]; M.setType(ip, fI, 'industria');
+  R = M.compute(ip, false, CS2.analysis.compute);
+  check('modulo industriale inquina sottovento', CS2.analysis.at(R.analysis, ip, 200, 0).plume > 0.2 && CS2.analysis.at(R.analysis, ip, 2400, 0).plume < 0.05);
+  const ipj = CS2.Project.fromJSON(JSON.parse(JSON.stringify(ip.toJSON())));
+  check('tipo dei moduli salvato', ipj.modules.length === 1 && ipj.modules[0].type === 'industria' && ipj.settings.autoRoads === true);
+  check('maschera derivata non salvata', !('derived' in ip.toJSON()));
+  // modulo curvo (concavo)
+  const cv2 = new CS2.Project(); const ca = cv2.addNode(-400, 0), cb = cv2.addNode(400, 0);
+  G.addRoad(cv2, ca.id, cb.id, 'medium');
+  G.addRoad(cv2, ca.id, cb.id, 'medium', Gm.quadToCubic(ca, { x: 0, y: -700 }, cb));
+  const cfc = M.extractFaces(cv2);
+  check('area chiusa da una curva e una dritta = 1 modulo', cfc.length === 1 && cfc[0].area > 150000);
 
   // pendenza
   const pg = new CS2.Project(); const PE = pg.layers.elevation;

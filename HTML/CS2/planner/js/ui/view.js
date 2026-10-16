@@ -21,7 +21,8 @@
       this.getProject = getProject;
       this.cam = { x: 0, y: 0, s: 0.05 };
       this.W = 800; this.H = 600; this.dpr = 1;
-      this.show = { terrain: true, grid: true, fertile: true, forest: true, ore: true, oil: true, groundwater: true, industryPlan: true, water: true, roads: true };
+      this.show = { terrain: true, grid: true, fertile: true, forest: true, ore: true, oil: true, groundwater: true, industryPlan: true, water: true, roads: true, modules: true };
+      this.modules = null;     // risultato di CS2.modules.compute
       this.analysis = null;    // { A, mode, sig } impostato dall'app
       this.cache = {};
       this.overlays = [];      // funzioni (ctx, view) disegnate sopra, per gli strumenti futuri
@@ -133,6 +134,7 @@
       else { ctx.fillStyle = '#0d0f10'; ctx.fillRect(X0, Y0, WW, WW); }
       ['fertile', 'forest', 'ore', 'oil', 'groundwater', 'industryPlan'].forEach(k => { if (this.show[k]) ctx.drawImage(this.resourceImage(p, k), X0, Y0, WW, WW); });
       if (this.analysis && this.analysis.mode !== 'none') ctx.drawImage(this.analysisImage(), X0, Y0, WW, WW);
+      if (this.show.modules && this.modules) this.drawModules(p);
 
       if (this.show.grid) {
         const step = this.cam.s * 1000 > 40 ? 1000 : 2000;
@@ -143,6 +145,7 @@
       ctx.strokeStyle = '#948b76'; ctx.lineWidth = 1.5; ctx.strokeRect(X0, Y0, WW, WW);
 
       if (this.show.roads) this.drawRoads(p);
+      if (this.show.modules && this.modules) this.drawProposals();
       this.overlays.forEach(f => f(ctx, this));
       this.drawWind(p);
       this.drawScale();
@@ -196,6 +199,57 @@
           ctx.beginPath(); ctx.arc(this.sx(n.x), this.sy(n.y), on ? 5 : 3, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
         });
       }
+    }
+    drawModules(p) {
+      const ctx = this.ctx, M = CS2.modules, C = M.C, sel = this.selection || {};
+      const COL = { [C.CONFLICT]: [230, 60, 200, 200], [C.INTERIOR]: [25, 25, 25, 190], [C.RESERVED]: [230, 140, 40, 190], [C.PLUME]: [150, 100, 50, 190],
+        [C.BLOCKED]: [200, 50, 50, 200], [C.SLOPE]: [220, 200, 60, 170], [C.GROUNDWATER]: [70, 150, 220, 190] };
+      const sig = this.modules.sig;
+      ctx.imageSmoothingEnabled = false;
+      this.modules.faces.forEach(f => {
+        const tc = M.TYPES[f.type].color;
+        ctx.beginPath(); f.poly.forEach((q, i) => i ? ctx.lineTo(this.sx(q.x), this.sy(q.y)) : ctx.moveTo(this.sx(q.x), this.sy(q.y))); ctx.closePath();
+        ctx.fillStyle = 'rgba(' + tc.join(',') + ',0.10)'; ctx.fill();
+        if (!f.img || f.imgSig !== sig) {
+          const x0 = Math.floor(f.bbox.x0 / 8) * 8, y0 = Math.floor(f.bbox.y0 / 8) * 8;
+          const w = Math.max(1, Math.ceil((f.bbox.x1 - x0) / 8)), h = Math.max(1, Math.ceil((f.bbox.y1 - y0) / 8));
+          const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+          const g = cv.getContext('2d'), im = g.createImageData(w, h), d = im.data;
+          for (let k = 0; k < f.cells.length; k += 3) {
+            const i = Math.floor((f.cells[k] - x0) / 8), j = Math.floor((f.cells[k + 1] - y0) / 8), s = f.cells[k + 2];
+            const c = s === C.ZONE ? [tc[0], tc[1], tc[2], 120] : COL[s];
+            const o = (j * w + i) * 4; d[o] = c[0]; d[o + 1] = c[1]; d[o + 2] = c[2]; d[o + 3] = c[3];
+          }
+          g.putImageData(im, 0, 0);
+          f.img = cv; f.imgSig = sig; f.imgX = x0; f.imgY = y0;
+        }
+        ctx.drawImage(f.img, this.sx(f.imgX), this.sy(f.imgY), f.img.width * 8 * this.cam.s, f.img.height * 8 * this.cam.s);
+        if (sel.module && f === sel.moduleFace) { ctx.strokeStyle = '#ffd36b'; ctx.lineWidth = 2; ctx.setLineDash([6, 4]); ctx.stroke(); ctx.setLineDash([]); }
+      });
+      ctx.imageSmoothingEnabled = true;
+    }
+    drawProposals() {
+      const ctx = this.ctx;
+      ctx.setLineDash([7, 5]); ctx.lineCap = 'butt';
+      this.modules.faces.forEach(f => {
+        if (!f.proposal) return;
+        f.proposal.segs.forEach(s => {
+          ctx.strokeStyle = s.type === 'medium' ? 'rgba(255,211,107,0.95)' : 'rgba(255,211,107,0.7)';
+          ctx.lineWidth = Math.max(1.2, ROAD_TYPES[s.type].w * this.cam.s * 0.7);
+          ctx.beginPath(); ctx.moveTo(this.sx(s.a.x), this.sy(s.a.y)); ctx.lineTo(this.sx(s.b.x), this.sy(s.b.y)); ctx.stroke();
+        });
+      });
+      ctx.setLineDash([]); ctx.lineCap = 'round';
+      // etichette dei moduli quando c'è spazio
+      ctx.font = "bold 10px 'Space Mono', monospace"; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      this.modules.faces.forEach(f => {
+        if ((f.bbox.x1 - f.bbox.x0) * this.cam.s < 70 || !f.stats.cells) return;
+        const q = CS2.modules.interiorPoint(f), bad = f.warnings.filter(w => w[0] !== 'good').length;
+        const txt = Math.round(100 * f.stats.zone / f.stats.cells) + '% zonabile' + (bad ? ' · ⚠ ' + bad : '');
+        const w = ctx.measureText(txt).width + 8;
+        ctx.fillStyle = 'rgba(9,10,11,0.8)'; ctx.fillRect(this.sx(q.x) - w / 2, this.sy(q.y) - 8, w, 16);
+        ctx.fillStyle = bad ? '#e8b060' : '#a8d0a8'; ctx.fillText(txt, this.sx(q.x), this.sy(q.y));
+      });
     }
     // maniglie modificabili di una strada: c1/c2 se curva, punto medio se dritta
     handles(p, e) {
