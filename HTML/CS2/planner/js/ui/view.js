@@ -153,21 +153,42 @@
       const order = ['alley', 'small', 'medium', 'large', 'xl', 'highway'];
       ctx.lineCap = 'round';
       const edges = p.graph.edges.slice().sort((x, y) => order.indexOf(x.type) - order.indexOf(y.type));
+      const path = e => {
+        const a = byId.get(e.a), b = byId.get(e.b);
+        ctx.beginPath(); ctx.moveTo(this.sx(a.x), this.sy(a.y));
+        if (e.c1 && e.c2) ctx.bezierCurveTo(this.sx(e.c1.x), this.sy(e.c1.y), this.sx(e.c2.x), this.sy(e.c2.y), this.sx(b.x), this.sy(b.y));
+        else ctx.lineTo(this.sx(b.x), this.sy(b.y));
+      };
       edges.forEach(e => {
-        const a = byId.get(e.a), b = byId.get(e.b), t = ROAD_TYPES[e.type];
+        const t = ROAD_TYPES[e.type];
         const hl = sel.edge === e.id || sel.hoverEdge === e.id;
         if (hl) {
           ctx.strokeStyle = sel.edge === e.id ? '#ffd36b' : 'rgba(255,211,107,0.5)';
           ctx.lineWidth = Math.max(5, t.w * this.cam.s + 4);
-          ctx.beginPath(); ctx.moveTo(this.sx(a.x), this.sy(a.y)); ctx.lineTo(this.sx(b.x), this.sy(b.y)); ctx.stroke();
+          path(e); ctx.stroke();
         }
         const lw = Math.max(order.indexOf(e.type) * 0.5 + 1.2, t.w * this.cam.s);
         ctx.strokeStyle = 'rgba(0,0,0,0.75)'; ctx.lineWidth = lw + 2;                 // bordo per il contrasto
-        ctx.beginPath(); ctx.moveTo(this.sx(a.x), this.sy(a.y)); ctx.lineTo(this.sx(b.x), this.sy(b.y)); ctx.stroke();
+        path(e); ctx.stroke();
         ctx.strokeStyle = COL[e.type];
         ctx.lineWidth = lw;
-        ctx.beginPath(); ctx.moveTo(this.sx(a.x), this.sy(a.y)); ctx.lineTo(this.sx(b.x), this.sy(b.y)); ctx.stroke();
+        path(e); ctx.stroke();
       });
+      // maniglie della strada selezionata
+      const se = sel.edge && p.graph.edges.find(e => e.id === sel.edge);
+      if (se && this.showNodes) {
+        const a = byId.get(se.a), b = byId.get(se.b);
+        const hs = this.handles(p, se);
+        ctx.strokeStyle = 'rgba(255,211,107,0.7)'; ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
+        if (se.c1) { ctx.beginPath(); ctx.moveTo(this.sx(a.x), this.sy(a.y)); ctx.lineTo(this.sx(se.c1.x), this.sy(se.c1.y)); ctx.moveTo(this.sx(b.x), this.sy(b.y)); ctx.lineTo(this.sx(se.c2.x), this.sy(se.c2.y)); ctx.stroke(); }
+        ctx.setLineDash([]);
+        hs.forEach(h => {
+          const X = this.sx(h.x), Y = this.sy(h.y), on = sel.hoverHandle === h.kind;
+          ctx.fillStyle = on ? '#ffd36b' : '#111'; ctx.strokeStyle = '#ffd36b'; ctx.lineWidth = 1.5;
+          if (h.kind === 'mid') { ctx.beginPath(); ctx.arc(X, Y, 5, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); }
+          else { ctx.fillRect(X - 4, Y - 4, 8, 8); ctx.strokeRect(X - 4, Y - 4, 8, 8); }
+        });
+      }
       if (this.showNodes) {
         p.graph.nodes.forEach(n => {
           const on = sel.node === n.id || sel.hoverNode === n.id;
@@ -175,6 +196,12 @@
           ctx.beginPath(); ctx.arc(this.sx(n.x), this.sy(n.y), on ? 5 : 3, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
         });
       }
+    }
+    // maniglie modificabili di una strada: c1/c2 se curva, punto medio se dritta
+    handles(p, e) {
+      if (e.c1 && e.c2) return [{ kind: 'c1', x: e.c1.x, y: e.c1.y }, { kind: 'c2', x: e.c2.x, y: e.c2.y }];
+      const a = p.node(e.a), b = p.node(e.b);
+      return [{ kind: 'mid', x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }];
     }
     drawWind(p) {
       const ctx = this.ctx, dw = p.downwind(), cx = this.W - 46, cy = 46, r = 26;

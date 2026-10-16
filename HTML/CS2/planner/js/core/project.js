@@ -67,12 +67,17 @@
     node(id) { return this.graph.nodes.find(n => n.id === id) || null; }
     addNode(x, y) { const n = { id: this.graph.nextId++, x, y }; this.graph.nodes.push(n); this.touch(); return n; }
     moveNode(id, x, y) { const n = this.node(id); if (n) { n.x = x; n.y = y; this.touch(); } return n; }
-    addEdge(a, b, type) {
+    // c: { c1, c2 } per una curva. Due strade dritte tra gli stessi nodi sono la stessa strada;
+    // una curva può invece affiancare una dritta (o un'altra curva) tra gli stessi nodi.
+    addEdge(a, b, type, c) {
       if (a === b || !this.node(a) || !this.node(b)) return null;
       if (!ROAD_TYPES[type]) throw new Error('tipo di strada sconosciuto: ' + type);
-      const dup = this.graph.edges.find(e => (e.a === a && e.b === b) || (e.a === b && e.b === a));
-      if (dup) { dup.type = type; this.touch(); return dup; }
+      if (!c) {
+        const dup = this.graph.edges.find(e => !e.c1 && ((e.a === a && e.b === b) || (e.a === b && e.b === a)));
+        if (dup) { dup.type = type; this.touch(); return dup; }
+      }
       const e = { id: this.graph.nextId++, a, b, type };
+      if (c) { e.c1 = { x: c.c1.x, y: c.c1.y }; e.c2 = { x: c.c2.x, y: c.c2.y }; }
       this.graph.edges.push(e); this.touch();
       return e;
     }
@@ -111,7 +116,12 @@
       const g = o.graph || {};
       const graph = {
         nodes: (g.nodes || []).filter(n => Number.isFinite(n.x) && Number.isFinite(n.y)),
-        edges: (g.edges || []).filter(e => ROAD_TYPES[e.type]),
+        edges: (g.edges || []).filter(e => ROAD_TYPES[e.type]).map(e => {
+          const ok = q => q && Number.isFinite(q.x) && Number.isFinite(q.y);
+          const out = { id: e.id, a: e.a, b: e.b, type: e.type };
+          if (ok(e.c1) && ok(e.c2)) { out.c1 = { x: e.c1.x, y: e.c1.y }; out.c2 = { x: e.c2.x, y: e.c2.y }; }   // curva
+          return out;
+        }),
         nextId: g.nextId || 1
       };
       const ids = new Set(graph.nodes.map(n => n.id));

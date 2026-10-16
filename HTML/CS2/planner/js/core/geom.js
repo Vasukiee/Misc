@@ -32,5 +32,30 @@
     return { d: dist(p, q), t, q };
   }
 
-  CS2.geom = { V, add, sub, mul, dot, crs, len, dist, norm, lerp, polyArea, centroid, segDist };
+  // ---- curve di Bézier cubiche {a, c1, c2, b}
+  function bezPoint(c, t) {
+    const u = 1 - t;
+    return V(u * u * u * c.a.x + 3 * u * u * t * c.c1.x + 3 * u * t * t * c.c2.x + t * t * t * c.b.x,
+             u * u * u * c.a.y + 3 * u * u * t * c.c1.y + 3 * u * t * t * c.c2.y + t * t * t * c.b.y);
+  }
+  function bezTangent(c, t) {
+    const u = 1 - t;
+    return norm(V(3 * u * u * (c.c1.x - c.a.x) + 6 * u * t * (c.c2.x - c.c1.x) + 3 * t * t * (c.b.x - c.c2.x),
+                  3 * u * u * (c.c1.y - c.a.y) + 6 * u * t * (c.c2.y - c.c1.y) + 3 * t * t * (c.b.y - c.c2.y)));
+  }
+  // de Casteljau: divide la curva in t mantenendo la forma esatta
+  function bezSplit(c, t) {
+    const p01 = lerp(c.a, c.c1, t), p12 = lerp(c.c1, c.c2, t), p23 = lerp(c.c2, c.b, t);
+    const p012 = lerp(p01, p12, t), p123 = lerp(p12, p23, t), m = lerp(p012, p123, t);
+    return [{ a: c.a, c1: p01, c2: p012, b: m }, { a: m, c1: p123, c2: p23, b: c.b }];
+  }
+  // punti campionati con il loro parametro t
+  function bezSample(c, n) { const out = []; for (let k = 0; k <= n; k++) { const t = k / n; out.push({ t, p: bezPoint(c, t) }); } return out; }
+  function bezLength(c) { const s = bezSample(c, 24); let L = 0; for (let k = 1; k < s.length; k++) L += dist(s[k - 1].p, s[k].p); return L; }
+  // curva quadratica (inizio, controllo, fine) → cubica
+  const quadToCubic = (a, q, b) => ({ a, c1: lerp(a, q, 2 / 3), c2: lerp(b, q, 2 / 3), b });
+  const straight = (a, b) => ({ a, c1: lerp(a, b, 1 / 3), c2: lerp(a, b, 2 / 3), b });
+
+  CS2.geom = { V, add, sub, mul, dot, crs, len, dist, norm, lerp, polyArea, centroid, segDist,
+    bezPoint, bezTangent, bezSplit, bezSample, bezLength, quadToCubic, straight };
 })(typeof window !== 'undefined' ? window : globalThis);

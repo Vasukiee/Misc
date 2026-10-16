@@ -64,9 +64,10 @@
         <button class="btn" id="toolSelect" title="V">Seleziona</button>
       </div>
       <label class="field">Tipo per le nuove strade <select id="roadType"></select></label>
+      <label class="field">Forma <select id="roadShape"><option value="straight">Dritta</option><option value="curve">Curva (inizio, controllo, fine)</option></select></label>
       <label class="field">Angoli guidati <select id="roadAngles"><option value="90">90°</option><option value="45">45°</option></select></label>
       <div id="selInfo"></div>
-      <p class="hint">Disegna: click per ogni punto, Esc / tasto destro / doppio click per finire, Shift per angolo libero. Aggancio a nodi, strade (crea l'incrocio), angoli, multipli di 8 m e alla distanza CtC dalle strade parallele (linea verde).</p>
+      <p class="hint">Disegna: click per ogni punto, Esc / tasto destro / doppio click per finire, Shift per angolo libero. Curva: il punto di controllo segue la direzione della strada da cui parti (Shift lo libera). Aggancio a nodi, strade (crea l'incrocio), angoli, multipli di 8 m e alla distanza CtC dalle strade parallele (linea verde).</p>
     </section>
     <section class="box">
       <h4>Vincoli</h4>

@@ -218,6 +218,37 @@ function pngEncode(w, h, ch, bd, samples, filterOf) {
   const t3 = tp.addNode(-100, -100), t4 = tp.addNode(100, -100);
   G.addRoad(tp, t3.id, t4.id, 'small');
   check('incrocio a T su un nodo esistente', tp.edgesOf(t2.id).length === 3);
+  // ---------------------------------------------------------------- curve
+  const Gm = CS2.geom;
+  const cc = { a: { x: 0, y: 0 }, c1: { x: 100, y: 200 }, c2: { x: 300, y: 200 }, b: { x: 400, y: 0 } };
+  const [cl1, cr1] = Gm.bezSplit(cc, 0.3);
+  check('divisione Bézier esatta', [0.1, 0.5, 0.9].every(t => Gm.dist(Gm.bezPoint(cl1, t), Gm.bezPoint(cc, t * 0.3)) < 1e-9 && Gm.dist(Gm.bezPoint(cr1, t), Gm.bezPoint(cc, 0.3 + t * 0.7)) < 1e-9));
+  const cp = new CS2.Project();
+  const s1 = cp.addNode(-500, 0), s2 = cp.addNode(500, 0); G.addRoad(cp, s1.id, s2.id, 'medium');
+  // curva che parte sotto la strada, sale sopra e torna sotto: la attraversa due volte
+  const k1 = cp.addNode(-300, 100), k2 = cp.addNode(300, 100);
+  const q = Gm.quadToCubic(k1, { x: 0, y: -300 }, k2);
+  const madeC = G.addRoad(cp, k1.id, k2.id, 'small', q);
+  const xNodes = cp.graph.nodes.filter(nn => Math.abs(nn.y) < 1.5 && Math.abs(nn.x) < 400);
+  check('curva che attraversa due volte: 2 incroci', xNodes.length === 2);
+  check('curva divisa in 3 pezzi curvi', madeC.length === 3 && madeC.every(e => G.isCurve(e)));
+  check('strada dritta divisa in 3 e resta dritta', cp.graph.edges.filter(e => e.type === 'medium').length === 3 && cp.graph.edges.filter(e => e.type === 'medium').every(e => !G.isCurve(e)));
+  const totalLen = madeC.reduce((a2, e) => a2 + G.edgeLength(cp, e), 0);
+  check('lunghezza della curva conservata dopo la divisione', near(totalLen, Gm.bezLength(q), 2));
+  // le maniglie seguono il nodo
+  const ce = madeC[0], c1before = { x: ce.c1.x, y: ce.c1.y };
+  G.moveNodeWithHandles(cp, ce.a, cp.node(ce.a).x + 50, cp.node(ce.a).y);
+  check('maniglia segue il nodo spostato', near(ce.c1.x, c1before.x + 50, 1e-9));
+  // tangente in uscita: continuando dalla fine della curva
+  const tdir = G.tangentAt(cp, madeC[2], k2.id);
+  check('tangente in uscita dalla fine curva punta verso il basso-destra', tdir.y > 0 && tdir.x > 0);
+  // curva salvata e riletta
+  const cj = CS2.Project.fromJSON(JSON.parse(JSON.stringify(cp.toJSON())));
+  check('curve salvate nel file', cj.graph.edges.filter(e => e.c1 && e.c2).length === 3);
+  // dividere una curva con nodeAt
+  const hitC = G.nearestEdge(cj, Gm.bezPoint(G.shape(cj, cj.graph.edges.find(e => e.c1)), 0.5), 5);
+  check('click su una curva la trova', !!hitC);
+
   // pendenza
   const pg = new CS2.Project(); const PE = pg.layers.elevation;
   for (let j = 0; j < PE.res; j++) for (let i = 0; i < PE.res; i++) PE.data[j * PE.res + i] = (i / PE.res) * 1433.6;   // 10%
