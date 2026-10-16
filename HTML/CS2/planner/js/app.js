@@ -580,7 +580,15 @@
   $('zIn').addEventListener('click', () => { view.zoomAt(view.W / 2, view.H / 2, 1.4); view.draw(); });
   $('zOut').addEventListener('click', () => { view.zoomAt(view.W / 2, view.H / 2, 1 / 1.4); view.draw(); });
   $('zFit').addEventListener('click', () => { view.fit(); view.draw(); });
-  root.addEventListener('resize', () => { view.resize(); view.draw(); });
+  // ridimensiona quando cambia l'area della mappa (anche se il CSS arriva dopo l'avvio, es. htmlpreview)
+  const onResize = () => {
+    const old = view.W, oldH = view.H;
+    view.resize();
+    if (old === view.W && oldH === view.H) return;
+    if (old < 400 || oldH < 300) view.fit();
+    view.draw();
+  };
+  if (root.ResizeObserver) new ResizeObserver(onResize).observe(cv); else root.addEventListener('resize', onResize);
 
   // ------------------------------------------------------------ terreno di prova
   // Solo per provare la pagina senza una heightmap vera.
