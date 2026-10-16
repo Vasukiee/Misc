@@ -148,14 +148,33 @@
       this.drawScale();
     }
     drawRoads(p) {
-      const ctx = this.ctx, byId = new Map(p.graph.nodes.map(n => [n.id, n]));
+      const ctx = this.ctx, byId = new Map(p.graph.nodes.map(n => [n.id, n])), sel = this.selection || {};
+      const COL = { highway: '#4a5560', xl: '#b4b9bc', large: '#a0a6aa', medium: '#868c90', small: '#6e7478', alley: '#5a5f62' };
+      const order = ['alley', 'small', 'medium', 'large', 'xl', 'highway'];
       ctx.lineCap = 'round';
-      p.graph.edges.forEach(e => {
+      const edges = p.graph.edges.slice().sort((x, y) => order.indexOf(x.type) - order.indexOf(y.type));
+      edges.forEach(e => {
         const a = byId.get(e.a), b = byId.get(e.b), t = ROAD_TYPES[e.type];
-        ctx.strokeStyle = e.type === 'highway' ? '#4a5560' : '#8a8f93';
-        ctx.lineWidth = Math.max(1.5, t.w * this.cam.s);
+        const hl = sel.edge === e.id || sel.hoverEdge === e.id;
+        if (hl) {
+          ctx.strokeStyle = sel.edge === e.id ? '#ffd36b' : 'rgba(255,211,107,0.5)';
+          ctx.lineWidth = Math.max(5, t.w * this.cam.s + 4);
+          ctx.beginPath(); ctx.moveTo(this.sx(a.x), this.sy(a.y)); ctx.lineTo(this.sx(b.x), this.sy(b.y)); ctx.stroke();
+        }
+        const lw = Math.max(order.indexOf(e.type) * 0.5 + 1.2, t.w * this.cam.s);
+        ctx.strokeStyle = 'rgba(0,0,0,0.75)'; ctx.lineWidth = lw + 2;                 // bordo per il contrasto
+        ctx.beginPath(); ctx.moveTo(this.sx(a.x), this.sy(a.y)); ctx.lineTo(this.sx(b.x), this.sy(b.y)); ctx.stroke();
+        ctx.strokeStyle = COL[e.type];
+        ctx.lineWidth = lw;
         ctx.beginPath(); ctx.moveTo(this.sx(a.x), this.sy(a.y)); ctx.lineTo(this.sx(b.x), this.sy(b.y)); ctx.stroke();
       });
+      if (this.showNodes) {
+        p.graph.nodes.forEach(n => {
+          const on = sel.node === n.id || sel.hoverNode === n.id;
+          ctx.fillStyle = on ? '#ffd36b' : '#d0d4d6'; ctx.strokeStyle = '#000'; ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.arc(this.sx(n.x), this.sy(n.y), on ? 5 : 3, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        });
+      }
     }
     drawWind(p) {
       const ctx = this.ctx, dw = p.downwind(), cx = this.W - 46, cy = 46, r = 26;

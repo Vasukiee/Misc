@@ -72,10 +72,17 @@
       if (this.undoStack.length > this.limit) this.undoStack.shift();
       this.redoStack = [];
     }
+    // modifiche alla rete stradale: si salva tutto il grafo (è piccolo)
+    recordGraph(project, label, before) {
+      this.undoStack.push({ kind: 'graph', label, before, after: JSON.stringify(project.graph) });
+      if (this.undoStack.length > this.limit) this.undoStack.shift();
+      this.redoStack = [];
+    }
     undo(project) { return this._swap(project, this.undoStack, this.redoStack, 'before'); }
     redo(project) { return this._swap(project, this.redoStack, this.undoStack, 'after'); }
     _swap(project, from, to, field) {
       const e = from.pop(); if (!e) return null;
+      if (e.kind === 'graph') { project.graph = JSON.parse(e[field]); to.push(e); return e; }
       const L = project.layers[e.key];
       paste(L.data, L.res, e.box, e[field]); L.changed();
       to.push(e);

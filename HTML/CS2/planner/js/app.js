@@ -176,11 +176,19 @@
     $('brushTarget').value = Math.round(tool.target);
     $('vRadius').textContent = tool.radius + ' m';
     $('vStrength').textContent = Math.round(tool.strength * 100) + '%';
-    $('map').style.cursor = tool.mode === 'brush' ? 'crosshair' : 'grab';
+    $('map').style.cursor = tool.mode === 'brush' || tool.mode === 'road' ? 'crosshair' : tool.mode === 'select' ? 'default' : 'grab';
+    $('toolRoad').classList.toggle('active', tool.mode === 'road');
+    $('toolSelect').classList.toggle('active', tool.mode === 'select');
+    view.showNodes = tool.mode === 'road' || tool.mode === 'select';
+    if (tool.mode !== 'road') endChain();
+    if (tool.mode !== 'select') { view.selection = null; renderSelection(); }
   }
+  function setMode(m) { tool.mode = m; syncTool(); view.draw(); }
   $('brushLayer').innerHTML = Object.keys(LAYERS).map(k => '<option value="' + k + '">' + LAYERS[k].label + '</option>').join('');
-  $('toolPan').addEventListener('click', () => { tool.mode = 'pan'; syncTool(); view.draw(); });
-  $('toolBrush').addEventListener('click', () => { tool.mode = 'brush'; syncTool(); });
+  $('toolPan').addEventListener('click', () => setMode('pan'));
+  $('toolBrush').addEventListener('click', () => setMode('brush'));
+  $('toolRoad').addEventListener('click', () => setMode('road'));
+  $('toolSelect').addEventListener('click', () => setMode('select'));
   $('brushLayer').addEventListener('change', e => {
     tool.layer = e.target.value; syncTool();
     const key = tool.layer === 'elevation' ? 'terrain' : tool.layer;
@@ -190,17 +198,121 @@
   $('brushRadius').addEventListener('input', e => { tool.radius = +e.target.value; syncTool(); view.draw(); });
   $('brushStrength').addEventListener('input', e => { tool.strength = +e.target.value / 100; syncTool(); });
   $('brushTarget').addEventListener('change', e => { tool.target = +e.target.value || 0; });
-  function undo() { const e = history.undo(project); if (e) { view.cache = {}; changed(); setStatus('Annullato: ' + e.label); } }
+  function undo() { endChain(); const e = history.undo(project); if (e) { view.cache = {}; changed(); setStatus('Annullato: ' + e.label); } }
   function redo() { const e = history.redo(project); if (e) { view.cache = {}; changed(); setStatus('Ripristinato: ' + e.label); } }
   $('btnUndo').addEventListener('click', undo);
   $('btnRedo').addEventListener('click', redo);
+  // ------------------------------------------------------------ strade
+  const G = CS2.graph, { ROAD_TYPES } = CS2.roads;
+  const road = { type: 'small', angles: 90, chain: null, prevDir: null, snap: null, before: null, free: false };
+  const pxTol = () => 10 / view.cam.s;
+  $('roadType').innerHTML = Object.keys(ROAD_TYPES).map(k => '<option value="' + k + '"' + (k === road.type ? ' selected' : '') + '>' + ROAD_TYPES[k].label + ' (' + ROAD_TYPES[k].w + ' m)</option>').join('');
+  $('roadType').addEventListener('change', e => { road.type = e.target.value; });
+  $('roadAngles').addEventListener('change', e => { road.angles = +e.target.value; });
+  function firstDir(nodeId) {
+    const e = project.edgesOf(nodeId)[0]; if (!e) return null;
+    const a = project.node(e.a), b = project.node(e.b);
+    return CS2.geom.norm(CS2.geom.sub(b, a));
+  }
+  function computeSnap(w, free) {
+    const st = road.chain ? project.node(road.chain) : null;
+    return G.snap(project, w, { start: st, startNode: st, prevDir: road.prevDir, type: road.type, pxTol: pxTol(), angles: road.angles, free });
+  }
+  function roadClick(w, free) {
+    const sn = computeSnap(w, free);
+    if (!road.chain) {
+      road.before = JSON.stringify(project.graph);
+      const n = G.nodeAt(project, sn.pt, sn);
+      road.chain = n.id; road.prevDir = firstDir(n.id);
+      return;
+    }
+    const st = project.node(road.chain);
+    if (CS2.geom.dist(st, sn.pt) < CS2.roads.CELL / 2) { endChain(); return; }   // doppio click: fine
+    const n = G.nodeAt(project, sn.pt, sn);
+    const made = G.addRoad(project, road.chain, n.id, road.type);
+    road.prevDir = CS2.geom.norm(CS2.geom.sub(n, st));
+    road.chain = n.id;
+    setStatus(made.length + ' tratti aggiunti · Esc o tasto destro per finire');
+    view.draw(); renderPanel();
+  }
+  function endChain() {
+    if (!road.chain) return;
+    road.chain = null; road.prevDir = null; road.snap = null;
+    G.removeOrphans(project);
+    if (road.before !== null && road.before !== JSON.stringify(project.graph)) { history.recordGraph(project, 'Strade', road.before); changed(); }
+    road.before = null;
+    view.draw();
+  }
+  view.overlays.push((ctx, v) => {
+    if (tool.mode !== 'road' || !road.snap) return;
+    const sn = road.snap, p = sn.pt;
+    if (sn.guide) {
+      const g = sn.guide, a = CS2.geom.add(g.linePt, CS2.geom.mul(g.dir, -4000)), b = CS2.geom.add(g.linePt, CS2.geom.mul(g.dir, 4000));
+      ctx.strokeStyle = 'rgba(109,179,109,0.8)'; ctx.lineWidth = 1; ctx.setLineDash([6, 6]);
+      ctx.beginPath(); ctx.moveTo(v.sx(a.x), v.sy(a.y)); ctx.lineTo(v.sx(b.x), v.sy(b.y)); ctx.stroke(); ctx.setLineDash([]);
+    }
+    const st = road.chain ? project.node(road.chain) : null;
+    if (st) {
+      const t = ROAD_TYPES[road.type];
+      ctx.strokeStyle = 'rgba(255,211,107,0.55)'; ctx.lineWidth = Math.max(2, t.w * v.cam.s);
+      ctx.beginPath(); ctx.moveTo(v.sx(st.x), v.sy(st.y)); ctx.lineTo(v.sx(p.x), v.sy(p.y)); ctx.stroke();
+      const L = CS2.geom.dist(st, p), gr = G.grade(project, st, p), maxS = CS2.analysis.params(project).slopeMax;
+      let ang = Math.atan2(-(p.y - st.y), p.x - st.x) * 180 / Math.PI; if (ang < 0) ang += 360;
+      const txt = Math.round(L) + ' m · ' + Math.round(ang) + '° · pend. ' + gr.toFixed(1) + '%' + (sn.guide ? ' · CtC ' + sn.guide.dist + ' m' : '');
+      ctx.font = "bold 11px 'Space Mono', monospace"; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+      const X = v.sx(p.x) + 12, Y = v.sy(p.y) - 14, wd = ctx.measureText(txt).width + 8;
+      ctx.fillStyle = 'rgba(9,10,11,0.88)'; ctx.fillRect(X - 4, Y - 9, wd, 18);
+      ctx.fillStyle = gr > maxS ? '#e06060' : '#e8e2c8'; ctx.fillText(txt, X, Y);
+    } else if (sn.guide) {
+      ctx.font = "bold 11px 'Space Mono', monospace"; ctx.fillStyle = '#9fd09f'; ctx.textAlign = 'left';
+      ctx.fillText('CtC ' + sn.guide.dist + ' m', v.sx(p.x) + 12, v.sy(p.y) - 12);
+    }
+    ctx.fillStyle = sn.node ? '#6db36d' : sn.edgeHit ? '#7fb0e0' : '#ffd36b';
+    ctx.beginPath(); ctx.arc(v.sx(p.x), v.sy(p.y), 5, 0, Math.PI * 2); ctx.fill();
+  });
+
+  // selezione
+  function hitTest(w) {
+    const n = G.nearestNode(project, w, pxTol());
+    if (n) return { node: n.id };
+    const e = G.nearestEdge(project, w, pxTol());
+    if (e) return { edge: e.edge.id };
+    return null;
+  }
+  function renderSelection() {
+    const sel = view.selection, el = $('selInfo');
+    if (!sel || (!sel.edge && !sel.node)) { el.innerHTML = tool.mode === 'select' ? '<p class="hint">Clicca una strada o un nodo. Trascina i nodi per spostarli; Canc per eliminare.</p>' : ''; return; }
+    if (sel.edge) {
+      const e = project.graph.edges.find(x => x.id === sel.edge); if (!e) { view.selection = null; return renderSelection(); }
+      const a = project.node(e.a), b = project.node(e.b);
+      el.innerHTML = kv('Lunghezza', Math.round(CS2.geom.dist(a, b)) + ' m') + kv('Pendenza max', G.grade(project, a, b).toFixed(1) + '%') +
+        '<label class="field">Tipo <select id="selType">' + Object.keys(ROAD_TYPES).map(k => '<option value="' + k + '"' + (k === e.type ? ' selected' : '') + '>' + ROAD_TYPES[k].label + '</option>').join('') + '</select></label>' +
+        '<button class="btn" id="selDel">Elimina strada</button>';
+      $('selType').addEventListener('change', ev => { const before = JSON.stringify(project.graph); e.type = ev.target.value; history.recordGraph(project, 'Tipo strada', before); changed(); renderSelection(); });
+    } else {
+      const n = project.node(sel.node); if (!n) { view.selection = null; return renderSelection(); }
+      el.innerHTML = kv('Strade collegate', project.edgesOf(n.id).length) + kv('Quota', Math.round(project.elevationAt(n.x, n.y)) + ' m') + '<button class="btn" id="selDel">Elimina nodo</button>';
+    }
+    $('selDel').addEventListener('click', deleteSelection);
+  }
+  function deleteSelection() {
+    const sel = view.selection; if (!sel) return;
+    const before = JSON.stringify(project.graph);
+    if (sel.edge) G.deleteEdge(project, sel.edge); else if (sel.node) G.deleteNode(project, sel.node);
+    view.selection = null; history.recordGraph(project, 'Elimina', before); changed(); renderSelection();
+  }
+
   document.addEventListener('keydown', e => {
     if (e.target.matches('input, select, textarea')) return;
     const k = e.key.toLowerCase();
-    if ((e.ctrlKey || e.metaKey) && k === 'z') { e.preventDefault(); e.shiftKey ? redo() : undo(); }
-    else if ((e.ctrlKey || e.metaKey) && k === 'y') { e.preventDefault(); redo(); }
-    else if (k === 'b') { tool.mode = 'brush'; syncTool(); }
-    else if (k === 'h' || k === 'escape') { tool.mode = 'pan'; syncTool(); view.draw(); }
+    if ((e.ctrlKey || e.metaKey) && k === 'z') { e.preventDefault(); endChain(); e.shiftKey ? redo() : undo(); }
+    else if ((e.ctrlKey || e.metaKey) && k === 'y') { e.preventDefault(); endChain(); redo(); }
+    else if (k === 'escape') { if (road.chain) endChain(); else setMode('pan'); }
+    else if (k === 'b') setMode('brush');
+    else if (k === 'r') setMode('road');
+    else if (k === 'v') setMode('select');
+    else if (k === 'h') setMode('pan');
+    else if ((k === 'delete' || k === 'backspace') && tool.mode === 'select') { e.preventDefault(); deleteSelection(); }
   });
   view.overlays.push((ctx, v) => {
     if (tool.mode !== 'brush' || !tool.cursor) return;
@@ -210,7 +322,7 @@
 
   // ------------------------------------------------------------ interazione mappa
   const cv = $('map');
-  let drag = null, painting = false, rafPending = false;
+  let drag = null, painting = false, rafPending = false, moving = null;
   const worldOf = e => { const r = cv.getBoundingClientRect(); return view.toWorld(e.clientX - r.left, e.clientY - r.top); };
   function scheduleDraw() { if (rafPending) return; rafPending = true; requestAnimationFrame(() => { rafPending = false; view.draw(); }); }
   function paint(w) { history.grow(brush.dab(project, tool.layer, { x: w.x, y: w.y, radius: tool.radius, strength: tool.strength * 0.35, mode: tool.brush, target: tool.target })); scheduleDraw(); }
@@ -228,8 +340,20 @@
       paint(w);
       return;
     }
+    if (tool.mode === 'road') {
+      if (e.button === 0) { roadClick(w, e.shiftKey); road.snap = computeSnap(w, e.shiftKey); view.draw(); return; }
+      if (e.button === 2 && road.chain) { endChain(); return; }
+    }
+    if (tool.mode === 'select' && e.button === 0) {
+      const h = hitTest(w);
+      view.selection = h; renderSelection();
+      if (h && h.node) { moving = { id: h.node, before: JSON.stringify(project.graph), moved: false }; view.draw(); return; }
+      view.draw();
+      if (h) return;
+    }
     drag = { x: e.clientX, y: e.clientY, cx: view.cam.x, cy: view.cam.y };
   });
+  cv.addEventListener('dblclick', () => { if (tool.mode === 'road') endChain(); });
   cv.addEventListener('pointermove', e => {
     const w = worldOf(e);
     tool.cursor = w;
@@ -241,18 +365,37 @@
       $('cursor').textContent = parts.join(' · ');
     } else $('cursor').textContent = 'fuori mappa';
     if (painting) { paint(w); return; }
+    if (moving) {
+      const other = G.nearestNode(project, w, pxTol(), new Set([moving.id]));
+      const pt = other ? other : { x: Math.round(w.x / CS2.roads.CELL) * CS2.roads.CELL, y: Math.round(w.y / CS2.roads.CELL) * CS2.roads.CELL };
+      const n = project.node(moving.id); n.x = pt.x; n.y = pt.y; moving.moved = true;
+      scheduleDraw(); return;
+    }
     if (drag) {
       view.cam.x = drag.cx - (e.clientX - drag.x) / view.cam.s;
       view.cam.y = drag.cy - (e.clientY - drag.y) / view.cam.s;
       scheduleDraw(); return;
     }
-    if (tool.mode === 'brush') scheduleDraw();
+    if (tool.mode === 'road') { road.snap = computeSnap(w, e.shiftKey); scheduleDraw(); }
+    else if (tool.mode === 'select') {
+      const h = hitTest(w) || {}, sel = view.selection || {};
+      if (h.node !== sel.hoverNode || h.edge !== sel.hoverEdge) { view.selection = Object.assign({}, view.selection, { hoverNode: h.node, hoverEdge: h.edge }); scheduleDraw(); }
+    }
+    else if (tool.mode === 'brush') scheduleDraw();
   });
   cv.addEventListener('pointerup', () => {
     if (painting) { painting = false; history.end(project); markManual(tool.layer); changed(); }
+    if (moving) {
+      if (moving.moved) {
+        const nid = G.finishMove(project, moving.id, pxTol());
+        view.selection = { node: nid };
+        history.recordGraph(project, 'Sposta nodo', moving.before); changed(); renderSelection();
+      }
+      moving = null;
+    }
     drag = null;
   });
-  cv.addEventListener('pointerleave', () => { tool.cursor = null; if (tool.mode === 'brush') scheduleDraw(); });
+  cv.addEventListener('pointerleave', () => { tool.cursor = null; road.snap = null; if (tool.mode === 'brush' || tool.mode === 'road') scheduleDraw(); });
   cv.addEventListener('wheel', e => {
     e.preventDefault();
     const r = cv.getBoundingClientRect();
