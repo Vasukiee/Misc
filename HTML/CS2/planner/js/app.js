@@ -39,14 +39,14 @@
     h += kv('Lato area giocabile', (p.map.size / 1000).toFixed(3) + ' km');
     h += kv('Elevazione', Math.round(r.lo) + ' – ' + Math.round(r.hi) + ' m');
     h += kv('Strade', p.graph.edges.length + ' tratti · ' + p.graph.nodes.length + ' nodi');
-    h += '<h4 style="margin-top:12px;">Strati</h4>';
+    h += '<h4 class="sub">Strati</h4>';
     Object.keys(LAYERS).forEach(k => {
       const key = k === 'elevation' ? 'terrain' : k;
       const on = view.show[key] ? 'checked' : '';
-      const sw = CS2.RES_COLORS[k] ? '<span class="sw" style="background:rgb(' + CS2.RES_COLORS[k].join(',') + ')"></span>' : '<span class="sw" style="background:#4a5a44"></span>';
+      const sw = CS2.RES_COLORS[k] ? '<span class="sw" style="background:rgb(' + CS2.RES_COLORS[k].join(',') + ')"></span>' : '<span class="sw" style="background:#d8cdb4"></span>';
       h += '<label class="layer-row"><input type="checkbox" data-show="' + key + '" ' + on + '>' + sw + '<span>' + LAYERS[k].label + '</span><em>' + p.sources[k] + '</em></label>';
     });
-    h += '<label class="layer-row"><input type="checkbox" data-show="grid" ' + (view.show.grid ? 'checked' : '') + '><span class="sw" style="background:#333"></span><span>Griglia 1 km</span><em></em></label>';
+    h += '<label class="layer-row"><input type="checkbox" data-show="grid" ' + (view.show.grid ? 'checked' : '') + '><span class="sw" style="background:rgba(31,42,54,.25)"></span><span>Griglia 1 km</span><em></em></label>';
     $('panel').innerHTML = h;
     $('panel').querySelectorAll('[data-show]').forEach(el => el.addEventListener('change', () => { view.show[el.dataset.show] = el.checked; view.draw(); }));
     $('btnUndo').disabled = !history.undoStack.length;
@@ -150,9 +150,9 @@
     $('modStats').innerHTML = kv('Moduli', T.modules) + kv('Zonabile', ha(T.zone)) + kv('Interno non zonabile', ha(T.interior)) + kv('Celle in conflitto', ha(T.conflict)) +
       kv('Lotti su vincoli', ha(T.constrained)) + kv('Avvisi', T.warnings) + (project.settings.autoRoads ? kv('Strade proposte', props) : '');
     $('modAcceptAll').disabled = !props;
-    const L = [['rgba(70,150,80,.7)', 'Zonabile (colore del tipo)'], ['rgb(25,25,25)', 'Interno: oltre 6 celle dalla strada'], ['rgb(230,60,200)', 'Conflitto tra griglie'],
-      ['rgb(230,140,40)', 'Sopra risorse da riservare'], ['rgb(150,100,50)', 'Sottovento all\'industria'], ['rgb(200,50,50)', 'Acqua / riva / troppo ripido'], ['rgb(220,200,60)', 'Pendenza da gestire'], ['rgb(70,150,220)', 'Industria sulla falda'], ['rgba(255,211,107,.9)', 'Strada proposta (tratteggio)']];
-    $('modLegend').innerHTML = L.map(([c, l]) => '<div><span class="sw" style="background:' + c + ';border:1px solid #333"></span>' + l + '</div>').join('');
+    const L = [['rgba(70,150,80,.7)', 'Zonabile (colore del tipo)'], ['rgb(96,102,112)', 'Interno: oltre 6 celle dalla strada'], ['rgb(230,60,200)', 'Conflitto tra griglie'],
+      ['rgb(230,140,40)', 'Sopra risorse da riservare'], ['rgb(150,100,50)', 'Sottovento all\'industria'], ['rgb(200,50,50)', 'Acqua / riva / troppo ripido'], ['rgb(220,200,60)', 'Pendenza da gestire'], ['rgb(70,150,220)', 'Industria sulla falda'], ['rgba(29,78,216,.85)', 'Strada proposta (tratteggio blu)']];
+    $('modLegend').innerHTML = L.map(([c, l]) => '<div><span class="sw" style="background:' + c + '"></span>' + l + '</div>').join('');
   }
   function renderGrowth() {
     const g = modules && modules.growth; if (!g) return;
@@ -197,7 +197,7 @@
   $('modAcceptAll').addEventListener('click', () => { if (modules) accept(modules.faces.filter(f => f.proposal && f.proposal.segs.length)); });
   function renderAnalysis() {
     const mode = $('anMode').value;
-    $('anLegend').innerHTML = (LEGENDS[mode] || []).map(([c, l]) => '<div><span class="sw" style="background:' + c + ';border:1px solid #333"></span>' + l + '</div>').join('');
+    $('anLegend').innerHTML = (LEGENDS[mode] || []).map(([c, l]) => '<div><span class="sw" style="background:' + c + '"></span>' + l + '</div>').join('');
     if (!analysis) { $('anStats').innerHTML = ''; return; }
     const st = analysis.stat, pc = x => (x * 100).toFixed(1) + '%';
     $('anStats').innerHTML = '<div class="hint" style="margin-top:4px;">Mappa per le case:</div>' +
@@ -253,6 +253,7 @@
     $('toolPan').classList.toggle('active', tool.mode === 'pan');
     $('toolBrush').classList.toggle('active', tool.mode === 'brush');
     $('brushOpts').style.display = tool.mode === 'brush' ? '' : 'none';
+    $('brushOff').style.display = tool.mode === 'brush' ? 'none' : '';
     const modes = brush.MODES[LAYERS[tool.layer].kind];
     if (!modes[tool.brush]) tool.brush = Object.keys(modes)[0];
     $('brushMode').innerHTML = Object.keys(modes).map(k => '<option value="' + k + '"' + (k === tool.brush ? ' selected' : '') + '>' + modes[k] + '</option>').join('');
@@ -269,7 +270,19 @@
     if (tool.mode !== 'road') endChain();
     if (tool.mode !== 'select') { view.selection = null; renderSelection(); }
   }
-  function setMode(m) { tool.mode = m; syncTool(); view.draw(); }
+  const TOOL_TAB = { brush: 'modifica', road: 'strade', phase: 'moduli' };
+  function setMode(m) { tool.mode = m; if (TOOL_TAB[m]) showTab(TOOL_TAB[m]); syncTool(); view.draw(); }
+
+  // ------------------------------------------------------------ schede della barra laterale
+  function showTab(name) {
+    document.querySelectorAll('.tab').forEach(b => { const on = b.dataset.tab === name; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
+    document.querySelectorAll('.tabbody > [data-tab]').forEach(el => { el.hidden = el.dataset.tab !== name; });
+    try { localStorage.setItem('cs2planner.tab', name); } catch (e) { /* solo una comodità */ }
+  }
+  document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
+  let firstTab = 'mappa';
+  try { firstTab = localStorage.getItem('cs2planner.tab') || firstTab; } catch (e) { /* idem */ }
+  showTab(document.querySelector('.tab[data-tab="' + firstTab + '"]') ? firstTab : 'mappa');
   $('brushLayer').innerHTML = Object.keys(LAYERS).map(k => '<option value="' + k + '">' + LAYERS[k].label + '</option>').join('');
   $('toolPan').addEventListener('click', () => setMode('pan'));
   $('toolBrush').addEventListener('click', () => setMode('brush'));
@@ -353,14 +366,14 @@
     const sn = road.snap, p = sn.pt;
     if (sn.guide) {
       const g = sn.guide, a = CS2.geom.add(g.linePt, CS2.geom.mul(g.dir, -4000)), b = CS2.geom.add(g.linePt, CS2.geom.mul(g.dir, 4000));
-      ctx.strokeStyle = 'rgba(109,179,109,0.8)'; ctx.lineWidth = 1; ctx.setLineDash([6, 6]);
+      ctx.strokeStyle = 'rgba(47,125,74,0.85)'; ctx.lineWidth = 1; ctx.setLineDash([6, 6]);
       ctx.beginPath(); ctx.moveTo(v.sx(a.x), v.sy(a.y)); ctx.lineTo(v.sx(b.x), v.sy(b.y)); ctx.stroke(); ctx.setLineDash([]);
     }
     const st = road.chain ? project.node(road.chain) : null;
     if (st) {
       const t = ROAD_TYPES[road.type];
       let curve = null;
-      ctx.strokeStyle = 'rgba(255,211,107,0.55)'; ctx.lineWidth = Math.max(2, t.w * v.cam.s);
+      ctx.strokeStyle = 'rgba(194,65,12,0.5)'; ctx.lineWidth = Math.max(2, t.w * v.cam.s);
       ctx.beginPath(); ctx.moveTo(v.sx(st.x), v.sy(st.y));
       if (road.shape === 'curve' && road.ctrl) {
         curve = Gm.quadToCubic(st, road.ctrl, p);
@@ -369,23 +382,24 @@
       if (road.shape === 'curve' && !road.ctrl) { ctx.save(); ctx.lineWidth = 1; ctx.setLineDash([4, 4]); ctx.stroke(); ctx.restore(); }
       else ctx.stroke();
       if (road.ctrl) {
-        ctx.strokeStyle = 'rgba(255,211,107,0.6)'; ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
+        ctx.strokeStyle = 'rgba(194,65,12,0.7)'; ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
         ctx.beginPath(); ctx.moveTo(v.sx(st.x), v.sy(st.y)); ctx.lineTo(v.sx(road.ctrl.x), v.sy(road.ctrl.y)); ctx.lineTo(v.sx(p.x), v.sy(p.y)); ctx.stroke(); ctx.setLineDash([]);
-        ctx.fillStyle = '#ffd36b'; ctx.fillRect(v.sx(road.ctrl.x) - 4, v.sy(road.ctrl.y) - 4, 8, 8);
+        ctx.fillStyle = '#c2410c'; ctx.fillRect(v.sx(road.ctrl.x) - 4, v.sy(road.ctrl.y) - 4, 8, 8);
       }
       if (road.shape === 'curve' && !road.ctrl) return;
       const L = curve ? Gm.bezLength(curve) : Gm.dist(st, p), gr = G.grade(project, st, p, curve), maxS = CS2.analysis.params(project).slopeMax;
       let ang = Math.atan2(-(p.y - st.y), p.x - st.x) * 180 / Math.PI; if (ang < 0) ang += 360;
       const txt = Math.round(L) + ' m · ' + Math.round(ang) + '° · pend. ' + gr.toFixed(1) + '%' + (sn.guide ? ' · CtC ' + sn.guide.dist + ' m' : '');
-      ctx.font = "bold 11px 'Space Mono', monospace"; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+      ctx.font = "600 11px 'IBM Plex Mono', monospace"; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
       const X = v.sx(p.x) + 12, Y = v.sy(p.y) - 14, wd = ctx.measureText(txt).width + 8;
-      ctx.fillStyle = 'rgba(9,10,11,0.88)'; ctx.fillRect(X - 4, Y - 9, wd, 18);
-      ctx.fillStyle = gr > maxS ? '#e06060' : '#e8e2c8'; ctx.fillText(txt, X, Y);
+      ctx.fillStyle = 'rgba(251,250,246,0.95)'; ctx.fillRect(X - 4, Y - 9, wd, 18);
+      ctx.strokeStyle = 'rgba(31,42,54,0.35)'; ctx.lineWidth = 1; ctx.strokeRect(X - 3.5, Y - 8.5, wd - 1, 17);
+      ctx.fillStyle = gr > maxS ? '#b42318' : '#1f2a36'; ctx.fillText(txt, X, Y);
     } else if (sn.guide) {
-      ctx.font = "bold 11px 'Space Mono', monospace"; ctx.fillStyle = '#9fd09f'; ctx.textAlign = 'left';
+      ctx.font = "600 11px 'IBM Plex Mono', monospace"; ctx.fillStyle = '#2f7d4a'; ctx.textAlign = 'left';
       ctx.fillText('CtC ' + sn.guide.dist + ' m', v.sx(p.x) + 12, v.sy(p.y) - 12);
     }
-    ctx.fillStyle = sn.node ? '#6db36d' : sn.edgeHit ? '#7fb0e0' : '#ffd36b';
+    ctx.fillStyle = sn.node ? '#2f7d4a' : sn.edgeHit ? '#1d4ed8' : '#c2410c';
     ctx.beginPath(); ctx.arc(v.sx(p.x), v.sy(p.y), 5, 0, Math.PI * 2); ctx.fill();
   });
 
@@ -407,7 +421,7 @@
     if (sel && sel.module) {
       const f = sel.moduleFace; if (!f) { el.innerHTML = ''; return; }
       const s = f.stats, ha = n => (n * 64 / 10000).toFixed(1) + ' ha', pc = n => s.cells ? Math.round(100 * n / s.cells) + '%' : '—';
-      el.innerHTML = '<h4 style="margin-top:6px;">Modulo</h4>' +
+      el.innerHTML = '' +
         '<label class="field">Tipo <select id="modType">' + Object.keys(MOD.TYPES).map(k => '<option value="' + k + '"' + (k === f.type ? ' selected' : '') + '>' + MOD.TYPES[k].label + '</option>').join('') + '</select></label>' +
         '<label class="field">Fase di costruzione <input id="modPhase" type="number" min="1" step="1" value="' + (f.phase === null ? '' : f.phase) + '" placeholder="non pianificato"></label>' +
         kv('Superficie (senza strade)', ha(s.cells)) + kv('Zonabile', pc(s.zone)) + kv('Interno', pc(s.interior)) + kv('Conflitto', pc(s.conflict)) +
@@ -458,7 +472,7 @@
   });
   view.overlays.push((ctx, v) => {
     if (tool.mode !== 'brush' || !tool.cursor) return;
-    ctx.strokeStyle = 'rgba(255,211,107,0.9)'; ctx.lineWidth = 1.5;
+    ctx.strokeStyle = 'rgba(194,65,12,0.9)'; ctx.lineWidth = 1.5;
     ctx.beginPath(); ctx.arc(v.sx(tool.cursor.x), v.sy(tool.cursor.y), Math.max(3, tool.radius * v.cam.s), 0, Math.PI * 2); ctx.stroke();
   });
 

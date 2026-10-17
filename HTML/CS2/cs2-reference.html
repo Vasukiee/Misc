@@ -4,221 +4,251 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CS2 Reference Sheet - Dark Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
-
+  /* Stile "tavola tecnica" (stessi token di planner/css/app.css): carta chiara, inchiostro blu-grigio, un solo accento. */
   :root {
-    --bg: #0a0b0c;
-    --panel: #111214;
-    --border: #2a2d30;
-    --accent: #8b8c89;
-    --accent2: #948b76;
-    --accent3: #a3a8a8;
-    --text: #9a9fa3;
-    --muted: #52585b;
-    --good: #6db36d;
-    --warn: #c8904a;
-    --bad:  #c85050;
+    --paper: #f4f1ea;        /* fondo pagina */
+    --sheet: #fbfaf6;        /* pannelli */
+    --field: #ffffff;        /* campi di input */
+    --line: #ddd7c9;         /* bordi leggeri */
+    --line-strong: #b8af9b;  /* bordi dei controlli */
+    --ink: #1f2a36;          /* testo principale */
+    --ink-2: #4a5563;        /* testo secondario */
+    --muted: #7d828a;        /* note */
+    --accent: #c2410c;       /* azioni principali, valori attivi */
+    --accent-ink: #9a3412;
+    --accent-soft: #fbe7da;
+    --bad: #b42318; --warn: #b45309; --good: #2f7d4a;
+    --radius: 4px;
+    --sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
 
-    /* Zone (stessi colori usati nel pianificatore) */
-    --zone-com: #34506b;
-    --zone-off: #4a3a5c;
-    --zone-mix: #2f5a5a;
-    --zone-res: #35503a;
-    --zone-lowrent: #5a4630;
-    --zone-med: #563a5a;
-    --zone-high: #5e3434;
-    --zone-ind: #5e4f2a;
-    --zone-park: #1f3326;
+    /* Zone (tinte chiare, stesse famiglie di colore del gioco) */
+    --zone-com: #93b4d6;
+    --zone-off: #a9a3d9;
+    --zone-mix: #8fc4bd;
+    --zone-res: #a8cc95;
+    --zone-lowrent: #d2b48a;
+    --zone-med: #dcb3d3;
+    --zone-high: #d99a8f;
+    --zone-ind: #dcc77f;
+    --zone-park: #d3e6c6;
 
-    --srv-edu: #5c6b54;
-    --srv-fire: #8c5a45;
-    --srv-pol: #455a6b;
-    --srv-med: #7a6368;
-    --srv-post: #7a7452;
-    --srv-death: #8a8f91;
+    --srv-edu: #4f7a3a;
+    --srv-fire: #9a4a2c;
+    --srv-pol: #2f5d8a;
+    --srv-med: #9b4d5a;
+    --srv-post: #8a7426;
+    --srv-death: #6b7078;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    background-color: var(--bg);
-    background-image: repeating-linear-gradient(45deg, #0d0e10 0px, #0d0e10 2px, var(--bg) 2px, var(--bg) 6px);
-    color: var(--text);
-    font-family: 'Space Mono', monospace;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
     font-size: 14px;
-    line-height: 1.6;
+    line-height: 1.55;
     padding: 24px 16px;
     max-width: 1200px;
     margin: 0 auto;
+    -webkit-font-smoothing: antialiased;
   }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 
-  h1, h2, h3, h4, .section-title { font-family: 'Cinzel', serif; }
+  h1, h2, h3, h4, .section-title { font-family: var(--sans); }
 
   .header {
-    border-left: 8px solid var(--accent2);
-    border-bottom: 1px solid var(--border);
-    padding: 16px 20px;
-    margin-bottom: 32px;
-    background: linear-gradient(90deg, rgba(148,139,118,0.05) 0%, transparent 100%);
+    border-bottom: 1px solid var(--line-strong);
+    padding: 4px 0 16px;
+    margin-bottom: 28px;
   }
-  .header h1 { font-size: 2.8rem; font-weight: 800; letter-spacing: 0.1em; color: var(--accent3); text-transform: uppercase; }
-  .header p  { color: var(--accent); font-size: 0.9rem; margin-top: 8px; letter-spacing: 0.05em; }
-  .header span { color: var(--accent2); }
+  .header h1 { font-size: 2rem; font-weight: 600; line-height: 1.2; letter-spacing: -0.005em; color: var(--ink); }
+  .header p  { color: var(--ink-2); font-family: var(--mono); font-size: 12px; margin-top: 8px; letter-spacing: 0.02em; }
+  .header span { color: var(--accent); }
 
   .section {
-    margin-bottom: 32px;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-top: 2px solid var(--accent);
-    box-shadow: 4px 4px 15px rgba(0,0,0,0.6);
+    margin-bottom: 24px;
+    background: var(--sheet);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
   }
   .section-header {
-    background: #0c0d0f;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--line);
     padding: 12px 16px;
     display: flex; align-items: center; gap: 12px;
   }
   .section-num {
-    font-family: 'Cinzel', serif; font-size: 1.1rem;
-    color: var(--bg); background: var(--accent);
-    padding: 2px 8px; font-weight: 800;
+    font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: .04em;
+    color: var(--ink); border: 1.5px solid var(--ink); border-radius: 2px;
+    padding: 1px 6px; min-width: 30px; text-align: center; flex-shrink: 0;
   }
-  .section-title { font-size: 1.1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent3); }
+  .section-title { font-size: 1.15rem; font-weight: 600; line-height: 1.3; color: var(--ink); }
   .section-body  { padding: 16px; display: flex; flex-direction: column; gap: 16px; }
 
-  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; border: 1px solid var(--border); }
-  th {
-    font-family: 'Cinzel', serif; font-size: 0.9rem; letter-spacing: 0.1em;
-    color: var(--accent2); text-align: left; padding: 10px 12px;
-    border-bottom: 1px solid var(--border); background: #090a0b;
+  table {
+    width: 100%; border-collapse: collapse; font-size: 13px; border: 1px solid var(--line);
+    background: var(--field); font-variant-numeric: tabular-nums;
   }
-  td { padding: 10px 12px; border-bottom: 1px dashed var(--border); vertical-align: top; }
+  th {
+    font-size: 12px; font-weight: 600; color: var(--ink-2); text-align: left; padding: 8px 12px;
+    border-bottom: 1px solid var(--line-strong); background: var(--sheet);
+  }
+  td { padding: 8px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
   tr:last-child td { border-bottom: none; }
-  tr:hover td { background: rgba(255,255,255,0.02); }
+  tr:hover td { background: #f7f5ef; }
 
-  .val { color: var(--accent3); font-weight: bold; }
+  .val { color: var(--ink); font-weight: 600; }
   .good { color: var(--good); } .warnc { color: var(--warn); } .badc { color: var(--bad); }
 
-  .tag { display: inline-block; font-size: 0.75rem; padding: 2px 6px; margin-right: 6px; border: 1px solid currentColor; background: #000; }
-  .tag-ok   { color: var(--accent2); }
-  .tag-warn { color: var(--accent); }
+  .tag {
+    display: inline-block; font-family: var(--mono); font-size: 11px; font-weight: 600; line-height: 1.5;
+    padding: 0 6px; margin-right: 6px; border: 1px solid currentColor; border-radius: 2px;
+    background: var(--field); color: var(--ink-2); white-space: nowrap;
+  }
+  .tag-ok   { color: var(--ink-2); }
+  .tag-warn { color: var(--warn); }
 
   .note {
-    font-size: 0.85rem; color: var(--text);
-    padding: 12px 16px; border-left: 3px solid var(--accent2); background: #0c0d0f;
+    font-size: 13px; color: var(--ink-2);
+    padding: 10px 14px; background: var(--field);
+    border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: var(--radius);
   }
-  .note strong { color: var(--accent3); font-weight: bold; }
-  .note .ok    { color: var(--accent2); }
-  .note.warn   { border-left-color: #c87050; }
-  .note.warn strong { color: #c87050; }
-  .note.check  { border-left-color: #526b6b; }
-  .note.check strong { color: #7fa0a0; }
+  .note strong { color: var(--ink); font-weight: 600; }
+  .note .ok    { color: var(--accent-ink); font-weight: 500; }
+  .note.warn   { border-left-color: var(--warn); }
+  .note.warn strong { color: var(--warn); }
+  .note.check  { border-left-color: var(--ink-2); }
+  .note.check strong { color: var(--ink-2); }
 
-  .rule-block { background: #090a0b; border: 1px solid var(--border); padding: 12px 16px; font-size: 0.85rem; }
-  .rule-block .rule-title { font-family: 'Cinzel', serif; font-size: 1rem; color: var(--accent); margin-bottom: 8px; text-transform: uppercase; }
+  .rule-block {
+    background: var(--field); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 10px 14px 12px; font-size: 13px; color: var(--ink-2);
+  }
+  .rule-block strong { color: var(--ink); font-weight: 600; }
+  .rule-block .rule-title {
+    font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--ink-2); padding-bottom: 6px; margin-bottom: 10px; border-bottom: 1px solid var(--line);
+  }
   .rule-block ol, .rule-block ul { padding-left: 20px; }
   .rule-block li { margin-bottom: 6px; }
 
-  .hierarchy { display: flex; flex-direction: column; gap: 8px; }
+  .hierarchy { display: flex; flex-direction: column; gap: 6px; }
   .h-row {
     display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
-    padding: 10px 12px; border: 1px solid var(--border);
-    background: #0c0d0f; font-size: 0.85rem;
+    padding: 8px 12px; border: 1px solid var(--line); border-radius: var(--radius);
+    background: var(--field); font-size: 13px;
   }
-  .h-arrow { color: var(--accent); font-size: 0.85rem; margin: 2px 4px; }
-  .h-name  { flex: 1; font-weight: 700; color: var(--accent3); min-width: 160px; }
-  .h-vals  { color: var(--accent2); }
+  .h-arrow { color: var(--ink-2); font-size: 12px; margin: 0 4px; }
+  .h-name  { flex: 1; font-weight: 600; color: var(--ink); min-width: 160px; }
+  .h-vals  { color: var(--ink-2); font-variant-numeric: tabular-nums; }
 
   .grid-zone { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .zone-card { border: 1px solid var(--border); padding: 14px; background: #0c0d0f; }
-  .zone-card-title { font-family: 'Cinzel', serif; font-size: 1.1rem; color: var(--accent3); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
-  .zone-card .line { display: flex; justify-content: space-between; gap: 10px; font-size: 0.85rem; padding: 4px 0; color: var(--text); }
-  .zone-card .line span:last-child { color: var(--accent2); text-align: right; }
-  .zone-card .desc { font-size: 0.8rem; color: var(--text); margin-top: 8px; }
+  .zone-card { border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 14px 12px; background: var(--field); }
+  .zone-card-title { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+  .zone-card .line { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; padding: 4px 0; color: var(--ink-2); border-bottom: 1px solid var(--line); }
+  .zone-card .line span:last-child { color: var(--ink); text-align: right; font-variant-numeric: tabular-nums; }
+  .zone-card .desc { font-size: 12.5px; color: var(--ink-2); margin-top: 8px; }
+  .zone-card .desc strong { color: var(--ink); font-weight: 600; }
 
   .underground-grid { display: flex; flex-direction: column; gap: 6px; }
-  .u-layer { display: flex; align-items: stretch; border: 1px solid var(--border); background: #0c0d0f; font-size: 0.85rem; }
-  .u-depth { background: var(--border); color: var(--accent3); padding: 10px 14px; min-width: 130px; display: flex; align-items: center; border-right: 1px solid var(--border); font-weight: bold; }
-  .u-content { flex: 1; padding: 10px 14px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .u-layer { display: flex; align-items: stretch; border: 1px solid var(--line); border-radius: var(--radius); background: var(--field); font-size: 13px; overflow: hidden; }
+  .u-depth { background: var(--paper); color: var(--ink); padding: 10px 14px; min-width: 130px; display: flex; align-items: center; border-right: 1px solid var(--line); font-weight: 600; }
+  .u-content { flex: 1; padding: 10px 14px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; color: var(--ink-2); }
 
   .control-group {
-    display: flex; gap: 8px; flex-wrap: wrap;
-    align-items: center; background: #090a0b; padding: 10px;
-    border: 1px solid var(--border);
+    display: flex; gap: 6px; flex-wrap: wrap;
+    align-items: center; background: var(--paper); padding: 10px;
+    border: 1px solid var(--line); border-radius: var(--radius);
   }
-  .ctrl-label { font-size: 0.85rem; color: var(--accent3); min-width: 60px; font-weight: bold; }
+  .ctrl-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-2); min-width: 60px; }
 
   .btn {
-    font-family: 'Space Mono', monospace; font-size: 0.75rem;
-    padding: 6px 12px; cursor: pointer; background: #0d0e10;
-    border: 1px solid var(--muted); color: var(--muted);
-    text-transform: uppercase; font-weight: bold; transition: all 0.2s;
+    font-family: var(--sans); font-size: 12.5px; font-weight: 500; line-height: 1.2;
+    padding: 5px 10px; cursor: pointer; border-radius: var(--radius);
+    background: var(--field); border: 1px solid var(--line-strong); color: var(--ink);
   }
-  .btn:hover { border-color: var(--accent3); color: var(--accent3); }
-  .btn.active { background: var(--border); color: var(--accent3) !important; border-color: var(--accent); }
-  .btn.primary { border-color: var(--accent2); color: var(--accent2); }
+  .btn:hover { border-color: var(--ink-2); background: #f7f5ef; }
+  .btn.active { background: var(--ink); border-color: var(--ink); color: var(--paper) !important; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn.primary:hover { background: var(--accent-ink); border-color: var(--accent-ink); }
 
-  .sliders { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px 20px; }
-  .sl { display: flex; flex-direction: column; gap: 2px; font-size: 0.78rem; }
-  .sl .sl-top { display: flex; justify-content: space-between; color: var(--muted); }
-  .sl .sl-top b { color: var(--accent3); }
-  input[type=range] { width: 100%; -webkit-appearance: none; appearance: none; background: transparent; }
-  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 8px; background: var(--accent2); cursor: pointer; margin-top: -7px; border: 1px solid #000; }
-  input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: var(--muted); }
-  input[type=range]::-moz-range-thumb { height: 18px; width: 8px; background: var(--accent2); border: 1px solid #000; border-radius: 0; }
-  input[type=range]::-moz-range-track { height: 4px; background: var(--muted); }
+  .sliders { width: 100%; display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px 20px; }
+  .sl { display: flex; flex-direction: column; gap: 3px; font-size: 12px; color: var(--ink-2); }
+  .sl .sl-top { display: flex; justify-content: space-between; gap: 8px; color: var(--ink-2); }
+  .sl .sl-top b { color: var(--accent); font-weight: 600; font-family: var(--mono); font-size: 11.5px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  input[type=range] { width: 100%; accent-color: var(--accent); }
 
-  .seed-box { display: flex; gap: 6px; align-items: center; font-size: 0.78rem; color: var(--muted); }
-  .seed-box input {
-    width: 90px; background: #0d0e10; border: 1px solid var(--muted); color: var(--accent3);
-    font-family: 'Space Mono', monospace; padding: 4px 6px; font-size: 0.8rem;
+  .seed-box { display: flex; gap: 6px; align-items: center; font-size: 11px; font-weight: 600; letter-spacing: .08em; color: var(--ink-2); }
+  .seed-box input, select {
+    background: var(--field); border: 1px solid var(--line-strong); border-radius: var(--radius); color: var(--ink);
+    font-family: var(--sans); font-size: 13px; padding: 4px 7px; font-variant-numeric: tabular-nums;
   }
-  select {
-    background: #0d0e10; border: 1px solid var(--muted); color: var(--accent3);
-    font-family: 'Space Mono', monospace; padding: 4px 6px; font-size: 0.8rem;
-  }
+  .seed-box input { width: 90px; font-family: var(--mono); font-size: 12px; letter-spacing: 0; font-weight: 400; }
+  .seed-box input:hover, select:hover { border-color: var(--ink-2); }
 
-  .map-wrap { position: relative; width: 100%; border: 1px solid var(--border); box-shadow: 4px 4px 0px rgba(0,0,0,0.5); background: #090a0b; }
+  .map-wrap { position: relative; width: 100%; border: 1px solid var(--line-strong); border-radius: var(--radius); overflow: hidden; background: #ebe7dd; }
   .map-wrap canvas { display: block; width: 100%; touch-action: none; cursor: grab; }
   .map-wrap canvas.dragging { cursor: grabbing; }
   .map-tools { position: absolute; top: 8px; right: 8px; display: flex; flex-direction: column; gap: 4px; }
-  .map-tools .btn { padding: 2px 8px; font-size: 0.9rem; background: rgba(13,14,16,0.85); }
-  .map-hint { position: absolute; left: 8px; bottom: 6px; font-size: 0.68rem; color: var(--muted); pointer-events: none; }
+  .map-tools .btn { width: 30px; height: 30px; padding: 0; font-size: 15px; box-shadow: 0 1px 2px rgba(31,42,54,.15); }
+  .map-hint {
+    position: absolute; left: 8px; bottom: 6px; font-size: 11px; color: var(--ink-2); pointer-events: none;
+    background: rgba(251,250,246,.85); padding: 1px 6px; border-radius: 2px;
+  }
 
   .plan-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 16px; align-items: start; }
-  .info-panel { background: #090a0b; border: 1px solid var(--border); padding: 14px; font-size: 0.8rem; display: flex; flex-direction: column; gap: 10px; }
-  .info-panel h4 { font-size: 0.95rem; color: var(--accent3); border-bottom: 1px dashed var(--muted); padding-bottom: 4px; }
-  .kv { display: flex; justify-content: space-between; gap: 8px; border-bottom: 1px dashed var(--border); padding: 3px 0; }
-  .kv span:last-child { color: var(--accent3); font-weight: bold; text-align: right; }
-  .tips { list-style: none; display: flex; flex-direction: column; gap: 6px; }
-  .tips li { padding-left: 12px; border-left: 2px solid var(--muted); }
+  .info-panel {
+    background: var(--field); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 10px 12px 12px; font-size: 12px; display: flex; flex-direction: column; gap: 14px; color: var(--ink-2);
+  }
+  .info-panel h4 {
+    font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--ink-2); padding-bottom: 6px; margin-bottom: 4px; border-bottom: 1px solid var(--line);
+  }
+  .kv { display: flex; justify-content: space-between; gap: 8px; border-bottom: 1px solid var(--line); padding: 3px 0; font-size: 12px; color: var(--ink-2); }
+  .kv span:last-child { color: var(--ink); font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+  .tips { list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--ink); }
+  .tips li { padding-left: 8px; border-left: 3px solid var(--line-strong); }
   .tips li.t-bad { border-left-color: var(--bad); }
   .tips li.t-warn { border-left-color: var(--warn); }
   .tips li.t-good { border-left-color: var(--good); }
 
-  .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 0.75rem; background: #0c0d0f; padding: 12px; border: 1px solid var(--border); }
-  .legend-item { display: flex; align-items: center; gap: 6px; color: #999; }
-  .legend-sep { width: 100%; height: 2px; }
-  .sw { width: 12px; height: 12px; display: inline-block; }
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; background: var(--field); padding: 10px 12px;
+    border: 1px solid var(--line); border-radius: var(--radius);
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; color: var(--ink-2); }
+  .legend-sep { width: 100%; height: 1px; background: var(--line); margin: 4px 0; }
+  .sw { width: 12px; height: 12px; display: inline-block; border-radius: 2px; box-shadow: inset 0 0 0 1px rgba(31,42,54,.25); }
   .sw-line { width: 18px; display: inline-block; }
 
   .calc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; align-items: end; }
-  .calc-out { font-size: 1.2rem; color: var(--accent3); font-weight: bold; }
+  .calc-out { font-family: var(--mono); font-size: 1.2rem; color: var(--accent); font-weight: 600; font-variant-numeric: tabular-nums; }
 
   .ctc-table td, .ctc-table th { text-align: center; }
   .ctc-table td:first-child, .ctc-table th:first-child { text-align: left; }
+  .ctc-table td:not(:first-child) { font-family: var(--mono); font-size: 12px; }
 
-  code { color: var(--accent3); }
+  code {
+    font-family: var(--mono); color: var(--ink); background: var(--paper);
+    border: 1px solid var(--line); border-radius: 3px; padding: 1px 6px;
+  }
 
   @media (max-width: 900px) { .plan-layout { grid-template-columns: 1fr; } }
   @media (max-width: 600px) {
     .grid-zone { grid-template-columns: 1fr; }
-    .header h1 { font-size: 1.9rem; }
-    th, td { padding: 6px; font-size: 0.75rem; }
-    th { font-size: 0.75rem; letter-spacing: 0.04em; }
+    .header h1 { font-size: 1.6rem; }
+    th, td { padding: 6px; font-size: 12px; }
+    th { font-size: 11.5px; }
     table { word-break: break-word; }
-    body { padding: 16px 12px; }
+    body { padding: 16px; }
+    .section-header { padding: 10px 12px; }
+    .section-body { padding: 12px; }
   }
 </style>
 </head>
@@ -311,13 +341,13 @@
       <div class="legend-item"><span class="sw" style="background:var(--zone-ind)"></span>Industria</div>
       <div class="legend-item"><span class="sw" style="background:var(--zone-park)"></span>Residuo → parco / piazza</div>
       <div class="legend-sep"></div>
-      <div class="legend-item"><span class="sw-line" style="height:5px;background:#3a3f44"></span>Grande 6c (32 m)</div>
-      <div class="legend-item"><span class="sw-line" style="height:4px;background:#2c3034"></span>Media 4c (24 m)</div>
-      <div class="legend-item"><span class="sw-line" style="height:2px;background:#24272a"></span>Piccola 2c (16 m)</div>
-      <div class="legend-item"><span class="sw-line" style="height:3px;border-top:3px dashed #7a6368"></span>Tram</div>
-      <div class="legend-item"><span class="sw-line" style="height:2px;border-top:2px dashed #948b76"></span>Bus</div>
-      <div class="legend-item"><span class="sw-line" style="height:3px;background:#526b6b"></span>Metro</div>
-      <div class="legend-item"><span class="sw-line" style="height:3px;border-top:3px dotted #8a7366"></span>Ferrovia</div>
+      <div class="legend-item"><span class="sw-line" style="height:5px;background:#3d4752"></span>Grande 6c (32 m)</div>
+      <div class="legend-item"><span class="sw-line" style="height:4px;background:#5f6873"></span>Media 4c (24 m)</div>
+      <div class="legend-item"><span class="sw-line" style="height:2px;background:#8a8f96"></span>Piccola 2c (16 m)</div>
+      <div class="legend-item"><span class="sw-line" style="height:3px;border-top:3px dashed #9b4d5a"></span>Tram</div>
+      <div class="legend-item"><span class="sw-line" style="height:2px;border-top:2px dashed #7a6a2e"></span>Bus</div>
+      <div class="legend-item"><span class="sw-line" style="height:3px;background:#2e6f7a"></span>Metro</div>
+      <div class="legend-item"><span class="sw-line" style="height:3px;border-top:3px dotted #6b4f3f"></span>Ferrovia</div>
       <div class="legend-sep"></div>
       <div class="legend-item"><span class="sw-line" style="height:4px;background:var(--good)"></span>Cucitura continua</div>
       <div class="legend-item"><span class="sw-line" style="height:4px;background:var(--bad)"></span>Cucitura in conflitto (pochi gradi)</div>
@@ -402,7 +432,7 @@
   <div class="section-body">
     <div class="rule-block">
       <div class="rule-title">Formula corretta</div>
-      <code style="font-size:0.95rem;">CtC = 96 m + larghezza_A / 2 + larghezza_B / 2</code>
+      <code style="font-size:13px;">CtC = 96 m + larghezza_A / 2 + larghezza_B / 2</code>
       <div style="color:var(--muted); font-size:0.85rem; margin-top:8px;">
         96 m = 6 celle (48 m) per lato, schiena contro schiena. Conta la <strong>larghezza fisica</strong> della strada (carreggiata + marciapiedi), <strong>non il numero di corsie</strong>: una 4 corsie è larga 24 m (3 celle), non 4 celle.
       </div>
@@ -432,7 +462,7 @@
         <label class="sl"><span class="sl-top">Profondità zona per lato <b id="ctcDepthV"></b></span>
           <input type="range" id="ctcDepth" min="1" max="6" step="1" value="6">
         </label>
-        <div><div style="font-size:0.75rem;color:var(--muted);">DISTANZA TRA GLI ASSI</div><div class="calc-out" id="ctcOut"></div></div>
+        <div><div style="font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--ink-2);">DISTANZA TRA GLI ASSI</div><div class="calc-out" id="ctcOut"></div></div>
       </div>
     </div>
 
@@ -454,7 +484,7 @@
   <div class="section-body">
     <div class="grid-zone">
       <div class="zone-card">
-        <div class="zone-card-title" style="color:#a8956a">1. Zone industriali</div>
+        <div class="zone-card-title" style="color:#8a6d1a">1. Zone industriali</div>
         <div class="line"><span>Cosa</span><span>Manifattura + magazzini (zoning)</span></div>
         <div class="line"><span>Strade</span><span>Piccole 2c dentro, medie ai bordi</span></div>
         <div class="line"><span>Isolato</span><span>12 celle × 30–36 celle</span></div>
@@ -462,14 +492,14 @@
         <div class="desc">Isolati lunghi = meno incroci per i camion. Ogni isolato deve uscire su un collettore in meno di 2 incroci.</div>
       </div>
       <div class="zone-card">
-        <div class="zone-card-title" style="color:#7d9a6a">2. Industria specializzata</div>
+        <div class="zone-card-title" style="color:#5a7a3a">2. Industria specializzata</div>
         <div class="line"><span>Cosa</span><span>Agricoltura, foreste, minerali, petrolio</span></div>
         <div class="line"><span>Come</span><span>Area disegnata sopra la risorsa</span></div>
         <div class="line"><span>Forma</span><span>Libera: segue la risorsa, non la griglia</span></div>
         <div class="desc">Prima attiva la vista risorse naturali e trova dove sono. L'edificio principale va su una strada, poi disegni l'area di lavoro sopra la risorsa. È il caso tipico di modulo "storto".</div>
       </div>
       <div class="zone-card">
-        <div class="zone-card-title" style="color:var(--accent3)">3. Logistica (piazzabili)</div>
+        <div class="zone-card-title" style="color:var(--ink)">3. Logistica (piazzabili)</div>
         <div class="line"><span>Cosa</span><span>Stazione merci, porto, terminal cargo</span></div>
         <div class="line"><span>Dove</span><span>Tra industria e autostrada/ferrovia</span></div>
         <div class="desc">Non hanno celle di zona: mettili nei residui o in un modulo dedicato, con accesso diretto all'arteria e alla ferrovia.</div>
@@ -502,12 +532,12 @@
       <canvas id="macroMap" width="800" height="420" style="cursor:default;"></canvas>
     </div>
     <div class="legend">
-      <div class="legend-item"><span class="sw-line" style="height:6px;background:#2a3138;"></span>Autostrada</div>
-      <div class="legend-item"><span class="sw-line" style="height:6px;background:#2f3336;"></span>Arteria</div>
+      <div class="legend-item"><span class="sw-line" style="height:6px;background:#3d4752;"></span>Autostrada</div>
+      <div class="legend-item"><span class="sw-line" style="height:6px;background:#7d8590;"></span>Arteria</div>
       <div class="legend-item"><span class="sw" style="background:var(--zone-ind);opacity:0.6;"></span>Industria</div>
-      <div class="legend-item"><span class="sw" style="background:#3b2929;"></span>Metropoli</div>
-      <div class="legend-item"><span class="sw" style="background:#17181a;border:1px solid #3d3835;"></span>Scalo merci / Stazioni</div>
-      <div class="legend-item"><span class="sw-line" style="height:2px;border-top:2px dashed #526b6b;"></span>Metro</div>
+      <div class="legend-item"><span class="sw" style="background:#d99a8f;"></span>Metropoli</div>
+      <div class="legend-item"><span class="sw" style="background:#ffffff;border:1px solid #4a5563;"></span>Scalo merci / Stazioni</div>
+      <div class="legend-item"><span class="sw-line" style="height:2px;border-top:2px dashed #2e6f7a;"></span>Metro</div>
     </div>
   </div>
 </div>
@@ -527,9 +557,9 @@
     <table>
       <tr><th>Fase</th><th>Dove</th><th>Cosa zonizzare</th></tr>
       <tr><td><span class="tag tag-ok">1. BORGO</span></td><td class="val">Modulo vicino allo svincolo</td><td>Bassa densità, commercio sul fronte dell'arteria. Acqua, fognatura ed elettricità prima di tutto.</td></tr>
-      <tr><td><span class="tag" style="color:var(--accent3);">2. ESPANSIONE</span></td><td class="val">Moduli adiacenti</td><td>Appena il gioco li sblocca: media densità, Low Rent e <strong>zone miste</strong> (casa sopra, negozio sotto) sui collettori.</td></tr>
-      <tr><td><span class="tag" style="color:var(--accent2);">3. CENTRO CITTÀ</span></td><td class="val">Modulo centro + tram</td><td>Alta densità e uffici. Uffici e commercio sul fronte delle arterie (tollerano il rumore), case all'interno.</td></tr>
-      <tr><td><span class="tag" style="color:var(--accent);">4. METROPOLI</span></td><td class="val">Anello esterno</td><td>Il valore del terreno sale al centro: non demolire, aggiungi moduli suburbani collegati dalla metro.</td></tr>
+      <tr><td><span class="tag" style="color:var(--ink);">2. ESPANSIONE</span></td><td class="val">Moduli adiacenti</td><td>Appena il gioco li sblocca: media densità, Low Rent e <strong>zone miste</strong> (casa sopra, negozio sotto) sui collettori.</td></tr>
+      <tr><td><span class="tag" style="color:var(--ink-2);">3. CENTRO CITTÀ</span></td><td class="val">Modulo centro + tram</td><td>Alta densità e uffici. Uffici e commercio sul fronte delle arterie (tollerano il rumore), case all'interno.</td></tr>
+      <tr><td><span class="tag" style="color:var(--ink-2);">4. METROPOLI</span></td><td class="val">Anello esterno</td><td>Il valore del terreno sale al centro: non demolire, aggiungi moduli suburbani collegati dalla metro.</td></tr>
       <tr><td><span class="tag" style="color:var(--muted);">5. HUB GLOBALE</span></td><td class="val">Connessioni esterne</td><td>Stazione ferroviaria, terminal merci, metro verso aeroporto e stazione.</td></tr>
     </table>
     <div class="note check">
@@ -555,7 +585,7 @@
     </div>
     <div class="grid-zone">
       <div class="zone-card">
-        <div class="zone-card-title" style="color:var(--accent2)">Bus (adduzione)</div>
+        <div class="zone-card-title" style="color:#7a6a2e">Bus (adduzione)</div>
         <div class="line"><span>Ruolo</span><span>Raccolta capillare</span></div>
         <div class="line"><span>Percorso</span><span>Collettore e locali del modulo</span></div>
         <div class="desc">Una linea per modulo, corta (2–4 km). Tocca il fronte dove passa il tram. Fermate ogni 300–400 m: troppe fermate rallentano tutta la linea.</div>
@@ -567,13 +597,13 @@
         <div class="desc">I colli di bottiglia li creano gli incroci e il traffico misto, non le inversioni: usa binari in sede propria. Un capolinea in una strada cieca ha bisogno di un anello o di un'inversione, quindi meglio far girare la linea attorno a un isolato.</div>
       </div>
       <div class="zone-card">
-        <div class="zone-card-title" style="color:#6f9090">Metro</div>
+        <div class="zone-card-title" style="color:#2e6f7a">Metro</div>
         <div class="line"><span>Ruolo</span><span>Collegamento tra hub lontani</span></div>
         <div class="line"><span>Percorso</span><span>Sotterraneo, libero dalla griglia</span></div>
         <div class="desc">Stazioni sugli incroci di collettori (spina × collettore) dei moduli principali. Linee il più possibile dritte da hub a hub; la profondità la scegli tu con l'elevazione dello strumento.</div>
       </div>
       <div class="zone-card">
-        <div class="zone-card-title" style="color:#8a7366">Treno</div>
+        <div class="zone-card-title" style="color:#6b4f3f">Treno</div>
         <div class="line"><span>Ruolo</span><span>Collegamenti esterni (pendolari, turisti, merci)</span></div>
         <div class="line"><span>Rumore</span><span>Alto: tienilo al margine</span></div>
         <div class="desc">Stazione passeggeri collegata alla metro, scalo merci collegato all'industria. Le curve dei binari sono molto larghe: riserva il corridoio prima di costruire i moduli.</div>
@@ -595,10 +625,10 @@
       <strong>Scelta del mezzo:</strong> i cittadini con auto mettono a confronto tempo e costi, parcheggio compreso. Un parcheggio caro o lontano a destinazione spinge verso il trasporto pubblico. Non serve "togliere" i parcheggi, basta renderli meno convenienti dove c'è un'alternativa buona.
     </div>
     <div class="hierarchy">
-      <div class="h-row"><span class="tag" style="color:#6b8f6b;">SUBURBI</span><span class="h-name">Parcheggi privati degli edifici</span><span class="h-vals">Pochi pubblici</span></div>
-      <div class="h-row"><span class="tag" style="color:var(--accent3);">HUB METRO / TRAM</span><span class="h-name">Park &amp; Ride nei residui accanto alla stazione</span><span class="h-vals">Tariffa bassa</span></div>
-      <div class="h-row"><span class="tag" style="color:#a86b6b;">CENTRO</span><span class="h-name">Multipiano / sotterranei, pochi</span><span class="h-vals">Tariffa alta (policy di distretto)</span></div>
-      <div class="h-row"><span class="tag" style="color:#6b8aa8;">ARTERIE</span><span class="h-name">Evita la sosta su strada dove serve capacità</span><span class="h-vals">Scegli varianti senza parcheggi</span></div>
+      <div class="h-row"><span class="tag" style="color:#3f7a4f;">SUBURBI</span><span class="h-name">Parcheggi privati degli edifici</span><span class="h-vals">Pochi pubblici</span></div>
+      <div class="h-row"><span class="tag" style="color:var(--ink);">HUB METRO / TRAM</span><span class="h-name">Park &amp; Ride nei residui accanto alla stazione</span><span class="h-vals">Tariffa bassa</span></div>
+      <div class="h-row"><span class="tag" style="color:#8a4a5a;">CENTRO</span><span class="h-name">Multipiano / sotterranei, pochi</span><span class="h-vals">Tariffa alta (policy di distretto)</span></div>
+      <div class="h-row"><span class="tag" style="color:#2f5d8a;">ARTERIE</span><span class="h-name">Evita la sosta su strada dove serve capacità</span><span class="h-vals">Scegli varianti senza parcheggi</span></div>
     </div>
     <div class="note check">
       <strong>Da verificare:</strong> tariffe massime e opzioni di sosta su strada cambiano tra le patch. Controlla le policy di distretto/città nella tua versione.
@@ -742,42 +772,43 @@ function ctcDist(a, b, depth) {
 <!-- ==================== SCRIPT: INDUSTRIA ==================== -->
 <script>
 (function () {
+function drawIndustry() {
   const c = document.getElementById('industryMap');
   const ctx = c.getContext('2d');
   const W = 640, H = 400;
-  ctx.fillStyle = '#090a0b'; ctx.fillRect(0, 0, W, H);
-  const font = (s, b) => (b ? 'bold ' : '') + s + "px 'Space Mono', monospace";
+  ctx.fillStyle = '#ebe7dd'; ctx.fillRect(0, 0, W, H);
+  const font = (s, b) => (b ? '600 ' : '') + s + "px 'IBM Plex Mono', monospace";
 
   // Ferrovia (nord)
-  ctx.strokeStyle = '#232629'; ctx.lineWidth = 6;
+  ctx.strokeStyle = 'rgba(31,42,54,0.15)'; ctx.lineWidth = 6;
   ctx.beginPath(); ctx.moveTo(0, 22); ctx.lineTo(W, 22); ctx.stroke();
-  ctx.strokeStyle = '#8a7366'; ctx.lineWidth = 2; ctx.setLineDash([3, 5]);
+  ctx.strokeStyle = '#6b4f3f'; ctx.lineWidth = 2; ctx.setLineDash([3, 5]);
   ctx.beginPath(); ctx.moveTo(0, 22); ctx.lineTo(W, 22); ctx.stroke(); ctx.setLineDash([]);
 
   // Arteria (sud)
-  ctx.strokeStyle = '#3a3f44'; ctx.lineWidth = 12;
+  ctx.strokeStyle = '#3d4752'; ctx.lineWidth = 12;
   ctx.beginPath(); ctx.moveTo(0, H - 28); ctx.lineTo(W, H - 28); ctx.stroke();
-  ctx.fillStyle = '#8b8c89'; ctx.font = font(10, true); ctx.textAlign = 'left';
+  ctx.fillStyle = '#1f2a36'; ctx.font = font(10, true); ctx.textAlign = 'left';
   ctx.fillText('ARTERIA GRANDE → AUTOSTRADA', 10, H - 8);
 
   // 1. Zone industriali: griglia di piccole con collettore
   const gx = 20, gy = 60, gw = 250, gh = 290;
-  ctx.strokeStyle = '#2c3034'; ctx.lineWidth = 5;
+  ctx.strokeStyle = '#5f6873'; ctx.lineWidth = 5;
   ctx.strokeRect(gx, gy, gw, gh);
   ctx.beginPath(); ctx.moveTo(gx + gw / 2, gy + gh); ctx.lineTo(gx + gw / 2, H - 28); ctx.stroke();
-  ctx.strokeStyle = '#24272a'; ctx.lineWidth = 2.5;
+  ctx.strokeStyle = '#8a8f96'; ctx.lineWidth = 2.5;
   const rows = [gy, gy + 72, gy + 144, gy + 216, gy + gh];
   rows.slice(1, -1).forEach(y => { ctx.beginPath(); ctx.moveTo(gx, y); ctx.lineTo(gx + gw, y); ctx.stroke(); });
   for (let i = 0; i < rows.length - 1; i++) {
     const y0 = rows[i] + 4, y1 = rows[i + 1] - 4;
-    ctx.fillStyle = 'rgba(94,79,42,0.55)'; ctx.fillRect(gx + 4, y0, gw - 8, y1 - y0);
-    ctx.strokeStyle = 'rgba(0,0,0,0.35)'; ctx.lineWidth = 1;
+    ctx.fillStyle = 'rgba(220,199,127,0.85)'; ctx.fillRect(gx + 4, y0, gw - 8, y1 - y0);
+    ctx.strokeStyle = 'rgba(31,42,54,0.22)'; ctx.lineWidth = 1;
     for (let x = gx + 34; x < gx + gw - 4; x += 30) { ctx.beginPath(); ctx.moveTo(x, y0); ctx.lineTo(x, y1); ctx.stroke(); }
     ctx.beginPath(); ctx.moveTo(gx + 4, (y0 + y1) / 2); ctx.lineTo(gx + gw - 4, (y0 + y1) / 2); ctx.stroke();
   }
-  ctx.fillStyle = '#c8b68a'; ctx.font = font(11, true); ctx.textAlign = 'center';
+  ctx.fillStyle = '#1f2a36'; ctx.font = font(11, true); ctx.textAlign = 'center';
   ctx.fillText('ZONE INDUSTRIALI', gx + gw / 2, gy - 10);
-  ctx.fillStyle = '#827863'; ctx.font = font(9);
+  ctx.fillStyle = '#4a5563'; ctx.font = font(9);
   ctx.fillText('CtC 112 m · isolati 12 × ~32 celle', gx + gw / 2, gy + gh + 14);
 
   // 2. Area specializzata su risorsa (forma libera)
@@ -785,44 +816,48 @@ function ctcDist(a, b, depth) {
   ctx.beginPath();
   ctx.moveTo(320, 90); ctx.bezierCurveTo(380, 50, 470, 70, 480, 130);
   ctx.bezierCurveTo(495, 190, 450, 250, 390, 245); ctx.bezierCurveTo(330, 240, 290, 170, 320, 90);
-  ctx.fillStyle = 'rgba(80,110,70,0.25)'; ctx.fill();
-  ctx.strokeStyle = '#7d9a6a'; ctx.lineWidth = 1.5; ctx.setLineDash([6, 4]); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = 'rgba(90,122,58,0.14)'; ctx.fill();
+  ctx.strokeStyle = '#5a7a3a'; ctx.lineWidth = 1.5; ctx.setLineDash([6, 4]); ctx.stroke(); ctx.setLineDash([]);
   ctx.restore();
-  ctx.fillStyle = 'rgba(125,154,106,0.6)';
+  ctx.fillStyle = 'rgba(90,122,58,0.45)';
   [[350, 120], [400, 100], [440, 140], [370, 180], [420, 200], [455, 175]].forEach(p => {
     ctx.beginPath(); ctx.arc(p[0], p[1], 5, 0, Math.PI * 2); ctx.fill();
   });
-  ctx.fillStyle = '#9ab88a'; ctx.font = font(11, true); ctx.textAlign = 'center';
+  ctx.fillStyle = '#1f2a36'; ctx.font = font(11, true); ctx.textAlign = 'center';
   ctx.fillText('AREA SPECIALIZZATA', 400, 150);
-  ctx.font = font(9); ctx.fillStyle = '#7d9a6a';
+  ctx.font = font(9); ctx.fillStyle = '#5a7a3a';
   ctx.fillText('disegnata sulla risorsa', 400, 164);
   // Edificio principale + strada di accesso
-  ctx.strokeStyle = '#2c3034'; ctx.lineWidth = 5;
+  ctx.strokeStyle = '#5f6873'; ctx.lineWidth = 5;
   ctx.beginPath(); ctx.moveTo(390, 245); ctx.lineTo(390, H - 28); ctx.stroke();
-  ctx.fillStyle = '#17181a'; ctx.fillRect(366, 262, 48, 30);
-  ctx.strokeStyle = '#7d9a6a'; ctx.lineWidth = 2; ctx.strokeRect(366, 262, 48, 30);
-  ctx.fillStyle = '#9ab88a'; ctx.font = font(8, true); ctx.fillText('EDIFICIO', 390, 280);
+  ctx.fillStyle = '#ffffff'; ctx.fillRect(366, 262, 48, 30);
+  ctx.strokeStyle = '#5a7a3a'; ctx.lineWidth = 2; ctx.strokeRect(366, 262, 48, 30);
+  ctx.fillStyle = '#1f2a36'; ctx.font = font(8, true); ctx.fillText('EDIFICIO', 390, 280);
 
   // 3. Logistica piazzabile
-  ctx.fillStyle = '#17181a'; ctx.fillRect(520, 60, 100, 70);
-  ctx.strokeStyle = '#3d3835'; ctx.lineWidth = 2; ctx.strokeRect(520, 60, 100, 70);
-  ctx.strokeStyle = '#8a7366'; ctx.lineWidth = 2; ctx.setLineDash([3, 4]);
+  ctx.fillStyle = '#ffffff'; ctx.fillRect(520, 60, 100, 70);
+  ctx.strokeStyle = '#4a5563'; ctx.lineWidth = 2; ctx.strokeRect(520, 60, 100, 70);
+  ctx.strokeStyle = '#6b4f3f'; ctx.lineWidth = 2; ctx.setLineDash([3, 4]);
   ctx.beginPath(); ctx.moveTo(500, 22); ctx.quadraticCurveTo(540, 22, 545, 60); ctx.stroke(); ctx.setLineDash([]);
-  ctx.fillStyle = '#a3a8a8'; ctx.font = font(10, true);
+  ctx.fillStyle = '#1f2a36'; ctx.font = font(10, true);
   ctx.fillText('STAZIONE', 570, 90); ctx.fillText('MERCI', 570, 104);
-  ctx.fillStyle = '#17181a'; ctx.fillRect(520, 170, 100, 60);
-  ctx.strokeStyle = '#3d3835'; ctx.strokeRect(520, 170, 100, 60);
-  ctx.fillStyle = '#a3a8a8'; ctx.fillText('MAGAZZINI', 570, 204);
-  ctx.strokeStyle = '#2c3034'; ctx.lineWidth = 5;
-  ctx.beginPath(); ctx.moveTo(570, 130); ctx.lineTo(570, 170); ctx.moveTo(570, 230); ctx.lineTo(570, H - 28); ctx.stroke();
-  ctx.fillStyle = '#7a7063'; ctx.font = font(9);
+  ctx.fillStyle = '#ffffff'; ctx.fillRect(520, 170, 100, 60);
+  ctx.strokeStyle = '#4a5563'; ctx.strokeRect(520, 170, 100, 60);
+  ctx.fillStyle = '#1f2a36'; ctx.fillText('MAGAZZINI', 570, 204);
+  ctx.strokeStyle = '#5f6873'; ctx.lineWidth = 5;
+  ctx.beginPath(); ctx.moveTo(570, 130); ctx.lineTo(570, 170); ctx.moveTo(570, 230); ctx.lineTo(570, 240); ctx.moveTo(570, 260); ctx.lineTo(570, H - 28); ctx.stroke();
+  ctx.fillStyle = '#4a5563'; ctx.font = font(9);
   ctx.fillText('piazzabili: niente celle', 570, 250);
+}
+drawIndustry();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { const c = document.getElementById('industryMap'); c.width = c.width; drawIndustry(); });   // ridisegna con i font caricati
 })();
 </script>
 
 <!-- ==================== SCRIPT: MACRO ==================== -->
 <script>
 (function () {
+function drawMacro() {
   const c = document.getElementById('macroMap');
   const cx = c.getContext('2d');
   const W = 800, H = 420;
@@ -833,95 +868,98 @@ function ctcDist(a, b, depth) {
     cx.fillStyle = color; cx.fill(); cx.restore();
   }
   function drawDimLine(x1, y1, x2, y2, text) {
-    cx.strokeStyle = '#52585b'; cx.lineWidth = 1; cx.setLineDash([4, 2]);
+    cx.strokeStyle = '#c2410c'; cx.lineWidth = 1; cx.setLineDash([4, 2]);
     cx.beginPath(); cx.moveTo(x1, y1); cx.lineTo(x2, y2); cx.stroke(); cx.setLineDash([]);
     cx.beginPath(); cx.moveTo(x1, y1 - 5); cx.lineTo(x1, y1 + 5); cx.stroke();
     cx.beginPath(); cx.moveTo(x2, y2 - 5); cx.lineTo(x2, y2 + 5); cx.stroke();
-    cx.font = "11px 'Space Mono'"; cx.textAlign = 'center'; cx.textBaseline = 'middle';
-    const w = cx.measureText(text).width + 6; cx.fillStyle = '#090a0b';
+    cx.font = "600 11px 'IBM Plex Mono', monospace"; cx.textAlign = 'center'; cx.textBaseline = 'middle';
+    const w = cx.measureText(text).width + 6; cx.fillStyle = '#ebe7dd';
     cx.fillRect(x1 + (x2 - x1) / 2 - w / 2, y1 - 18, w, 16);
-    cx.fillStyle = '#948b76'; cx.fillText(text, x1 + (x2 - x1) / 2, y1 - 10);
+    cx.fillStyle = '#9a3412'; cx.fillText(text, x1 + (x2 - x1) / 2, y1 - 10);
   }
 
-  cx.fillStyle = '#090a0b'; cx.fillRect(0, 0, W, H);
+  cx.fillStyle = '#ebe7dd'; cx.fillRect(0, 0, W, H);
 
   const windY = 45;
-  cx.strokeStyle = '#52585b'; cx.lineWidth = 2; cx.setLineDash([5, 5]);
+  cx.strokeStyle = '#4a5563'; cx.lineWidth = 2; cx.setLineDash([5, 5]);
   cx.beginPath(); cx.moveTo(W - 40, windY); cx.lineTo(W - 120, windY); cx.stroke();
-  cx.setLineDash([]); drawArrow(W - 120, windY, Math.PI, '#52585b');
-  cx.fillStyle = '#7a7063'; cx.font = "12px 'Space Mono'"; cx.textAlign = 'right';
+  cx.setLineDash([]); drawArrow(W - 120, windY, Math.PI, '#4a5563');
+  cx.fillStyle = '#4a5563'; cx.font = "600 12px 'IBM Plex Mono', monospace"; cx.textAlign = 'right';
   cx.fillText("DIREZIONE VENTO", W - 40, windY - 14);
 
   const indX = 40, indY = 60, indW = 220, indH = 320;
-  cx.fillStyle = 'rgba(94,79,42,0.3)'; cx.strokeStyle = '#4a3f29'; cx.lineWidth = 2;
+  cx.fillStyle = 'rgba(220,199,127,0.55)'; cx.strokeStyle = '#8a6d1a'; cx.lineWidth = 2;
   cx.fillRect(indX, indY, indW, indH); cx.strokeRect(indX, indY, indW, indH);
   cx.beginPath(); cx.moveTo(indX, indY + indH / 2); cx.lineTo(indX + indW, indY + indH / 2); cx.stroke();
   cx.beginPath(); cx.moveTo(indX + indW / 2, indY); cx.lineTo(indX + indW / 2, indY + indH); cx.stroke();
-  cx.fillStyle = '#827863'; cx.font = "bold 14px 'Cinzel'"; cx.textAlign = 'center';
+  cx.fillStyle = '#1f2a36'; cx.font = "600 14px 'IBM Plex Sans', sans-serif"; cx.textAlign = 'center';
   cx.fillText("SETTORE INDUSTRIALE", indX + indW / 2, indY - 15);
 
   const cityX = W / 2 + 130, cityY = 60, cityW = 220, cityH = 320;
-  cx.fillStyle = 'rgba(53,80,58,0.4)'; cx.fillRect(cityX, cityY, cityW, cityH);
-  cx.fillStyle = 'rgba(86,58,90,0.5)'; cx.fillRect(cityX + 30, cityY + 40, cityW - 60, cityH - 80);
-  cx.fillStyle = 'rgba(94,52,52,0.6)'; cx.fillRect(cityX + 60, cityY + 80, cityW - 120, cityH - 160);
-  cx.strokeStyle = '#2a2d30'; cx.strokeRect(cityX, cityY, cityW, cityH);
-  cx.fillStyle = '#8c7b6c'; cx.font = "bold 14px 'Cinzel'"; cx.textAlign = 'center';
+  cx.fillStyle = 'rgba(168,204,149,0.75)'; cx.fillRect(cityX, cityY, cityW, cityH);
+  cx.fillStyle = 'rgba(220,179,211,0.9)'; cx.fillRect(cityX + 30, cityY + 40, cityW - 60, cityH - 80);
+  cx.fillStyle = 'rgba(217,154,143,0.95)'; cx.fillRect(cityX + 60, cityY + 80, cityW - 120, cityH - 160);
+  cx.strokeStyle = '#4a5563'; cx.strokeRect(cityX, cityY, cityW, cityH);
+  cx.fillStyle = '#1f2a36'; cx.font = "600 14px 'IBM Plex Sans', sans-serif"; cx.textAlign = 'center';
   cx.fillText("METROPOLI (FASE 5)", cityX + cityW / 2, cityY - 15);
 
   const hwX = W / 2;
   [-10, 10].forEach((o, k) => {
-    cx.strokeStyle = '#2a3138'; cx.lineWidth = 10;
+    cx.strokeStyle = '#3d4752'; cx.lineWidth = 10;
     cx.beginPath(); cx.moveTo(hwX + o, 0); cx.lineTo(hwX + o, H); cx.stroke();
-    cx.strokeStyle = '#52585b'; cx.lineWidth = 1; cx.setLineDash([8, 8]);
+    cx.strokeStyle = 'rgba(255,255,255,0.85)'; cx.lineWidth = 1; cx.setLineDash([8, 8]);
     cx.beginPath(); cx.moveTo(hwX + o, 0); cx.lineTo(hwX + o, H); cx.stroke(); cx.setLineDash([]);
     const a = k === 0 ? Math.PI / 2 : -Math.PI / 2;
-    drawArrow(hwX + o, 100, a, '#7a7063'); drawArrow(hwX + o, H - 80, a, '#7a7063');
+    drawArrow(hwX + o, 100, a, '#ffffff'); drawArrow(hwX + o, H - 80, a, '#ffffff');
   });
-  cx.fillStyle = '#8b8c89'; cx.font = "bold 12px 'Space Mono'"; cx.textAlign = 'left';
+  cx.fillStyle = '#1f2a36'; cx.font = "600 12px 'IBM Plex Mono', monospace"; cx.textAlign = 'left';
   cx.fillText("AUTOSTRADA", hwX + 25, 65);
   cx.fillText("↓ VERSO PORTO / SCALI", hwX + 25, H - 20);
 
   const artY = H / 2 + 20;
-  cx.strokeStyle = '#2f3336'; cx.lineWidth = 12;
+  cx.strokeStyle = '#7d8590'; cx.lineWidth = 12;
   cx.beginPath(); cx.moveTo(hwX + 15, artY); cx.lineTo(cityX + cityW / 2, artY); cx.stroke();
   cx.beginPath(); cx.moveTo(hwX - 15, artY); cx.lineTo(indX + indW / 2, artY); cx.stroke();
 
-  cx.strokeStyle = '#2a3138'; cx.lineWidth = 4;
+  cx.strokeStyle = '#3d4752'; cx.lineWidth = 4;
   cx.beginPath(); cx.moveTo(hwX, artY - 60); cx.lineTo(hwX + 60, artY); cx.lineTo(hwX, artY + 60); cx.lineTo(hwX - 60, artY); cx.closePath(); cx.stroke();
-  cx.fillStyle = '#090a0b'; cx.strokeStyle = '#2f3336'; cx.lineWidth = 2;
+  cx.fillStyle = '#ffffff'; cx.strokeStyle = '#7d8590'; cx.lineWidth = 2;
   [[hwX + 60, 10], [hwX - 60, 10], [cityX, 8]].forEach(p => { cx.beginPath(); cx.arc(p[0], artY, p[1], 0, Math.PI * 2); cx.fill(); cx.stroke(); });
 
   const trainY = 18;
-  cx.strokeStyle = '#232629'; cx.lineWidth = 6;
+  cx.strokeStyle = 'rgba(31,42,54,0.15)'; cx.lineWidth = 6;
   cx.beginPath(); cx.moveTo(0, trainY); cx.lineTo(W, trainY); cx.stroke();
-  cx.strokeStyle = '#8a7366'; cx.lineWidth = 2; cx.setLineDash([4, 6]);
+  cx.strokeStyle = '#6b4f3f'; cx.lineWidth = 2; cx.setLineDash([4, 6]);
   cx.beginPath(); cx.moveTo(0, trainY); cx.lineTo(W, trainY); cx.stroke(); cx.setLineDash([]);
 
   const stationW = 120, stationH = 24, stationX = cityX + cityW / 2 - stationW / 2;
-  cx.fillStyle = '#17181a'; cx.fillRect(stationX, trainY - stationH / 2, stationW, stationH);
-  cx.strokeStyle = '#3d3835'; cx.lineWidth = 2; cx.strokeRect(stationX, trainY - stationH / 2, stationW, stationH);
-  cx.fillStyle = '#a3a8a8'; cx.font = "12px 'Space Mono'"; cx.textAlign = 'center'; cx.textBaseline = 'middle';
+  cx.fillStyle = '#ffffff'; cx.fillRect(stationX, trainY - stationH / 2, stationW, stationH);
+  cx.strokeStyle = '#4a5563'; cx.lineWidth = 2; cx.strokeRect(stationX, trainY - stationH / 2, stationW, stationH);
+  cx.fillStyle = '#1f2a36'; cx.font = "600 12px 'IBM Plex Mono', monospace"; cx.textAlign = 'center'; cx.textBaseline = 'middle';
   cx.fillText("STAZIONE", stationX + stationW / 2, trainY);
 
   const branchX = indX + indW / 2;
-  cx.strokeStyle = '#232629'; cx.lineWidth = 4;
+  cx.strokeStyle = 'rgba(31,42,54,0.15)'; cx.lineWidth = 4;
   cx.beginPath(); cx.moveTo(branchX + 40, trainY); cx.quadraticCurveTo(branchX, trainY, branchX, trainY + 40); cx.lineTo(branchX, indY + 20); cx.stroke();
-  cx.strokeStyle = '#8a7366'; cx.lineWidth = 1.5; cx.setLineDash([3, 5]);
+  cx.strokeStyle = '#6b4f3f'; cx.lineWidth = 1.5; cx.setLineDash([3, 5]);
   cx.beginPath(); cx.moveTo(branchX + 40, trainY); cx.quadraticCurveTo(branchX, trainY, branchX, trainY + 40); cx.lineTo(branchX, indY + 20); cx.stroke(); cx.setLineDash([]);
 
   const yardW = 110, yardH = 40;
-  cx.fillStyle = '#17181a'; cx.fillRect(branchX - yardW / 2, indY + 20, yardW, yardH);
-  cx.strokeStyle = '#3d3835'; cx.lineWidth = 2; cx.strokeRect(branchX - yardW / 2, indY + 20, yardW, yardH);
-  cx.fillStyle = '#a3a8a8'; cx.font = "bold 11px 'Space Mono'"; cx.textAlign = 'center'; cx.textBaseline = 'middle';
+  cx.fillStyle = '#ffffff'; cx.fillRect(branchX - yardW / 2, indY + 20, yardW, yardH);
+  cx.strokeStyle = '#4a5563'; cx.lineWidth = 2; cx.strokeRect(branchX - yardW / 2, indY + 20, yardW, yardH);
+  cx.fillStyle = '#1f2a36'; cx.font = "600 11px 'IBM Plex Mono', monospace"; cx.textAlign = 'center'; cx.textBaseline = 'middle';
   cx.fillText("SCALO MERCI", branchX, indY + 40);
 
-  cx.strokeStyle = '#526b6b'; cx.lineWidth = 2; cx.setLineDash([6, 6]);
+  cx.strokeStyle = '#2e6f7a'; cx.lineWidth = 2; cx.setLineDash([6, 6]);
   cx.beginPath(); cx.moveTo(cityX + cityW / 2, cityY + cityH / 2); cx.lineTo(cityX + cityW - 10, H - 40); cx.lineTo(W, H - 40); cx.stroke(); cx.setLineDash([]);
-  cx.fillStyle = '#526b6b'; cx.font = "bold 10px 'Space Mono'"; cx.textAlign = 'right';
+  cx.fillStyle = '#2e6f7a'; cx.font = "600 10px 'IBM Plex Mono', monospace"; cx.textAlign = 'right';
   cx.fillText("METRO → AEROPORTO", W - 10, H - 50);
 
   drawDimLine(hwX + 72, artY - 30, cityX - 5, artY - 30, "BUFFER: 240 m");
   drawDimLine(indX + indW + 5, artY + 30, hwX - 72, artY + 30, "BUFFER: 160 m");
+}
+drawMacro();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { const c = document.getElementById('macroMap'); c.width = c.width; drawMacro(); });   // ridisegna con i font caricati
 })();
 </script>
 
@@ -1037,16 +1075,16 @@ function ctcDist(a, b, depth) {
 
   // ---------------------------------------------------------------- modello
   const DTYPE = {
-    centro:    { label: 'Centro',    L: 160, color: '#5e3434' },
-    urbano:    { label: 'Urbano',    L: 208, color: '#563a5a' },
-    quartiere: { label: 'Quartiere', L: 208, color: '#35503a' },
-    suburbio:  { label: 'Suburbio',  L: 256, color: '#35503a' },
-    industria: { label: 'Industria', L: 288, color: '#5e4f2a' },
-    parco:     { label: 'Parco',     L: 256, color: '#1f3326' }
+    centro:    { label: 'Centro',    L: 160, color: '#d99a8f' },
+    urbano:    { label: 'Urbano',    L: 208, color: '#dcb3d3' },
+    quartiere: { label: 'Quartiere', L: 208, color: '#a8cc95' },
+    suburbio:  { label: 'Suburbio',  L: 256, color: '#a8cc95' },
+    industria: { label: 'Industria', L: 288, color: '#dcc77f' },
+    parco:     { label: 'Parco',     L: 256, color: '#d3e6c6' }
   };
   const ZCOL = {
-    LOW: '#35503a', LOW_R: '#5a4630', MED: '#563a5a', HIGH: '#5e3434', MIX: '#2f5a5a',
-    COM: '#34506b', OFF: '#4a3a5c', IND: '#5e4f2a', PARK: '#1f3326'
+    LOW: '#a8cc95', LOW_R: '#d2b48a', MED: '#dcb3d3', HIGH: '#d99a8f', MIX: '#8fc4bd',
+    COM: '#93b4d6', OFF: '#a9a3d9', IND: '#dcc77f', PARK: '#d3e6c6'
   };
   const ZNAME = { LOW: 'Bassa densità', LOW_R: 'Low Rent', MED: 'Media densità', HIGH: 'Alta densità', MIX: 'Misto', COM: 'Commercio', OFF: 'Uffici', IND: 'Industria', PARK: 'Parco' };
   // stime indicative (per ettaro di isolato)
@@ -1064,20 +1102,20 @@ function ctcDist(a, b, depth) {
     return 'LOW';
   }
   const SRV = {
-    CLIN:  { icon: '🏥', label: 'Clinica',          color: '#7a6368' },
-    HOSP:  { icon: '🏥', label: 'Ospedale',         color: '#a07880' },
-    FIRE:  { icon: '🚒', label: 'Pompieri',         color: '#8c5a45' },
-    POL:   { icon: '🚓', label: 'Polizia',          color: '#455a6b' },
-    EDU1:  { icon: '📚', label: 'Elementare',       color: '#5c6b54' },
-    EDU2:  { icon: '🎓', label: 'Superiore',        color: '#5c6b54' },
-    UNI:   { icon: '🏛️', label: 'Università',       color: '#7d8f72' },
-    POST:  { icon: '📦', label: 'Poste',            color: '#7a7452' },
-    WASTE: { icon: '♻️', label: 'Rifiuti',          color: '#7a7452' },
-    CEM:   { icon: '⚰️', label: 'Cimitero',         color: '#8a8f91' },
-    CARGO: { icon: '🚂', label: 'Stazione merci',   color: '#8a7366' },
-    PR:    { icon: 'P',  label: 'Park & Ride',      color: '#948b76', park: true },
-    PARKM: { icon: 'P',  label: 'Multipiano',       color: '#948b76', park: true },
-    PARKL: { icon: '🌳', label: 'Parco di città',   color: '#4f7a5a' }
+    CLIN:  { icon: '🏥', label: 'Clinica',          color: '#9b4d5a' },
+    HOSP:  { icon: '🏥', label: 'Ospedale',         color: '#b0485c' },
+    FIRE:  { icon: '🚒', label: 'Pompieri',         color: '#9a4a2c' },
+    POL:   { icon: '🚓', label: 'Polizia',          color: '#2f5d8a' },
+    EDU1:  { icon: '📚', label: 'Elementare',       color: '#4f7a3a' },
+    EDU2:  { icon: '🎓', label: 'Superiore',        color: '#4f7a3a' },
+    UNI:   { icon: '🏛️', label: 'Università',       color: '#3f6b4f' },
+    POST:  { icon: '📦', label: 'Poste',            color: '#8a7426' },
+    WASTE: { icon: '♻️', label: 'Rifiuti',          color: '#8a7426' },
+    CEM:   { icon: '⚰️', label: 'Cimitero',         color: '#6b7078' },
+    CARGO: { icon: '🚂', label: 'Stazione merci',   color: '#6b4f3f' },
+    PR:    { icon: 'P',  label: 'Park & Ride',      color: '#6f6648', park: true },
+    PARKM: { icon: 'P',  label: 'Multipiano',       color: '#6f6648', park: true },
+    PARKL: { icon: '🌳', label: 'Parco di città',   color: '#3f7a4f' }
   };
   const NAMES = ['Borgo Vecchio', 'San Rocco', 'Le Fornaci', 'Porta Nuova', 'Belvedere', 'Il Molino', 'Santa Chiara', 'Le Vigne',
     'Ponte Alto', 'Campo Lungo', 'La Pieve', 'Torre Bianca', 'I Gelsi', 'Prato Grande', 'Le Cave', 'San Biagio', 'La Fontana',
@@ -1085,7 +1123,7 @@ function ctcDist(a, b, depth) {
     'Canneto', 'Poggio Verde', 'Le Rose', 'Sant\'Anna', 'Fossombrone', 'Gli Olmi', 'Il Porto', 'La Rotonda', 'Cascina Nuova',
     'Rio Secco', 'Le Logge', 'Madonna del Piano', 'San Vito', 'Quercianella', 'Il Ghetto', 'Campo dei Fiori', 'La Darsena',
     'Pietralunga', 'San Felice', 'Ca\' Rossa', 'Le Serre', 'Ponte Rotto', 'Villa Bassa'];
-  const BUS_COL = ['#948b76', '#a8995e', '#8a7a52', '#b09a70', '#7d7458', '#a38c64'];
+  const BUS_COL = ['#7a6a2e', '#8a6d1a', '#6f6648', '#94742f', '#5f6a2e', '#86603a'];
 
   function phaseFromHop(h) { return h === 0 ? 1 : h === 1 ? 2 : h === 2 ? 3 : h <= 4 ? 4 : 5; }
 
@@ -1183,8 +1221,8 @@ function ctcDist(a, b, depth) {
       e.phase = Math.min.apply(null, e.faces.map(id => faces[id].phase));
     });
     const tramLines = [
-      { id: 'T1', name: 'Tram T1 · anello centro', poly: core.poly.slice(), minPhase: 3, color: '#7a6368' },
-      { id: 'T2', name: 'Tram T2 · anello urbano', poly: T2nodes, minPhase: 4, color: '#8c5a45' }
+      { id: 'T1', name: 'Tram T1 · anello centro', poly: core.poly.slice(), minPhase: 3, color: '#9b4d5a' },
+      { id: 'T2', name: 'Tram T2 · anello urbano', poly: T2nodes, minPhase: 4, color: '#7a5a2e' }
     ];
     if (n === 3) tramLines.pop();
 
@@ -1443,9 +1481,9 @@ function ctcDist(a, b, depth) {
   function pathPoly(p) { ctx.beginPath(); p.forEach((q, i) => i ? ctx.lineTo(sx(q), sy(q)) : ctx.moveTo(sx(q), sy(q))); ctx.closePath(); }
   function pathLine(p, closed) { ctx.beginPath(); p.forEach((q, i) => i ? ctx.lineTo(sx(q), sy(q)) : ctx.moveTo(sx(q), sy(q))); if (closed) ctx.closePath(); }
   const ROADSTYLE = {
-    small:  { col: '#24272a', ov: 'rgba(80,255,120,0.55)', min: 1 },
-    medium: { col: '#2c3034', ov: 'rgba(0,200,255,0.6)', min: 1.8 },
-    large:  { col: '#3a3f44', ov: 'rgba(255,60,60,0.65)', min: 2.8 }
+    small:  { col: '#8a8f96', ov: 'rgba(47,125,74,0.85)', min: 1 },
+    medium: { col: '#5f6873', ov: 'rgba(37,99,168,0.85)', min: 1.8 },
+    large:  { col: '#3d4752', ov: 'rgba(124,58,170,0.85)', min: 2.8 }
   };
   function strokeRoad(a, b, type) {
     const st = ROADSTYLE[type];
@@ -1466,11 +1504,11 @@ function ctcDist(a, b, depth) {
   function draw() {
     const c = city;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.fillStyle = '#090a0b'; ctx.fillRect(0, 0, Wc, Hc);
+    ctx.fillStyle = '#ebe7dd'; ctx.fillRect(0, 0, Wc, Hc);
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
 
     // griglia di sfondo 500 m
-    ctx.strokeStyle = 'rgba(255,255,255,0.025)'; ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(31,42,54,0.08)'; ctx.lineWidth = 1;
     const g0 = toWorld(0, 0), g1 = toWorld(Wc, Hc);
     for (let x = Math.floor(g0.x / 500) * 500; x < g1.x; x += 500) { ctx.beginPath(); ctx.moveTo(sx(V(x, 0)), 0); ctx.lineTo(sx(V(x, 0)), Hc); ctx.stroke(); }
     for (let y = Math.floor(g0.y / 500) * 500; y < g1.y; y += 500) { ctx.beginPath(); ctx.moveTo(0, sy(V(0, y))); ctx.lineTo(Wc, sy(V(0, y))); ctx.stroke(); }
@@ -1478,11 +1516,11 @@ function ctcDist(a, b, depth) {
     // moduli futuri
     c.faces.forEach(f => {
       if (built(f)) return;
-      pathPoly(f.poly); ctx.fillStyle = 'rgba(255,255,255,0.012)'; ctx.fill();
-      ctx.setLineDash([4, 6]); ctx.strokeStyle = 'rgba(160,160,160,0.15)'; ctx.lineWidth = 1; ctx.stroke(); ctx.setLineDash([]);
+      pathPoly(f.poly); ctx.fillStyle = 'rgba(31,42,54,0.03)'; ctx.fill();
+      ctx.setLineDash([4, 6]); ctx.strokeStyle = 'rgba(31,42,54,0.25)'; ctx.lineWidth = 1; ctx.stroke(); ctx.setLineDash([]);
       if (layers.labels) {
         const C = centroid(f.poly);
-        ctx.fillStyle = 'rgba(160,160,160,0.25)'; ctx.font = "10px 'Space Mono', monospace"; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = 'rgba(31,42,54,0.45)'; ctx.font = "600 10px 'IBM Plex Mono', monospace"; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         ctx.fillText('FASE ' + f.phase, sx(C), sy(C));
       }
     });
@@ -1494,9 +1532,9 @@ function ctcDist(a, b, depth) {
         pathPoly(b.poly);
         if (b.zone && layers.zones) { ctx.fillStyle = ZCOL[b.zone]; ctx.fill(); }
         else if (!b.zone) {
-          ctx.fillStyle = b.cls === 'scarto' ? '#151f18' : '#1b2a20'; ctx.fill();
-          if (cam.s > 0.18 && b.cls !== 'scarto') { ctx.strokeStyle = 'rgba(109,179,109,0.18)'; ctx.lineWidth = 1; ctx.stroke(); }
-        } else { ctx.fillStyle = '#141618'; ctx.fill(); }
+          ctx.fillStyle = b.cls === 'scarto' ? '#e2e3d8' : '#d3e6c6'; ctx.fill();
+          if (cam.s > 0.18 && b.cls !== 'scarto') { ctx.strokeStyle = 'rgba(47,125,74,0.35)'; ctx.lineWidth = 1; ctx.stroke(); }
+        } else { ctx.fillStyle = '#e4e0d5'; ctx.fill(); }
       });
     });
 
@@ -1505,18 +1543,18 @@ function ctcDist(a, b, depth) {
       c.faces.forEach(f => { if (built(f)) f.roads.forEach(r => strokeRoad(r.a, r.b, r.type)); });
       Object.values(c.edges).forEach(e => { if (e.phase <= phase) strokeRoad(e.a, e.b, e.type); });
       // autostrada + raccordo con buffer
-      ctx.strokeStyle = '#2a3138'; ctx.lineWidth = Math.max(5, 46 * cam.s);
+      ctx.strokeStyle = '#1f2a36'; ctx.lineWidth = Math.max(5, 46 * cam.s);
       ctx.beginPath(); ctx.moveTo(sx(V(c.bounds.minX - 2000, c.hwY)), sy(V(0, c.hwY))); ctx.lineTo(sx(V(c.bounds.maxX + 2000, c.hwY)), sy(V(0, c.hwY))); ctx.stroke();
-      ctx.strokeStyle = '#52585b'; ctx.lineWidth = 1; ctx.setLineDash([8, 8]); ctx.stroke(); ctx.setLineDash([]);
+      ctx.strokeStyle = 'rgba(255,255,255,0.8)'; ctx.lineWidth = 1; ctx.setLineDash([8, 8]); ctx.stroke(); ctx.setLineDash([]);
       const og = c.origin, fa = og.poly[2], fb = og.poly[3], mid = lerp(fa, fb, 0.5);
       strokeRoad(mid, c.interchange, 'large');
-      ctx.strokeStyle = '#2a3138'; ctx.lineWidth = 3;
+      ctx.strokeStyle = '#1f2a36'; ctx.lineWidth = 3;
       ctx.beginPath(); ctx.arc(sx(c.interchange), sy(c.interchange), Math.max(6, 70 * cam.s), 0, Math.PI * 2); ctx.stroke();
-      ctx.fillStyle = '#8b8c89'; ctx.font = "bold 10px 'Space Mono', monospace"; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#1f2a36'; ctx.font = "600 11px 'IBM Plex Mono', monospace"; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
       ctx.fillText('AUTOSTRADA', sx(V(c.bounds.minX, 0)) + 6, sy(V(0, c.hwY)) - Math.max(8, 30 * cam.s));
       if (layers.dims) {
         const t = Math.round(vlen(sub(c.interchange, mid)));
-        ctx.fillStyle = '#948b76'; ctx.font = "10px 'Space Mono', monospace";
+        ctx.fillStyle = '#9a3412'; ctx.font = "600 10px 'IBM Plex Mono', monospace";
         ctx.fillText('BUFFER ' + (unit === 'm' ? t + ' m' : Math.round(t / 8) + 'c'), sx(lerp(mid, c.interchange, 0.5)) + 8, sy(lerp(mid, c.interchange, 0.5)));
       }
     }
@@ -1525,16 +1563,16 @@ function ctcDist(a, b, depth) {
     if (layers.seams) {
       Object.values(c.edges).forEach(e => {
         const sc = seamClass(e); if (!sc) return;
-        ctx.strokeStyle = sc.cls === 'ok' ? 'rgba(109,179,109,0.85)' : sc.cls === 'bad' ? 'rgba(200,80,80,0.9)' : 'rgba(200,144,74,0.9)';
+        ctx.strokeStyle = sc.cls === 'ok' ? 'rgba(47,125,74,0.8)' : sc.cls === 'bad' ? 'rgba(180,35,24,0.85)' : 'rgba(180,83,9,0.85)';
         ctx.lineWidth = Math.max(4, 40 * cam.s);
         ctx.beginPath(); ctx.moveTo(sx(e.a), sy(e.a)); ctx.lineTo(sx(e.b), sy(e.b)); ctx.stroke();
         if (sc.cls === 'ok' || city.S * cam.s < 90) return;
         const m = lerp(e.a, e.b, 0.5);
         const txt = sc.d.toFixed(1) + '°';
-        ctx.font = "bold 10px 'Space Mono', monospace"; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.font = "600 10px 'IBM Plex Mono', monospace"; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         const w = ctx.measureText(txt).width + 6;
-        ctx.fillStyle = 'rgba(9,10,11,0.85)'; ctx.fillRect(sx(m) - w / 2, sy(m) - 7, w, 14);
-        ctx.fillStyle = '#e0e0e0'; ctx.fillText(txt, sx(m), sy(m));
+        ctx.fillStyle = 'rgba(251,250,246,0.95)'; ctx.fillRect(sx(m) - w / 2, sy(m) - 7, w, 14);
+        ctx.fillStyle = '#1f2a36'; ctx.fillText(txt, sx(m), sy(m));
       });
     }
 
@@ -1569,13 +1607,13 @@ function ctcDist(a, b, depth) {
     // metro + treno
     if (layers.metro) {
       if (phase >= 5) {
-        ctx.strokeStyle = '#232629'; ctx.lineWidth = Math.max(4, 20 * cam.s);
+        ctx.strokeStyle = 'rgba(31,42,54,0.15)'; ctx.lineWidth = Math.max(4, 20 * cam.s);
         ctx.beginPath(); ctx.moveTo(sx(V(c.bounds.minX - 2000, 0)), sy(V(0, c.railY))); ctx.lineTo(sx(V(c.bounds.maxX + 2000, 0)), sy(V(0, c.railY))); ctx.stroke();
-        ctx.strokeStyle = '#8a7366'; ctx.lineWidth = 2; ctx.setLineDash([3, 5]); ctx.stroke(); ctx.setLineDash([]);
+        ctx.strokeStyle = '#6b4f3f'; ctx.lineWidth = 2; ctx.setLineDash([3, 5]); ctx.stroke(); ctx.setLineDash([]);
         // diramazione merci verso l'industria
         c.faces.forEach(f => f.services.forEach(s => {
           if (s.kind !== 'CARGO' || phase < s.minPhase) return;
-          ctx.strokeStyle = '#8a7366'; ctx.lineWidth = 2; ctx.setLineDash([3, 5]);
+          ctx.strokeStyle = '#6b4f3f'; ctx.lineWidth = 2; ctx.setLineDash([3, 5]);
           ctx.beginPath(); ctx.moveTo(sx(V(s.block.c.x - 300, 0)), sy(V(0, c.railY))); ctx.quadraticCurveTo(sx(s.block.c), sy(V(0, c.railY)), sx(s.block.c), sy(s.block.c)); ctx.stroke(); ctx.setLineDash([]);
         }));
       }
@@ -1584,20 +1622,20 @@ function ctcDist(a, b, depth) {
         const pts = m.faces.filter(built).map(f => f.hub);
         if (phase >= 5) { if (m.ext === 'rail') pts.push(c.railStation); else pts.push(c.airport); }
         if (pts.length < 2) return;
-        ctx.strokeStyle = 'rgba(82,107,107,0.45)'; ctx.lineWidth = 7;
+        ctx.strokeStyle = 'rgba(46,111,122,0.18)'; ctx.lineWidth = 7;
         smooth(pts); ctx.stroke();
-        ctx.strokeStyle = '#6f9090'; ctx.lineWidth = 2; ctx.setLineDash([10, 8]); smooth(pts); ctx.stroke(); ctx.setLineDash([]);
+        ctx.strokeStyle = '#2e6f7a'; ctx.lineWidth = 2; ctx.setLineDash([10, 8]); smooth(pts); ctx.stroke(); ctx.setLineDash([]);
         pts.forEach(p => {
           const r = 7;
-          ctx.fillStyle = '#111416'; ctx.fillRect(sx(p) - r, sy(p) - r, 2 * r, 2 * r);
-          ctx.strokeStyle = '#6f9090'; ctx.lineWidth = 1.5; ctx.strokeRect(sx(p) - r, sy(p) - r, 2 * r, 2 * r);
-          ctx.fillStyle = '#a3c0c0'; ctx.font = "bold 9px 'Space Mono', monospace"; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillStyle = '#ffffff'; ctx.fillRect(sx(p) - r, sy(p) - r, 2 * r, 2 * r);
+          ctx.strokeStyle = '#2e6f7a'; ctx.lineWidth = 1.5; ctx.strokeRect(sx(p) - r, sy(p) - r, 2 * r, 2 * r);
+          ctx.fillStyle = '#2e6f7a'; ctx.font = "600 9px 'IBM Plex Mono', monospace"; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
           ctx.fillText('M', sx(p), sy(p) + 0.5);
         });
       });
       if (phase >= 5) {
-        boxLabel(V(c.railStation.x, c.railStation.y - 30), 'STAZIONE', '#8a7366', 70, 18);
-        boxLabel(V(c.airport.x + 40, c.airport.y), 'AEROPORTO', '#526b6b', 90, 40);
+        boxLabel(V(c.railStation.x, c.railStation.y - 30), 'STAZIONE', '#6b4f3f', 70, 18);
+        boxLabel(V(c.airport.x + 40, c.airport.y), 'AEROPORTO', '#2e6f7a', 90, 40);
       }
     }
 
@@ -1609,17 +1647,17 @@ function ctcDist(a, b, depth) {
         const def = SRV[s.kind];
         if (def.park ? !layers.park : !layers.services) return;
         const b = s.block;
-        pathPoly(b.poly); ctx.fillStyle = '#16181a'; ctx.fill(); ctx.strokeStyle = def.color; ctx.lineWidth = 1.5; ctx.stroke();
+        pathPoly(b.poly); ctx.fillStyle = '#f6f3ec'; ctx.fill(); ctx.strokeStyle = def.color; ctx.lineWidth = 1.5; ctx.stroke();
         const r = cam.s > 0.09 ? 9 : 5;
         const X = sx(b.c), Y = sy(b.c);
-        ctx.fillStyle = '#0d0e10'; ctx.fillRect(X - r, Y - r, 2 * r, 2 * r);
+        ctx.fillStyle = '#ffffff'; ctx.fillRect(X - r, Y - r, 2 * r, 2 * r);
         ctx.strokeStyle = def.color; ctx.lineWidth = 1.5; ctx.strokeRect(X - r, Y - r, 2 * r, 2 * r);
         if (r > 6) {
           ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-          if (def.icon === 'P') { ctx.fillStyle = def.color; ctx.font = "bold 12px 'Cinzel', serif"; }
+          if (def.icon === 'P') { ctx.fillStyle = def.color; ctx.font = "600 12px 'IBM Plex Sans', sans-serif"; }
           else { ctx.fillStyle = def.color; ctx.font = "11px 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif"; }
           ctx.fillText(def.icon, X, Y + 1);
-          if (cam.s > 0.22) { ctx.font = "bold 8px 'Space Mono', monospace"; ctx.fillStyle = '#a3a8a8'; ctx.fillText(def.label.toUpperCase(), X, Y + r + 7); }
+          if (cam.s > 0.22) { ctx.font = "600 8px 'IBM Plex Mono', monospace"; ctx.fillStyle = '#1f2a36'; ctx.fillText(def.label.toUpperCase(), X, Y + r + 7); }
         }
       });
     });
@@ -1627,7 +1665,7 @@ function ctcDist(a, b, depth) {
     // selezione + quote
     const sel = selId !== null ? c.faces[selId] : null;
     if (sel) {
-      pathPoly(sel.poly); ctx.strokeStyle = '#d6cfae'; ctx.lineWidth = 2; ctx.setLineDash([6, 4]); ctx.stroke(); ctx.setLineDash([]);
+      pathPoly(sel.poly); ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 6; ctx.stroke(); ctx.strokeStyle = '#c2410c'; ctx.lineWidth = 3; ctx.stroke();
       if (layers.dims && built(sel)) drawDims(sel);
     }
 
@@ -1639,35 +1677,35 @@ function ctcDist(a, b, depth) {
         const X = sx(C), Y = sy(C) - (cam.s > 0.15 ? 0 : 0);
         ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         const small = city.S * cam.s < 110;
-        ctx.font = small ? "bold 9px 'Cinzel', serif" : "bold 11px 'Cinzel', serif";
+        ctx.font = small ? "600 9.5px 'IBM Plex Sans', sans-serif" : "600 11px 'IBM Plex Sans', sans-serif";
         const t1 = f.name.toUpperCase(), t2 = DTYPE[f.type].label.toUpperCase() + ' · F' + f.phase;
         const w = Math.max(ctx.measureText(t1).width, small ? 0 : 70) + 10;
-        ctx.fillStyle = 'rgba(9,10,11,0.72)';
-        if (small) { ctx.fillRect(X - w / 2, Y - 7, w, 14); ctx.fillStyle = '#d0ccbc'; ctx.fillText(t1, X, Y); return; }
+        ctx.fillStyle = 'rgba(251,250,246,0.88)';
+        if (small) { ctx.fillRect(X - w / 2, Y - 7, w, 14); ctx.fillStyle = '#1f2a36'; ctx.fillText(t1, X, Y); return; }
         ctx.fillRect(X - w / 2, Y - 14, w, 28);
-        ctx.fillStyle = '#d0ccbc'; ctx.fillText(t1, X, Y - 5);
-        ctx.font = "9px 'Space Mono', monospace"; ctx.fillStyle = '#948b76'; ctx.fillText(t2, X, Y + 8);
+        ctx.fillStyle = '#1f2a36'; ctx.fillText(t1, X, Y - 5);
+        ctx.font = "9px 'IBM Plex Mono', monospace"; ctx.fillStyle = '#4a5563'; ctx.fillText(t2, X, Y + 8);
       });
     }
 
     // vento + scala
-    ctx.fillStyle = '#7a7063'; ctx.font = "10px 'Space Mono', monospace"; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#4a5563'; ctx.font = "600 10px 'IBM Plex Mono', monospace"; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
     ctx.fillText('VENTO ←', 10, 14);
     const bar = niceBar(120 / cam.s);
-    ctx.strokeStyle = '#a3a8a8'; ctx.lineWidth = 2;
+    ctx.strokeStyle = '#1f2a36'; ctx.lineWidth = 2;
     ctx.beginPath(); ctx.moveTo(10, Hc - 28); ctx.lineTo(10 + bar * cam.s, Hc - 28); ctx.stroke();
-    ctx.fillStyle = '#a3a8a8'; ctx.fillText(bar >= 1000 ? (bar / 1000) + ' km' : bar + ' m', 14 + bar * cam.s, Hc - 28);
+    ctx.fillStyle = '#1f2a36'; ctx.fillText(bar >= 1000 ? (bar / 1000) + ' km' : bar + ' m', 14 + bar * cam.s, Hc - 28);
   }
   function niceBar(m) { const s = [50, 100, 200, 250, 500, 1000, 2000, 5000]; let r = s[0]; s.forEach(v => { if (v <= m) r = v; }); return r; }
   function drawStop(p, col, r) {
-    ctx.beginPath(); ctx.arc(sx(p), sy(p), r, 0, Math.PI * 2); ctx.fillStyle = '#0a0b0c'; ctx.fill();
+    ctx.beginPath(); ctx.arc(sx(p), sy(p), r, 0, Math.PI * 2); ctx.fillStyle = '#ffffff'; ctx.fill();
     ctx.lineWidth = 1.5; ctx.strokeStyle = col; ctx.stroke();
   }
   function boxLabel(p, txt, col, w, h) {
     const W = Math.max(w * cam.s, 58), H = Math.max(h * cam.s, 16);
-    ctx.fillStyle = '#17181a'; ctx.fillRect(sx(p) - W / 2, sy(p) - H / 2, W, H);
+    ctx.fillStyle = '#ffffff'; ctx.fillRect(sx(p) - W / 2, sy(p) - H / 2, W, H);
     ctx.strokeStyle = col; ctx.lineWidth = 1.5; ctx.strokeRect(sx(p) - W / 2, sy(p) - H / 2, W, H);
-    ctx.fillStyle = '#a3a8a8'; ctx.font = "bold 9px 'Space Mono', monospace"; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#1f2a36'; ctx.font = "600 9px 'IBM Plex Mono', monospace"; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText(txt, sx(p), sy(p));
   }
   function smooth(pts) {
@@ -1683,17 +1721,17 @@ function ctcDist(a, b, depth) {
     const ul = f.uLines, si = ul.findIndex(l => l.spine);
     const uq = si >= 0 && si + 1 < ul.length ? (ul[si].pos + ul[si + 1].pos) / 2 : 40;
     const pts = [{ pos: 0, type: f.frontType, front: true }].concat(f.vLines.filter(l => l.pos > 0));
-    ctx.font = "bold 9px 'Space Mono', monospace"; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.font = "600 9px 'IBM Plex Mono', monospace"; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     for (let i = 0; i < pts.length - 1; i++) {
       const a = f.toW(uq, pts[i].pos), b = f.toW(uq, pts[i + 1].pos);
       if (!inConvex(b, f.poly)) break;
-      ctx.strokeStyle = '#d6cfae'; ctx.lineWidth = 1;
+      ctx.strokeStyle = '#c2410c'; ctx.lineWidth = 1;
       ctx.beginPath(); ctx.moveTo(sx(a), sy(a)); ctx.lineTo(sx(b), sy(b)); ctx.stroke();
       const d = pts[i + 1].pos - pts[i].pos, m = lerp(a, b, 0.5);
       const txt = unit === 'm' ? Math.round(d) + ' m' : (d / 8).toFixed(d % 8 ? 1 : 0) + 'c';
       const w = ctx.measureText(txt).width + 6;
-      ctx.fillStyle = 'rgba(9,10,11,0.9)'; ctx.fillRect(sx(m) - w / 2, sy(m) - 7, w, 14);
-      ctx.fillStyle = pts[i + 1].type === 'medium' || pts[i].type === 'medium' || pts[i].front ? '#c8904a' : '#d6cfae';
+      ctx.fillStyle = 'rgba(251,250,246,0.95)'; ctx.fillRect(sx(m) - w / 2, sy(m) - 7, w, 14);
+      ctx.fillStyle = pts[i + 1].type === 'medium' || pts[i].type === 'medium' || pts[i].front ? '#9a3412' : '#1f2a36';
       ctx.fillText(txt, sx(m), sy(m));
     }
   }
@@ -1750,7 +1788,7 @@ function ctcDist(a, b, depth) {
     d += kv('Residui (servizi/verde)', f.stats.residuo + f.stats.profondo);
     d += kv('Abitanti / lavoro (stima)', fmtInt(f.stats.res) + ' / ' + fmtInt(f.stats.jobs));
     const zs = Object.entries(f.stats.zoneArea).sort((a, b) => b[1] - a[1]);
-    if (zs.length) d += kv('Zone principali', zs.slice(0, 3).map(([z, a]) => '<span style="color:' + ZCOL[z] + ';filter:brightness(1.8)">■</span> ' + ZNAME[z] + ' ' + (a / 10000).toFixed(1) + ' ha').join('<br>'));
+    if (zs.length) d += kv('Zone principali', zs.slice(0, 3).map(([z, a]) => '<span style="color:' + ZCOL[z] + ';filter:saturate(1.6) brightness(0.85)">■</span> ' + ZNAME[z] + ' ' + (a / 10000).toFixed(1) + ' ha').join('<br>'));
     if (f.services.length) d += kv('Servizi', f.services.map(s => SRV[s.kind].label + (s.minPhase > f.phase ? ' (F' + s.minPhase + ')' : '')).join(', '));
     if (f.bus && f.type !== 'parco') d += kv('Bus di quartiere', (f.bus.len / 1000).toFixed(1) + ' km · ' + busVehicles(f) + ' veicoli');
 

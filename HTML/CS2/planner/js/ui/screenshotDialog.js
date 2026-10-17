@@ -59,13 +59,13 @@
         ctx.putImageData(im, 0, 0);
       }
       if (corners.length) {
-        ctx.strokeStyle = '#ffd36b'; ctx.lineWidth = 2; ctx.beginPath();
+        ctx.strokeStyle = '#c2410c'; ctx.lineWidth = 2; ctx.beginPath();
         corners.forEach((p, i) => i ? ctx.lineTo(p.x * scale, p.y * scale) : ctx.moveTo(p.x * scale, p.y * scale));
         if (corners.length === 4) ctx.closePath();
         ctx.stroke();
         corners.forEach((p, i) => {
-          ctx.fillStyle = '#ffd36b'; ctx.beginPath(); ctx.arc(p.x * scale, p.y * scale, 5, 0, Math.PI * 2); ctx.fill();
-          ctx.fillStyle = '#000'; ctx.font = 'bold 11px monospace'; ctx.fillText(CORNER_NAMES[i], p.x * scale + 8, p.y * scale - 6);
+          ctx.fillStyle = '#c2410c'; ctx.beginPath(); ctx.arc(p.x * scale, p.y * scale, 5, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#fff'; ctx.font = "600 11px 'IBM Plex Mono', monospace"; ctx.fillText(CORNER_NAMES[i], p.x * scale + 8, p.y * scale - 6);
         });
       }
       const step = corners.length < 4 ? 'Clicca l\'angolo <b>' + CORNER_NAMES[corners.length] + '</b> dell\'area giocabile (' + (corners.length + 1) + '/4)'
