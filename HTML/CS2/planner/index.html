@@ -10,47 +10,70 @@
 <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-move" viewBox="0 0 24 24"><path d="M12 3v18M3 12h18M12 3 9 6M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"/></symbol>
+    <symbol id="i-brush" viewBox="0 0 24 24"><path d="M14.5 4.5l5 5L11 18l-5-5z"/><path d="M6 13l-2.2 2.2a2.6 2.6 0 0 0 3.7 3.7L9.5 17"/></symbol>
+    <symbol id="i-road" viewBox="0 0 24 24"><path d="M4 20 15 9M8 20l11-11"/><circle cx="4" cy="20" r="1.4"/><circle cx="17.5" cy="6.5" r="2.5"/></symbol>
+    <symbol id="i-select" viewBox="0 0 24 24"><path d="M5 3.5l13 6.5-5.5 1.8L10.5 18z"/><path d="M12.8 12l5 5"/></symbol>
+    <symbol id="i-flag" viewBox="0 0 24 24"><path d="M6 21V4M6 4h11l-2.5 4L17 12H6"/></symbol>
+    <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></symbol>
+    <symbol id="i-redo" viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+    <symbol id="i-fit" viewBox="0 0 24 24"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></symbol>
+    <symbol id="i-open" viewBox="0 0 24 24"><path d="M3 6h6l2 2h10v11H3z"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M4 20h16"/></symbol>
+    <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 16V5M7 10l5-5 5 5M4 20h16"/></symbol>
+    <symbol id="i-dice" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2.5"/><circle cx="9" cy="9" r=".9"/><circle cx="15" cy="15" r=".9"/><circle cx="15" cy="9" r=".9"/><circle cx="9" cy="15" r=".9"/></symbol>
+  </defs>
+</svg>
 <header class="topbar">
   <div class="brand"><span>CS2</span> Planner</div>
   <div class="tools">
-    <button class="btn" id="btnNew">Nuovo</button>
-    <button class="btn" id="btnOpen">Apri…</button>
-    <button class="btn primary" id="btnSave">Salva file</button>
+    <button class="btn" id="btnNew"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg>Nuovo</button>
+    <button class="btn" id="btnOpen"><svg class="ic" aria-hidden="true"><use href="#i-open"/></svg>Apri…</button>
+    <button class="btn primary" id="btnSave"><svg class="ic" aria-hidden="true"><use href="#i-down"/></svg>Salva file</button>
     <input type="file" id="fileOpen" accept=".cs2plan,.json,.gz" hidden>
     <span class="sep"></span>
-    <button class="btn" id="btnDemo" title="Genera un terreno finto per provare la pagina (verrà sostituito dall'import)">Terreno di prova</button>
+    <button class="btn" id="btnDemo" title="Genera un terreno finto per provare la pagina (verrà sostituito dall'import)"><svg class="ic" aria-hidden="true"><use href="#i-dice"/></svg>Terreno di prova</button>
   </div>
   <a class="back" href="../cs2-reference.html">← Reference sheet</a>
 </header>
 
 <main class="layout">
   <aside class="side">
-    <section class="box">
+    <nav class="tabs" role="tablist">
+      <button class="tab" role="tab" data-tab="mappa">Mappa</button>
+      <button class="tab" role="tab" data-tab="modifica">Modifica</button>
+      <button class="tab" role="tab" data-tab="vincoli">Vincoli</button>
+      <button class="tab" role="tab" data-tab="strade">Strade</button>
+      <button class="tab" role="tab" data-tab="moduli">Moduli</button>
+      <button class="tab" role="tab" data-tab="esporta">Esporta</button>
+    </nav>
+    <section class="box selbox"><h4>Selezione</h4><div id="selInfo"></div></section>
+    <div class="tabbody">
+    <section class="box" data-tab="mappa">
       <h4>Progetto</h4>
       <label class="field">Nome <input id="pName" type="text"></label>
       <label class="field">Lato mappa (m) <input id="pSize" type="number" min="1000" step="1"></label>
       <label class="field">Livello del mare (m) <input id="pSea" type="number" step="1"></label>
       <label class="field">Vento <b id="vWind"></b><input id="pWind" type="range" min="0" max="355" step="5"></label>
     </section>
-    <section class="box">
+    <section class="box" data-tab="mappa">
       <h4>Importa mappa</h4>
-      <button class="btn" id="btnHeightmap">Heightmap PNG…</button>
+      <button class="btn" id="btnHeightmap"><svg class="ic" aria-hidden="true"><use href="#i-up"/></svg>Heightmap PNG…</button>
       <input type="file" id="fileHeightmap" accept=".png,image/png" hidden>
       <label class="check"><input type="checkbox" id="hmWorld"> È la mappa mondo (uso il centro)</label>
       <label class="field">Scala altezza 16 bit (m) <input id="hmScale" type="number" min="1" step="1"></label>
-      <button class="btn" id="btnShot">Screenshot risorse…</button>
+      <button class="btn" id="btnShot"><svg class="ic" aria-hidden="true"><use href="#i-up"/></svg>Screenshot risorse…</button>
       <input type="file" id="fileShot" accept="image/*" hidden>
       <p class="hint">Heightmap: esportala dall'editor del gioco (PNG 4096×4096, 16 bit). Screenshot: vista risorse naturali, dall'alto, con tutta l'area giocabile visibile.</p>
     </section>
-    <section class="box">
+    <section class="box" data-tab="modifica">
       <h4>Modifica a mano</h4>
-      <div class="row">
-        <button class="btn" id="toolPan" title="H">Sposta</button>
-        <button class="btn" id="toolBrush" title="B">Pennello</button>
-        <span class="grow"></span>
-        <button class="btn" id="btnUndo" title="Ctrl+Z">↶</button>
-        <button class="btn" id="btnRedo" title="Ctrl+Shift+Z">↷</button>
-      </div>
+      <p class="hint" id="brushOff">Scegli il pennello <kbd>B</kbd> nella barra sulla mappa per modificare elevazione e strati.</p>
       <div id="brushOpts">
         <label class="field">Strato <select id="brushLayer"></select></label>
         <label class="field">Azione <select id="brushMode"></select></label>
@@ -60,19 +83,15 @@
         <p class="hint">Click sinistro dipinge · tasto destro trascina la mappa.</p>
       </div>
     </section>
-    <section class="box">
+    <section class="box" data-tab="strade">
       <h4>Strade</h4>
-      <div class="row">
-        <button class="btn" id="toolRoad" title="R">Disegna</button>
-        <button class="btn" id="toolSelect" title="V">Seleziona</button>
-      </div>
+      <p class="hint">Strumenti sulla mappa: Disegna <kbd>R</kbd> · Seleziona <kbd>V</kbd>.</p>
       <label class="field">Tipo per le nuove strade <select id="roadType"></select></label>
       <label class="field">Forma <select id="roadShape"><option value="straight">Dritta</option><option value="curve">Curva (inizio, controllo, fine)</option></select></label>
       <label class="field">Angoli guidati <select id="roadAngles"><option value="90">90°</option><option value="45">45°</option></select></label>
-      <div id="selInfo"></div>
       <p class="hint">Disegna: click per ogni punto, Esc / tasto destro / doppio click per finire, Shift per angolo libero. Curva: il punto di controllo segue la direzione della strada da cui parti (Shift lo libera). Aggancio a nodi, strade (crea l'incrocio), angoli, multipli di 8 m e alla distanza CtC dalle strade parallele (linea verde).</p>
     </section>
-    <section class="box">
+    <section class="box" data-tab="moduli">
       <h4>Moduli</h4>
       <label class="check"><input type="checkbox" id="modShow" checked> Mostra moduli e celle (8 m)</label>
       <button class="btn" id="modAuto" title="Propone collettore e strade locali alla distanza giusta dentro ogni area chiusa">Genera strade interne: ON</button>
@@ -81,11 +100,11 @@
       <div class="legend-list" id="modLegend"></div>
       <p class="hint">Ogni area chiusa da strade è un modulo. Clicca dentro un modulo (strumento Seleziona) per sceglierne il tipo e vedere gli avvisi. Le celle si colorano come le zone del gioco: zonabili entro 6 celle (48 m) dal bordo strada.</p>
     </section>
-    <section class="box">
+    <section class="box" data-tab="moduli">
       <h4>Crescita</h4>
       <label class="field">Mostra fino alla fase <b id="vPhase"></b><input id="phaseShow" type="range" min="0" max="1" step="1" value="0"></label>
       <div class="row">
-        <button class="btn" id="toolPhase" title="P: clicca i moduli per assegnare la fase">Pianifica a click</button>
+        <span class="muted">Strumento Fase <kbd>P</kbd>: prossima</span>
         <label class="check">fase <input id="phaseNext" type="number" min="1" step="1" value="1" class="num-sm"></label>
       </div>
       <label class="check"><input type="checkbox" id="phaseAuto" checked> +1 dopo ogni click</label>
@@ -96,7 +115,7 @@
       <div id="growthTable"></div>
       <p class="hint">Abitanti e posti di lavoro sono stime per ettaro zonabile, non valori del gioco. Una strada appartiene alla fase più bassa tra i moduli che delimita.</p>
     </section>
-    <section class="box">
+    <section class="box" data-tab="esporta">
       <h4>Esporta</h4>
       <div class="row">
         <label class="field" style="flex:1">Immagine guida
@@ -104,12 +123,12 @@
         </label>
       </div>
       <label class="check"><input type="checkbox" id="exTransparent"> Sfondo trasparente (solo strade e moduli)</label>
-      <button class="btn" id="exGuide">Scarica immagine guida (PNG)</button>
-      <button class="btn" id="exHeight" title="PNG 4096×4096 a 16 bit in scala di grigi, come la vuole l'editor del gioco">Scarica heightmap modificata</button>
-      <button class="btn" id="exPlan">Scarica piano (JSON)</button>
+      <button class="btn" id="exGuide"><svg class="ic" aria-hidden="true"><use href="#i-down"/></svg>Scarica immagine guida (PNG)</button>
+      <button class="btn" id="exHeight" title="PNG 4096×4096 a 16 bit in scala di grigi, come la vuole l'editor del gioco"><svg class="ic" aria-hidden="true"><use href="#i-down"/></svg>Scarica heightmap modificata</button>
+      <button class="btn" id="exPlan"><svg class="ic" aria-hidden="true"><use href="#i-down"/></svg>Scarica piano (JSON)</button>
       <p class="hint" id="exInfo">L'immagine guida usa i layer attivi e la fase mostrata. La heightmap va nella cartella Heightmaps del gioco e si importa dall'editor.</p>
     </section>
-    <section class="box">
+    <section class="box" data-tab="vincoli">
       <h4>Vincoli</h4>
       <label class="field">Mostra
         <select id="anMode">
@@ -138,14 +157,24 @@
         </div>
       </details>
     </section>
-    <section class="box" id="panel"></section>
+    <section class="box" id="panel" data-tab="mappa"></section>
+    </div>
   </aside>
   <section class="mapwrap">
     <canvas id="map"></canvas>
-    <div class="maptools">
-      <button class="btn" id="zIn">+</button>
-      <button class="btn" id="zOut">−</button>
-      <button class="btn" id="zFit">⤢</button>
+    <div class="maptools" role="toolbar" aria-label="Strumenti">
+      <button class="btn ib" id="toolPan" title="Sposta la mappa (H)" aria-label="Sposta"><svg class="ic" aria-hidden="true"><use href="#i-move"/></svg></button>
+      <button class="btn ib" id="toolBrush" title="Pennello: elevazione e strati (B)" aria-label="Pennello"><svg class="ic" aria-hidden="true"><use href="#i-brush"/></svg></button>
+      <button class="btn ib" id="toolRoad" title="Disegna strade (R)" aria-label="Disegna strade"><svg class="ic" aria-hidden="true"><use href="#i-road"/></svg></button>
+      <button class="btn ib" id="toolSelect" title="Seleziona strade, nodi e moduli (V)" aria-label="Seleziona"><svg class="ic" aria-hidden="true"><use href="#i-select"/></svg></button>
+      <button class="btn ib" id="toolPhase" title="Pianifica la fase a click sui moduli (P)" aria-label="Fase"><svg class="ic" aria-hidden="true"><use href="#i-flag"/></svg></button>
+      <span class="tsep"></span>
+      <button class="btn ib" id="btnUndo" title="Annulla (Ctrl+Z)" aria-label="Annulla"><svg class="ic" aria-hidden="true"><use href="#i-undo"/></svg></button>
+      <button class="btn ib" id="btnRedo" title="Ripeti (Ctrl+Shift+Z)" aria-label="Ripeti"><svg class="ic" aria-hidden="true"><use href="#i-redo"/></svg></button>
+      <span class="tsep"></span>
+      <button class="btn ib" id="zIn" title="Avvicina" aria-label="Avvicina"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg></button>
+      <button class="btn ib" id="zOut" title="Allontana" aria-label="Allontana"><svg class="ic" aria-hidden="true"><use href="#i-minus"/></svg></button>
+      <button class="btn ib" id="zFit" title="Mostra tutta la mappa" aria-label="Mostra tutta la mappa"><svg class="ic" aria-hidden="true"><use href="#i-fit"/></svg></button>
     </div>
   </section>
 </main>
