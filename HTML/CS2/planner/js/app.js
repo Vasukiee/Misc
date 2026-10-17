@@ -152,7 +152,7 @@
     $('modAcceptAll').disabled = !props;
     const L = [['rgba(70,150,80,.7)', 'Zonabile (colore del tipo)'], ['rgb(25,25,25)', 'Interno: oltre 6 celle dalla strada'], ['rgb(230,60,200)', 'Conflitto tra griglie'],
       ['rgb(230,140,40)', 'Sopra risorse da riservare'], ['rgb(150,100,50)', 'Sottovento all\'industria'], ['rgb(200,50,50)', 'Acqua / riva / troppo ripido'], ['rgb(220,200,60)', 'Pendenza da gestire'], ['rgb(70,150,220)', 'Industria sulla falda'], ['rgba(255,211,107,.9)', 'Strada proposta (tratteggio)']];
-    $('modLegend').innerHTML = L.map(([c, l]) => '<div><span class="sw" style="background:' + c + ';border:1px solid #333"></span>' + l + '</div>').join('');
+    $('modLegend').innerHTML = L.map(([c, l]) => '<div><span class="sw" style="background:' + c + '"></span>' + l + '</div>').join('');
   }
   function renderGrowth() {
     const g = modules && modules.growth; if (!g) return;
@@ -197,7 +197,7 @@
   $('modAcceptAll').addEventListener('click', () => { if (modules) accept(modules.faces.filter(f => f.proposal && f.proposal.segs.length)); });
   function renderAnalysis() {
     const mode = $('anMode').value;
-    $('anLegend').innerHTML = (LEGENDS[mode] || []).map(([c, l]) => '<div><span class="sw" style="background:' + c + ';border:1px solid #333"></span>' + l + '</div>').join('');
+    $('anLegend').innerHTML = (LEGENDS[mode] || []).map(([c, l]) => '<div><span class="sw" style="background:' + c + '"></span>' + l + '</div>').join('');
     if (!analysis) { $('anStats').innerHTML = ''; return; }
     const st = analysis.stat, pc = x => (x * 100).toFixed(1) + '%';
     $('anStats').innerHTML = '<div class="hint" style="margin-top:4px;">Mappa per le case:</div>' +

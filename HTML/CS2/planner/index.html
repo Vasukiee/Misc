@@ -4,11 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CS2 Planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
 <header class="topbar">
-  <div class="brand">CS2 // <span>Planner</span></div>
+  <div class="brand"><span>CS2</span> Planner</div>
   <div class="tools">
     <button class="btn" id="btnNew">Nuovo</button>
     <button class="btn" id="btnOpen">Apri…</button>
@@ -31,11 +34,11 @@
     </section>
     <section class="box">
       <h4>Importa mappa</h4>
-      <button class="btn primary" id="btnHeightmap">Heightmap PNG…</button>
+      <button class="btn" id="btnHeightmap">Heightmap PNG…</button>
       <input type="file" id="fileHeightmap" accept=".png,image/png" hidden>
       <label class="check"><input type="checkbox" id="hmWorld"> È la mappa mondo (uso il centro)</label>
       <label class="field">Scala altezza 16 bit (m) <input id="hmScale" type="number" min="1" step="1"></label>
-      <button class="btn primary" id="btnShot">Screenshot risorse…</button>
+      <button class="btn" id="btnShot">Screenshot risorse…</button>
       <input type="file" id="fileShot" accept="image/*" hidden>
       <p class="hint">Heightmap: esportala dall'editor del gioco (PNG 4096×4096, 16 bit). Screenshot: vista risorse naturali, dall'alto, con tutta l'area giocabile visibile.</p>
     </section>
@@ -73,7 +76,7 @@
       <h4>Moduli</h4>
       <label class="check"><input type="checkbox" id="modShow" checked> Mostra moduli e celle (8 m)</label>
       <button class="btn" id="modAuto" title="Propone collettore e strade locali alla distanza giusta dentro ogni area chiusa">Genera strade interne: ON</button>
-      <button class="btn primary" id="modAcceptAll">Accetta tutte le proposte</button>
+      <button class="btn" id="modAcceptAll">Accetta tutte le proposte</button>
       <div id="modStats"></div>
       <div class="legend-list" id="modLegend"></div>
       <p class="hint">Ogni area chiusa da strade è un modulo. Clicca dentro un modulo (strumento Seleziona) per sceglierne il tipo e vedere gli avvisi. Le celle si colorano come le zone del gioco: zonabili entro 6 celle (48 m) dal bordo strada.</p>
@@ -83,7 +86,7 @@
       <label class="field">Mostra fino alla fase <b id="vPhase"></b><input id="phaseShow" type="range" min="0" max="1" step="1" value="0"></label>
       <div class="row">
         <button class="btn" id="toolPhase" title="P: clicca i moduli per assegnare la fase">Pianifica a click</button>
-        <label class="check">fase <input id="phaseNext" type="number" min="1" step="1" value="1" style="width:52px;background:#0d0e10;border:1px solid var(--muted);color:var(--accent3);font-family:inherit;padding:2px 4px;"></label>
+        <label class="check">fase <input id="phaseNext" type="number" min="1" step="1" value="1" class="num-sm"></label>
       </div>
       <label class="check"><input type="checkbox" id="phaseAuto" checked> +1 dopo ogni click</label>
       <div class="row">
